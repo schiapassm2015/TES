@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/accion_ver_datos_paciente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <!-- Título -->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="Ver Datos del Paciente"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+                <ImageButton
+                    android:id="@+id/btnAyuda_ver"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/ayuda"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ayuda" />
+
+                <!-- Línea horizontal -->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/btnAyuda_ver"
+                    android:background="@android:color/darker_gray" />
+            </RelativeLayout>
+
+            <!-- Contenido -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/nombre" />
+
+                <EditText
+                    android:id="@+id/txtNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/curp" />
+
+                <EditText
+                    android:id="@+id/txtCurp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edad" />
+
+                <EditText
+                    android:id="@+id/txtEdad"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sexo" />
+
+                <EditText
+                    android:id="@+id/txtSexo"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gpo. Sang." />
+
+                <EditText
+                    android:id="@+id/txtSangre"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/domicilio" />
+
+                <EditText
+                    android:id="@+id/txtDireccion"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:inputType="text" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cp" />
+
+                <EditText
+                    android:id="@+id/txtCP"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:enabled="false"
+                    android:inputType="text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/localidad" />
+
+                <EditText
+                    android:id="@+id/txtLocalidad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text" />
+            </LinearLayout>
+
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:text="Fecha Reg. Civil" />
+
+                <EditText
+                    android:id="@+id/txtFechaRegistroCivil"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text" />
+            </LinearLayout>
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:text="Localidad Reg. Civil" />
+
+                <EditText
+                    android:id="@+id/txtLocalidadRegistroCivil"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text" />
+            </LinearLayout>
+            
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:text="UM Tratante" />
+
+                <EditText
+                    android:id="@+id/txtUnidadMedicaTratante"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text" />
+            </LinearLayout>
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:text="Madre / Tutor" />
+
+                <EditText
+                    android:id="@+id/txtTutor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="text" />
+            </LinearLayout>
+            
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reacciones Alérgicas"/>
+            
+            <ListView
+                android:id="@+id/lsAlergiasActuales"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:listitem="@android:layout/simple_list_item_checked" />
+            
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/accion_editar_datos_paciente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:orientation="vertical" >
+
+            <!-- Título -->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="Editar Datos del Paciente"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+                <ImageButton
+                    android:id="@+id/btnAyuda_editar"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/ayuda"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ayuda" />
+
+                <!-- Línea horizontal -->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/btnAyuda_editar"
+                    android:background="@android:color/darker_gray" />
+            </RelativeLayout>
+
+            
+            <!-- Domicilio -->
+            <TextView
+                style="@android:style/TextAppearance.DeviceDefault.DialogWindowTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/domicilio" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="Calle" />
+
+                <EditText
+                    android:id="@+id/txtCalle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="No." />
+
+                <EditText
+                    android:id="@+id/txtNumero"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberSigned"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="Colonia" />
+
+                <EditText
+                    android:id="@+id/txtColonia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberSigned"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/localidad" />
+
+                <Spinner
+                    android:id="@+id/spLocalidad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+            </LinearLayout>
+            
+            <Button android:id="@+id/btnActualizarDireccion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Actualizar Domicilio"/>
+            
+            
+            
+            <!-- Unidad Médica -->
+            <TextView
+                android:layout_marginTop="10dp"
+                style="@android:style/TextAppearance.DeviceDefault.DialogWindowTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UM Tratante" />
+            
+            <Spinner
+                android:id="@+id/spUM"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+            
+            <Button android:id="@+id/btnActualizarUM"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Actualizar UM Tratante"/>
+            
+            
+            <!-- Reacciones alérgicas -->
+            <TextView
+                android:layout_marginTop="10dp"
+                style="@android:style/TextAppearance.DeviceDefault.DialogWindowTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reacciones alérgicas" />
+            
+            <!-- Al implementar esto checar: 
+            http://www.androidhive.info/2013/07/android-expandable-list-view-tutorial/ -->
+            <ExpandableListView
+                android:id="@+id/lsAlergias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:listitem="@android:layout/simple_list_item_multiple_choice">
+            </ExpandableListView>
+            
+            <Button android:id="@+id/btnActualizarAlergias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Actualizar Alergias"/>
+            
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

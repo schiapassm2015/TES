@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fila de resultados visualizados en controles_censo_censo_nominal.xml 
+Este diseño debe hacer match perfecto en cantidad de controles y ancho
+de cada uno con la cabecera del xml que lo usa para simular vista
+similar a una tabla -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+    
+    <TextView android:id="@+id/txtNombre"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="Nombre apellido1 apellido2"
+        android:clickable="true"
+        android:textColor="#0000ff"/>
+    
+    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
+    
+    <TextView android:id="@+id/txtCurp"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="saca830223456chs0723"/>
+   
+    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
+    
+    <TextView android:id="@+id/txtFechaNacimiento"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:text="dd-mmm-aaaa"/>
+
+    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
+    
+    <TextView android:id="@+id/txtEdad"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:text="00"/>
+    
+    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
+    
+    <TextView android:id="@+id/txtDomicilio"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="Av. 123 calle 45"/>
+    
+    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
+    
+    <TextView android:id="@+id/txtCP"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="12345"/>
+    
+    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
+    
+    <TextView android:id="@+id/txtLocalidad"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="Tuxtla Gutiérrez"/>
+    
+    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
+        
+    <CheckBox android:id="@+id/chkBCG_U"
+        android:layout_width="10dp"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:checked="true"/>
+    
+
+</LinearLayout>

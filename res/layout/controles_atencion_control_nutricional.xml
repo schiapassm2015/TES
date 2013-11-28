@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/accion_ver_controles_nutricionales"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <!-- Título -->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="Ver Controles Nutricionales"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+                <ImageButton
+                    android:id="@+id/btnAyuda_ver"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/ayuda"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ayuda" />
+
+                <!-- Línea horizontal -->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/btnAyuda_ver"
+                    android:background="@android:color/darker_gray" />
+            </RelativeLayout>
+
+            <!-- Contenido -->
+
+			<LinearLayout android:orientation="vertical"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content">
+                
+                <!-- PONER gráfica aquí -->
+                <com.example.chartlibrary.LineGraph
+			        android:layout_width="match_parent"
+			        android:layout_height="200dp"
+			        
+			        android:id="@+id/grafica_linear"/>
+			    
+                <!-- Info gráfica -->
+	            <LinearLayout
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content" >
+	
+	                <TextView
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:text="Paciente" />
+	                <View
+	                    android:layout_width="0dp"
+	                    android:layout_height="match_parent"
+	                    android:layout_weight="1"
+	                    android:background="@drawable/gradiente_azul"/>
+	                
+	                <TextView
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginLeft="20dp"
+	                    android:text="Bajo Peso" />
+	                <View
+	                    android:layout_width="0dp"
+	                    android:layout_height="match_parent"
+	                    android:layout_weight="1"
+	                    android:background="@drawable/gradiente_amarillo"/>
+	                
+	                <TextView
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginLeft="20dp"
+	                    android:text="Peso Normal" />
+	                <View
+	                    android:layout_width="0dp"
+	                    android:layout_height="match_parent"
+	                    android:layout_weight="1"
+	                    android:background="@drawable/gradiente_verde"/>
+	                
+	                <TextView
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginLeft="20dp"
+	                    android:text="Sobrepeso" />
+	                <View
+	                    android:layout_width="0dp"
+	                    android:layout_height="match_parent"
+	                    android:layout_weight="1"
+	                    android:background="@drawable/gradiente_naranja"/>
+	                
+	                <TextView
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginLeft="20dp"
+	                    android:text="Obesidad" />
+	                <View
+	                    android:layout_width="0dp"
+	                    android:layout_height="match_parent"
+	                    android:layout_weight="1"
+	                    android:background="@drawable/gradiente_rojo"/>
+	            </LinearLayout>
+            </LinearLayout>
+            
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/accion_agregar_control_nutricional"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="30dp"
+            android:orientation="vertical" >
+
+            <!-- Título -->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="Agregar Control Nutricional"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+                <ImageButton
+                    android:id="@+id/btnAyuda_editar"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/ayuda"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ayuda" />
+
+                <!-- Línea horizontal -->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/btnAyuda_editar"
+                    android:background="@android:color/darker_gray" />
+            </RelativeLayout>
+
+            
+            <!-- Contenido -->
+            <Button android:id="@+id/btnAgregarControl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Agregar Control"/>
+
+                                
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

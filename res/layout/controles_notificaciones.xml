@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!-- Título -->
+    <RelativeLayout
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        
+	    <TextView android:layout_alignParentLeft="true" 
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+	        android:text="Notificaciones" />
+	    
+	    <ImageButton android:layout_alignParentRight="true"
+	        android:background="@android:color/transparent"
+	        android:id="@+id/btnAyuda"
+	        android:layout_width="30dp"
+	        android:layout_height="30dp"
+	        android:scaleType="centerCrop"
+	        android:src="@drawable/ayuda"
+	        android:contentDescription="@string/ayuda"/>
+	    
+	    <!-- Línea horizontal -->
+	    <View android:layout_below="@+id/btnAyuda"
+	        android:layout_width="match_parent"
+	        android:layout_height="1dp"
+	        android:background="@android:color/darker_gray" />
+	</RelativeLayout>
+	
+    <!-- Contenido -->
+    <ListView android:id="@+id/lsContenido" 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+        
+    
+</LinearLayout>

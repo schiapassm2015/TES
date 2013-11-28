@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" 
+    android:layout_height="wrap_content"
+    android:background="@drawable/gradiente_amarillo">
+
+    <TextView android:id="@+id/lblTitulo"
+        android:background="@drawable/gradiente_rojo"
+        android:layout_alignParentLeft="true"
+        style="@style/boton_menu_superior"
+        android:text="Barra principal"/>
+    
+    <HorizontalScrollView
+        android:background="@drawable/gradiente_azul"
+        android:layout_toRightOf="@+id/lblTitulo"
+        android:layout_width="match_parent" 
+        android:layout_height="wrap_content"
+        >
+        
+        <LinearLayout 
+            android:background="@drawable/gradiente_verde"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" 
+            android:layout_gravity="right">
+            
+            
+		    <TextView
+		        android:id="@+id/mnAtencion"
+		        style="@style/boton_menu_superior"
+		        android:text="@string/atencion" />
+		    
+		    <TextView
+		        android:id="@+id/mnCenso"
+		        style="@style/boton_menu_superior"
+		        android:text="@string/censo_nominal" />
+		    
+		    <TextView
+		        android:id="@+id/mnNotificaciones"
+		        style="@style/boton_menu_superior"
+		        android:text="@string/notificaciones" />
+		    
+		    <TextView
+		        android:id="@+id/mnSincronizacion"
+		        style="@style/boton_menu_superior"
+		        android:text="@string/sincronizacion" />
+		    
+		    <TextView
+		        android:id="@+id/mnConfiguracion" 
+		        style="@style/boton_menu_superior"
+		        android:text="@string/configuracion" />
+		    
+		    <TextView
+		        android:id="@+id/mnCerrar"
+		        style="@style/boton_menu_superior"
+		        android:text="@string/cerrar_sesion" />
+		    
+		</LinearLayout>
+    
+    </HorizontalScrollView>
+
+</RelativeLayout>

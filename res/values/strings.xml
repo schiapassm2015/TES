@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TES</string>
+    <string name="title_seccion_detail">Seccion Detail</string>
+    <string name="acerque_tes">Acerque la TES al lector</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="ayuda">Ayuda</string>
+    
+    <string name="nombre">Nombre</string>
+    <string name="curp">Curp</string>
+    <string name="sexo">Sexo</string>
+    <string name="fecha_nacimiento">Fecha Nacimiento</string>
+    <string name="edad">Edad</string>
+    <string name="domicilio">Domicilio</string>
+    <string name="cp">CP</string>
+    <string name="localidad">Localidad</string>
+    <string name="bcg">BCG</string>
+    <string name="hepatitis_b">Hepatitis B</string>
+    <string name="pentavalente">Pentavalente</string>
+    <string name="dpt">DPT</string>
+    <string name="rotavirus">Rotavirus</string>
+
+    <!-- Menú superior -->
+    <string name="atencion">Atención</string>
+    <string name="censo_nominal">Censo Nominal</string>
+    <string name="notificaciones">Notificaciones</string>
+    <string name="sincronizacion">Sincronización</string>
+    <string name="configuracion">Configuración</string>
+    <string name="cerrar_sesion">Cerrar Sesión</string>
+    
+    <!-- OPCIONES DE SPINNER -->
+    <string name="indistinto">Indistinto</string>
+    <string name="masculino">Masculino</string>
+    <string name="femenino">Femenino</string>
+    
+    <string name="cero_anos">0 años</string>
+    <string name="un_ano">1 año</string>
+    <string name="dos_anos">2 años</string>
+    <string name="tres_anos">3 años</string>
+    <string name="cuatro_anos">4 años</string>
+    
+    <string-array name="opciones_sexo">
+        <item>@string/indistinto</item>
+        <item>@string/masculino</item>
+        <item>@string/femenino</item>
+    </string-array>
+    
+    <string-array name="opciones_edad">
+        <item>@string/cero_anos</item>
+        <item>@string/un_ano</item>
+        <item>@string/dos_anos</item>
+        <item>@string/tres_anos</item>
+        <item>@string/cuatro_anos</item>
+    </string-array>
+</resources>
