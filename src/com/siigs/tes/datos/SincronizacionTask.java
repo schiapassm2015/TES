@@ -215,7 +215,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 			JSONArray ncat=new JSONArray();ncat.put(fil);
 			fil=new JSONObject();fil.put("id", 987).put("columna2", "f2c2").put("columna3", "f2c3");
 			ncat.put(fil);
-			nuevo.put("llavesesion", 852);nuevo.put("um", 741);nuevo.put("atributo2", "atr2").put("atributo3", "atr3")
+			nuevo.put("llavesesion", 852);nuevo.put("um", 741);nuevo.put("atributo2", "atr2").put("atributo3", nuevo.toString())
 			.put("catalogo1",ncat);
 			Log.d(TAG, "JSON nuevo: "+nuevo.toString(3));
 			Log.d(TAG, "Parseado correcto: "+salida);

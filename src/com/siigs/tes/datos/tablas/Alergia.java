@@ -11,6 +11,7 @@ public class Alergia {
 	
 	//Columnas en la nube
 	public final static String ID = "_id"; //para adaptadores android
+	public final static String TIPO = "tipo";
 	public final static String DESCRIPCION = "descripcion";
 	
 	//Columnas de control interno
@@ -22,6 +23,7 @@ public class Alergia {
 	public final static String CREATE_TABLE =
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
 		ID + " INTEGER PRIMARY KEY NOT NULL, " + //para adaptadores android
+		TIPO + " TEXT NOT NULL, "+
 		DESCRIPCION + " TEXT NOT NULL "+
 		"); ";
 }

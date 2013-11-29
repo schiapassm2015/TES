@@ -26,7 +26,7 @@ public class Persona {
 	public final static String CP_DOMICILIO = "cp_domicilio";
 	public final static String TELEFONO_DOMICILIO = "telefono_domicilio";
 	public final static String FECHA_REGISTRO = "fecha_registro";
-	public final static String ID_ASU_UM_TRATANTE = "id_asu_um_tratante";
+	//public final static String ID_ASU_UM_TRATANTE = "id_asu_um_tratante"; //Solo se usa en servidor
 	public final static String CELULAR = "celular";
 	public final static String ULTIMA_ACTUALIZACION = "ultima_actualizacion";
 	public final static String ID_NACIONALIDAD = "id_nacionalidad";
@@ -56,7 +56,7 @@ public class Persona {
 		CP_DOMICILIO + " INTEGER NOT NULL, "+
 		TELEFONO_DOMICILIO + " TEXT DEFAULT NULL, "+
 		FECHA_REGISTRO + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), "+
-		ID_ASU_UM_TRATANTE + " INTEGER NOT NULL, "+
+		//ID_ASU_UM_TRATANTE + " INTEGER NOT NULL, "+
 		CELULAR + " TEXT, "+
 		ULTIMA_ACTUALIZACION + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), "+
 		ID_NACIONALIDAD + " INTEGER NOT NULL, "+
