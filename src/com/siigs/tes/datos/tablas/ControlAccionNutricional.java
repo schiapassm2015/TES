@@ -25,7 +25,7 @@ public class ControlAccionNutricional {
 	public final static String CREATE_TABLE =
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
 		_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + //para adaptadores android
-		ID_PERSONA + " INTEGER NOT NULL, "+
+		ID_PERSONA + " TEXT NOT NULL, "+
 		ID_ACCION_NUTRICIONAL + " INTEGER NOT NULL, "+
 		FECHA + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), "+
 		ID_ASU_UM + " INTEGER NOT NULL, "+

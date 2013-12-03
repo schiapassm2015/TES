@@ -5,14 +5,16 @@ package com.siigs.tes.datos.tablas;
  * @author Axel
  *
  */
-public class RegistroCivil {
+public class Notificacion {
 
-	public final static String NOMBRE_TABLA = "cns_registro_civil"; //nombre en BD
+	public final static String NOMBRE_TABLA = "cns_notificacion"; //nombre en BD
 	
 	//Columnas en la nube
 	public final static String ID = "_id"; //para adaptadores android
-	public final static String ID_LOCALIDAD_REGISTRO_CIVIL = "id_localidad_registro_civil";
-	public final static String FECHA_REGISTRO = "fecha_registro";
+	public final static String TITULO = "titulo";
+	public final static String CONTENIDO = "contenido";
+	public final static String FECHA_INICIO = "fecha_inicio";
+	public final static String FECHA_FIN = "fecha_fin";
 	
 	//Columnas de control interno
 	public final static String _REMOTO_ID = "id"; //mapeo campo id en base de datos remota
@@ -23,7 +25,9 @@ public class RegistroCivil {
 	public final static String CREATE_TABLE =
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
 		ID + " INTEGER PRIMARY KEY NOT NULL, " + //para adaptadores android
-		ID_LOCALIDAD_REGISTRO_CIVIL + " INTEGER NOT NULL UNIQUE, " +
-		FECHA_REGISTRO + " INTEGER NOT NULL DEFAULT(strftime('%s','now')) " +
+		TITULO + " TEXT NOT NULL, " +
+		CONTENIDO + " TEXT NOT NULL, "+
+		FECHA_INICIO + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), "+
+		FECHA_FIN + " INTEGER DEFAULT(strftime('%s','now')) "+
 		"); ";
 }

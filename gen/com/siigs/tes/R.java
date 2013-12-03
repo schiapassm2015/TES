@@ -9,8 +9,9 @@ package com.siigs.tes;
 
 public final class R {
     public static final class array {
-        public static final int opciones_edad=0x7f060001;
-        public static final int opciones_sexo=0x7f060000;
+        public static final int id_tipo_censo=0x7f060000;
+        public static final int opciones_edad=0x7f060002;
+        public static final int opciones_sexo=0x7f060001;
     }
     public static final class attr {
     }
@@ -136,38 +137,44 @@ public final class R {
         public static final int app_name=0x7f040000;
         /**  Menú superior 
          */
-        public static final int atencion=0x7f040012;
+        public static final int atencion=0x7f040016;
         public static final int ayuda=0x7f040004;
         public static final int bcg=0x7f04000d;
         public static final int cancelar=0x7f040003;
-        public static final int censo_nominal=0x7f040013;
-        public static final int cero_anos=0x7f04001b;
-        public static final int cerrar_sesion=0x7f040017;
-        public static final int configuracion=0x7f040016;
+        public static final int censo_nominal=0x7f040017;
+        public static final int cero_anos=0x7f04001f;
+        public static final int cerrar_sesion=0x7f04001b;
+        public static final int configuracion=0x7f04001a;
         public static final int cp=0x7f04000b;
-        public static final int cuatro_anos=0x7f04001f;
+        public static final int cuatro_anos=0x7f040023;
         public static final int curp=0x7f040006;
         public static final int domicilio=0x7f04000a;
-        public static final int dos_anos=0x7f04001d;
+        public static final int dos_anos=0x7f040021;
         public static final int dpt=0x7f040010;
         public static final int edad=0x7f040009;
+        /**  Tipos de censo visualizables 
+         */
+        public static final int estatal=0x7f040012;
         public static final int fecha_nacimiento=0x7f040008;
-        public static final int femenino=0x7f04001a;
+        public static final int femenino=0x7f04001e;
         public static final int hepatitis_b=0x7f04000e;
         /**  OPCIONES DE SPINNER 
          */
-        public static final int indistinto=0x7f040018;
+        public static final int indistinto=0x7f04001c;
+        public static final int jurisdiccion=0x7f040013;
         public static final int localidad=0x7f04000c;
-        public static final int masculino=0x7f040019;
+        public static final int masculino=0x7f04001d;
+        public static final int municipio=0x7f040014;
         public static final int nombre=0x7f040005;
-        public static final int notificaciones=0x7f040014;
+        public static final int notificaciones=0x7f040018;
         public static final int pentavalente=0x7f04000f;
         public static final int rotavirus=0x7f040011;
         public static final int sexo=0x7f040007;
-        public static final int sincronizacion=0x7f040015;
+        public static final int sincronizacion=0x7f040019;
         public static final int title_seccion_detail=0x7f040001;
-        public static final int tres_anos=0x7f04001e;
-        public static final int un_ano=0x7f04001c;
+        public static final int tres_anos=0x7f040022;
+        public static final int un_ano=0x7f040020;
+        public static final int unidad_medica=0x7f040015;
     }
     public static final class style {
         /** 

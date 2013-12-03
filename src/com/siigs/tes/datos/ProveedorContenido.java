@@ -1,12 +1,21 @@
 package com.siigs.tes.datos;
 
 
+import java.util.ArrayList;
+
 import com.siigs.tes.datos.tablas.*;
+
 import android.content.ContentProvider;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.OperationApplicationException;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteConstraintException;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
@@ -138,6 +147,90 @@ public class ProveedorContenido extends ContentProvider {
 	public static final Uri REGISTRO_CIVIL_CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	        + "/" + REGISTRO_CIVIL_PATH);
 	
+	private static final String TIPO_SANGUINEO_PATH = TipoSanguineo.NOMBRE_TABLA;
+	public static final int TIPO_SANGUINEO_TODOS = 30;
+	public static final int TIPO_SANGUINEO_ID = 31;
+	public static final Uri TIPO_SANGUINEO_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + TIPO_SANGUINEO_PATH);
+	
+	private static final String ANTIGUO_DOMICILIO_PATH = AntiguoDomicilio.NOMBRE_TABLA;
+	public static final int ANTIGUO_DOMICILIO_TODOS = 40;
+	public static final int ANTIGUO_DOMICILIO_ID = 41;
+	public static final Uri ANTIGUO_DOMICILIO_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + ANTIGUO_DOMICILIO_PATH);
+	
+	private static final String ANTIGUA_UM_PATH = AntiguaUM.NOMBRE_TABLA;
+	public static final int ANTIGUA_UM_TODOS = 50;
+	public static final int ANTIGUA_UM_ID = 51;
+	public static final Uri ANTIGUA_UM_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + ANTIGUA_UM_PATH);
+	
+	private static final String PERSONA_AFILIACION_PATH = PersonaAfiliacion.NOMBRE_TABLA;
+	public static final int PERSONA_AFILIACION_TODOS = 60;
+	public static final int PERSONA_AFILIACION_ID = 61;
+	public static final Uri PERSONA_AFILIACION_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + PERSONA_AFILIACION_PATH);
+	
+	private static final String AFILIACION_PATH = Afiliacion.NOMBRE_TABLA;
+	public static final int AFILIACION_TODOS = 65;
+	public static final int AFILIACION_ID = 66;
+	public static final Uri AFILIACION_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + AFILIACION_PATH);
+	
+	private static final String CONTROL_NUTRICIONAL_PATH = ControlNutricional.NOMBRE_TABLA;
+	public static final int CONTROL_NUTRICIONAL_TODOS = 70;
+	public static final int CONTROL_NUTRICIONAL_ID = 71;
+	public static final Uri CONTROL_NUTRICIONAL_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + CONTROL_NUTRICIONAL_PATH);
+	
+	private static final String PERSONA_ALERGIA_PATH = PersonaAlergia.NOMBRE_TABLA;
+	public static final int PERSONA_ALERGIA_TODOS = 80;
+	public static final int PERSONA_ALERGIA_ID = 81;
+	public static final Uri PERSONA_ALERGIA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + PERSONA_ALERGIA_PATH);
+	
+	private static final String ALERGIA_PATH = Alergia.NOMBRE_TABLA;
+	public static final int ALERGIA_TODOS = 85;
+	public static final int ALERGIA_ID = 86;
+	public static final Uri ALERGIA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + ALERGIA_PATH);
+	
+	private static final String PERSONA_TUTOR_PATH = PersonaTutor.NOMBRE_TABLA;
+	public static final int PERSONA_TUTOR_TODOS = 90;
+	public static final int PERSONA_TUTOR_ID = 91;
+	public static final Uri PERSONA_TUTOR_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + PERSONA_TUTOR_PATH);
+	
+	private static final String TUTOR_PATH = Tutor.NOMBRE_TABLA;
+	public static final int TUTOR_TODOS = 95;
+	public static final int TUTOR_ID = 96;
+	public static final Uri TUTOR_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + TUTOR_PATH);
+	
+	private static final String PENDIENTES_TARJETA_PATH = PendientesTarjeta.NOMBRE_TABLA;
+	public static final int PENDIENTES_TARJETA_TODOS = 1200;
+	public static final int PENDIENTES_TARJETA_ID = 1201;
+	public static final Uri PENDIENTES_TARJETA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + PENDIENTES_TARJETA_PATH);
+	
+	private static final String NOTIFICACION_PATH = Notificacion.NOMBRE_TABLA;
+	public static final int NOTIFICACION_TODOS = 1300;
+	public static final int NOTIFICACION_ID = 1301;
+	public static final Uri NOTIFICACION_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + NOTIFICACION_PATH);
+	
+	private static final String ARBOL_SEGMENTACION_PATH = ArbolSegmentacion.NOMBRE_TABLA;
+	public static final int ARBOL_SEGMENTACION_TODOS = 1400;
+	public static final int ARBOL_SEGMENTACION_ID = 1401;
+	public static final Uri ARBOL_SEGMENTACION_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + ARBOL_SEGMENTACION_PATH);
+	
+	private static final String OPERADORA_CELULAR_PATH = OperadoraCelular.NOMBRE_TABLA;
+	public static final int OPERADORA_CELULAR_TODOS = 1500;
+	public static final int OPERADORA_CELULAR_ID = 1501;
+	public static final Uri OPERADORA_CELULAR_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + OPERADORA_CELULAR_PATH);
+	
 	/*
 	public static final String CONTENT_ITEM_TYPE = 
 			ContentResolver.CURSOR_ITEM_BASE_TYPE + "/persona";
@@ -200,6 +293,45 @@ public class ProveedorContenido extends ContentProvider {
 	    
 	    sURIMatcher.addURI(AUTHORITY, REGISTRO_CIVIL_PATH, REGISTRO_CIVIL_TODOS);
 	    sURIMatcher.addURI(AUTHORITY, REGISTRO_CIVIL_PATH + "/#", REGISTRO_CIVIL_ID);
+	    
+	    sURIMatcher.addURI(AUTHORITY, TIPO_SANGUINEO_PATH, TIPO_SANGUINEO_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, TIPO_SANGUINEO_PATH + "/#", TIPO_SANGUINEO_ID);
+	    
+	    sURIMatcher.addURI(AUTHORITY, ANTIGUO_DOMICILIO_PATH, ANTIGUO_DOMICILIO_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, ANTIGUO_DOMICILIO_PATH + "/#", ANTIGUO_DOMICILIO_ID);
+	    
+	    sURIMatcher.addURI(AUTHORITY, ANTIGUA_UM_PATH, ANTIGUA_UM_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, ANTIGUA_UM_PATH + "/#", ANTIGUA_UM_ID);
+	    
+	    sURIMatcher.addURI(AUTHORITY, PERSONA_AFILIACION_PATH, PERSONA_AFILIACION_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, PERSONA_AFILIACION_PATH + "/#", PERSONA_AFILIACION_ID);
+	    sURIMatcher.addURI(AUTHORITY, AFILIACION_PATH, AFILIACION_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, AFILIACION_PATH + "/#", AFILIACION_ID);
+	    
+	    sURIMatcher.addURI(AUTHORITY, CONTROL_NUTRICIONAL_PATH, CONTROL_NUTRICIONAL_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, CONTROL_NUTRICIONAL_PATH + "/#", CONTROL_NUTRICIONAL_ID);
+	    
+	    sURIMatcher.addURI(AUTHORITY, PERSONA_ALERGIA_PATH, PERSONA_ALERGIA_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, PERSONA_ALERGIA_PATH + "/#", PERSONA_ALERGIA_ID);
+	    sURIMatcher.addURI(AUTHORITY, ALERGIA_PATH, ALERGIA_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, ALERGIA_PATH + "/#", ALERGIA_ID);
+	    
+	    sURIMatcher.addURI(AUTHORITY, PERSONA_TUTOR_PATH, PERSONA_TUTOR_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, PERSONA_TUTOR_PATH + "/#", PERSONA_TUTOR_ID);
+	    sURIMatcher.addURI(AUTHORITY, TUTOR_PATH, TUTOR_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, TUTOR_PATH + "/#", TUTOR_ID);
+	    
+	    sURIMatcher.addURI(AUTHORITY, PENDIENTES_TARJETA_PATH, PENDIENTES_TARJETA_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, PENDIENTES_TARJETA_PATH + "/#", PENDIENTES_TARJETA_ID);
+	    
+	    sURIMatcher.addURI(AUTHORITY, NOTIFICACION_PATH, NOTIFICACION_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, NOTIFICACION_PATH + "/#", NOTIFICACION_ID);
+	    
+	    sURIMatcher.addURI(AUTHORITY, ARBOL_SEGMENTACION_PATH, ARBOL_SEGMENTACION_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, ARBOL_SEGMENTACION_PATH + "/#", ARBOL_SEGMENTACION_ID);
+	    
+	    sURIMatcher.addURI(AUTHORITY, OPERADORA_CELULAR_PATH, OPERADORA_CELULAR_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, OPERADORA_CELULAR_PATH + "/#", OPERADORA_CELULAR_ID);
 	}
 	
 	
@@ -397,6 +529,135 @@ public class ProveedorContenido extends ContentProvider {
 			builder.setTables(RegistroCivil.NOMBRE_TABLA);// No existe filtro
 			break;
 			
+		case ProveedorContenido.TIPO_SANGUINEO_ID:
+			builder.setTables(TipoSanguineo.NOMBRE_TABLA);
+			builder.appendWhere(TipoSanguineo.ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;
+		case ProveedorContenido.TIPO_SANGUINEO_TODOS:
+			builder.setTables(TipoSanguineo.NOMBRE_TABLA);// No existe filtro
+			break;
+			
+		case ProveedorContenido.ANTIGUO_DOMICILIO_ID:
+			builder.setTables(AntiguoDomicilio.NOMBRE_TABLA);
+			builder.appendWhere(AntiguoDomicilio._ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;
+		case ProveedorContenido.ANTIGUO_DOMICILIO_TODOS:
+			builder.setTables(AntiguoDomicilio.NOMBRE_TABLA);// No existe filtro
+			break;
+			
+		case ProveedorContenido.ANTIGUA_UM_ID:
+			builder.setTables(AntiguaUM.NOMBRE_TABLA);
+			builder.appendWhere(AntiguaUM._ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;
+		case ProveedorContenido.ANTIGUA_UM_TODOS:
+			builder.setTables(AntiguaUM.NOMBRE_TABLA);// No existe filtro
+			break;
+			
+		//AFILIACIONES
+		case ProveedorContenido.PERSONA_AFILIACION_ID:
+			builder.setTables(PersonaAfiliacion.NOMBRE_TABLA);
+			builder.appendWhere(PersonaAfiliacion._ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;			
+		case ProveedorContenido.PERSONA_AFILIACION_TODOS:
+			builder.setTables(PersonaAfiliacion.NOMBRE_TABLA);// No existe filtro
+			break;
+
+		case ProveedorContenido.AFILIACION_ID:
+			builder.setTables(Afiliacion.NOMBRE_TABLA);
+			builder.appendWhere(Afiliacion.ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;
+		case ProveedorContenido.AFILIACION_TODOS:
+			builder.setTables(Afiliacion.NOMBRE_TABLA);// No existe filtro
+			break;
+			
+		case ProveedorContenido.CONTROL_NUTRICIONAL_ID:
+			builder.setTables(ControlNutricional.NOMBRE_TABLA);
+			builder.appendWhere(ControlNutricional._ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;			
+		case ProveedorContenido.CONTROL_NUTRICIONAL_TODOS:
+			builder.setTables(ControlNutricional.NOMBRE_TABLA);// No existe filtro
+			break;
+			
+		//ALERGIAS	
+		case ProveedorContenido.PERSONA_ALERGIA_ID:
+			builder.setTables(PersonaAlergia.NOMBRE_TABLA);
+			builder.appendWhere(PersonaAlergia._ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;			
+		case ProveedorContenido.PERSONA_ALERGIA_TODOS:
+			builder.setTables(PersonaAlergia.NOMBRE_TABLA);// No existe filtro
+			break;
+			
+		case ProveedorContenido.ALERGIA_ID:
+			builder.setTables(Alergia.NOMBRE_TABLA);
+			builder.appendWhere(Alergia.ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;			
+		case ProveedorContenido.ALERGIA_TODOS:
+			builder.setTables(Alergia.NOMBRE_TABLA);// No existe filtro
+			break;
+			
+			
+		case ProveedorContenido.PERSONA_TUTOR_ID:
+			builder.setTables(PersonaTutor.NOMBRE_TABLA);
+			builder.appendWhere(PersonaTutor.ID_TUTOR + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;			
+		case ProveedorContenido.PERSONA_TUTOR_TODOS:
+			builder.setTables(PersonaTutor.NOMBRE_TABLA);// No existe filtro
+			break;
+		
+		case ProveedorContenido.TUTOR_ID:
+			builder.setTables(Tutor.NOMBRE_TABLA);
+			builder.appendWhere(Tutor.ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;			
+		case ProveedorContenido.TUTOR_TODOS:
+			builder.setTables(PersonaTutor.NOMBRE_TABLA);// No existe filtro
+			break;
+			
+		case ProveedorContenido.PENDIENTES_TARJETA_ID:
+			builder.setTables(PendientesTarjeta.NOMBRE_TABLA);
+			builder.appendWhere(PendientesTarjeta.ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;			
+		case ProveedorContenido.PENDIENTES_TARJETA_TODOS:
+			builder.setTables(PendientesTarjeta.NOMBRE_TABLA);// No existe filtro
+			break;
+			
+		case ProveedorContenido.NOTIFICACION_ID:
+			builder.setTables(Notificacion.NOMBRE_TABLA);
+			builder.appendWhere(Notificacion.ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;			
+		case ProveedorContenido.NOTIFICACION_TODOS:
+			builder.setTables(Notificacion.NOMBRE_TABLA);// No existe filtro
+			break;
+			
+		case ProveedorContenido.ARBOL_SEGMENTACION_ID:
+			builder.setTables(ArbolSegmentacion.NOMBRE_TABLA);
+			builder.appendWhere(ArbolSegmentacion.ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;			
+		case ProveedorContenido.ARBOL_SEGMENTACION_TODOS:
+			builder.setTables(ArbolSegmentacion.NOMBRE_TABLA);// No existe filtro
+			break;
+			
+		case ProveedorContenido.OPERADORA_CELULAR_ID:
+			builder.setTables(OperadoraCelular.NOMBRE_TABLA);
+			builder.appendWhere(OperadoraCelular.ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;			
+		case ProveedorContenido.OPERADORA_CELULAR_TODOS:
+			builder.setTables(OperadoraCelular.NOMBRE_TABLA);// No existe filtro
+			break;
+		
 		default:
 			throw new IllegalArgumentException("Uri desconocido "+tipoUri);
 		}
@@ -424,9 +685,89 @@ public class ProveedorContenido extends ContentProvider {
 		return null;
 	}
 
+	
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-		// TODO Auto-generated method stub
+		int tipoUri= sURIMatcher.match(uri);
+		SQLiteDatabase db=this.basedatos.getWritableDatabase();
+		long newID=0;
+		String tabla="";
+		
+		switch(tipoUri){
+		case ProveedorContenido.PERSONA_TODOS:
+			tabla=Persona.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.USUARIO_TODOS:
+			tabla=Usuario.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.USUARIO_INVITADO_TODOS:
+			tabla=UsuarioInvitado.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.TUTOR_TODOS:
+			tabla=Tutor.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.GRUPO_TODOS:
+			tabla=Grupo.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PERMISO_TODOS:
+			tabla=Permiso.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.NOTIFICACION_TODOS:
+			tabla=Notificacion.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.TIPO_SANGUINEO_TODOS:
+			tabla=TipoSanguineo.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.VACUNA_TODOS:
+			tabla=Vacuna.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ACCION_NUTRICIONAL_TODOS:
+			tabla=AccionNutricional.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.IRA_TODOS:
+			tabla=Ira.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.EDA_TODOS:
+			tabla=Eda.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONSULTA_TODOS:
+			tabla=Consulta.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ALERGIA_TODOS:
+			tabla=Alergia.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.AFILIACION_TODOS:
+			tabla=Afiliacion.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.NACIONALIDAD_TODOS:
+			tabla=Nacionalidad.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.OPERADORA_CELULAR_TODOS:
+			tabla=OperadoraCelular.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PENDIENTES_TARJETA_TODOS:
+			tabla=PendientesTarjeta.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ARBOL_SEGMENTACION_TODOS:
+			tabla=ArbolSegmentacion.NOMBRE_TABLA;
+			break;
+			
+		default:
+			throw new IllegalArgumentException("Uri desconocido "+uri);
+		}//fin casos
+		
+		//Insertamos registro
+		try{
+			newID=db.insertOrThrow(tabla, null, values);
+			if(newID>0){
+				Uri newUri=ContentUris.withAppendedId(uri, newID);
+				this.getContext().getContentResolver().notifyChange(uri, null);
+				return newUri;
+			}else{ throw new SQLException("Falló al insertar fila en "+uri);}
+		}catch(SQLiteConstraintException ex){
+			Log.i(TAG, "Ignorando fila repetida "+uri+ ", "+values);
+		}
+		
 		return null;
 	}
 
@@ -435,5 +776,37 @@ public class ProveedorContenido extends ContentProvider {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public ContentProviderResult[] applyBatch(
+			ArrayList<ContentProviderOperation> operations)
+			throws OperationApplicationException {
+		ContentProviderResult[] salida;
+		SQLiteDatabase db = this.basedatos.getWritableDatabase();
+		db.beginTransaction();
+		try{
+			salida = super.applyBatch(operations);
+			db.setTransactionSuccessful();
+		}finally{
+			db.endTransaction();
+		}
+		return salida;
+	}
+
+	@Override
+	public int bulkInsert(Uri uri, ContentValues[] values) {
+		int salida;
+		SQLiteDatabase db = this.basedatos.getWritableDatabase();
+		db.beginTransaction();
+		try{
+			salida= super.bulkInsert(uri, values);
+			db.setTransactionSuccessful();
+		}finally{
+			db.endTransaction();
+		}
+		return salida;
+	}
+	
+	
 
 }

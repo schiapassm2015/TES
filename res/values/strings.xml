@@ -21,6 +21,22 @@
     <string name="dpt">DPT</string>
     <string name="rotavirus">Rotavirus</string>
 
+    <!-- Tipos de censo visualizables -->
+    <string name="estatal">Estatal</string>
+    <string name="jurisdiccion">Jurisdicción</string>
+    <string name="municipio">Municipio</string>
+    <string name="unidad_medica">Unidad Médica</string>
+    <string name="localidad">Localidad</string>
+    
+    <string-array name="id_tipo_censo">
+        <item><!-- Localidad 0 no se usa --></item>
+        <item>@string/estatal</item>
+        <item>@string/jurisdiccion</item>
+        <item>@string/municipio</item>
+        <item>@string/unidad_medica</item>
+        <item>@string/localidad</item>
+    </string-array>
+    
     <!-- Menú superior -->
     <string name="atencion">Atención</string>
     <string name="censo_nominal">Censo Nominal</string>

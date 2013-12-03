@@ -1,10 +1,15 @@
 package com.siigs.tes;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.UUID;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -12,7 +17,9 @@ import android.widget.Toast;
 
 import com.siigs.tes.controles.ContenidoControles;
 import com.siigs.tes.datos.BaseDatos;
+import com.siigs.tes.datos.ProveedorContenido;
 import com.siigs.tes.datos.SincronizacionTask;
+import com.siigs.tes.datos.tablas.Usuario;
 
 /**
  * A list fragment representing a list of {@link ItemControl}. This fragment also supports
@@ -80,9 +87,50 @@ public class SeccionListFragment extends ListFragment {
 				
 //BaseDatos base =new BaseDatos(this.getActivity());
 //base.getReadableDatabase();
+getActivity().getContentResolver().query(ProveedorContenido.USUARIO_CONTENT_URI, new String[]{Usuario.ID,Usuario.NOMBRE}, null, null, null);
+ContentValues valores=new ContentValues();valores.put(Usuario.ID, 5);valores.put(Usuario.NOMBRE_USUARIO, "tu123");
+valores.put(Usuario.NOMBRE, "fulanito");valores.put(Usuario.CLAVE, "asdfasf");valores.put(Usuario.APELLIDO_PATERNO, "appat");
+valores.put(Usuario.APELLIDO_MATERNO, "apmat");valores.put(Usuario.CORREO, "agc@google.com");
+valores.put(Usuario.ACTIVO, 1);valores.put(Usuario.ID_GRUPO, 2);
+getActivity().getContentResolver().insert(ProveedorContenido.USUARIO_CONTENT_URI, valores);
+
+String uuid= UUID.randomUUID().toString().replace("-", "");
+byte[] hex = hexStringToByteArray(uuid);
+String dec = ByteArrayTohexString(hex);
+Log.i("Lista", "uuid:"+uuid+" en bytes:"+hex.length+ " decodificado:"+dec+" son iguales?"+uuid.equalsIgnoreCase(dec) );
+
 		//Lista vacía
 		LlenarLista(new java.util.ArrayList<ContenidoControles.ItemControl>());
 	}
+	
+	public static byte[] hexStringToByteArray(String cadena) {
+	    int len = cadena.length();
+	    byte[] data = new byte[len / 2];
+	    for (int i = 0; i < len; i += 2) {
+	    	int hex1 = Character.digit(cadena.charAt(i), 16) << 4;
+	    	int hex2 = Character.digit(cadena.charAt(i+1), 16);
+	        data[i / 2] = (byte) (hex1+hex2);
+	        //Log.d("a hex", "hex1="+hex1+", hex2="+hex2);
+	    }
+	    return data;
+	}
+	
+	public static String ByteArrayTohexString(byte[] cadena) {
+		int largo= cadena.length*2;
+		char[] salida = new char[largo];
+
+	    for (int i = 0; i < cadena.length; i++) {
+	    	int hex1= cadena[i]>>4, hex2= (cadena[i]- ((cadena[i]>>4)<<4) );
+	    	hex1= hex1<0? 16+hex1 : hex1;
+	    	//char izquierdo = Integer.toHexString(hex1).charAt(0);// Character.forDigit(cadena[i]>>4, 16);
+	    	//char derecho = Integer.toHexString(hex2).charAt(0); // Character.forDigit( cadena[i]-((cadena[i]>>4)<<4), 16);
+	    	//Log.d("cod", "Decodificado hex1="+hex1+", hex2="+hex2);//new String(new char[]{izquierdo}) + "," + new String(new char[]{derecho}) );
+	    	salida[i*2] = Integer.toHexString(hex1).charAt(0);
+	    	salida[(i*2)+1] = Integer.toHexString(hex2).charAt(0);
+	    }
+	    return new String(salida);
+	}
+	
 	
 	/**
 	 * Actualiza la lista de opciones para el usuario.

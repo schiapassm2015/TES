@@ -15,7 +15,7 @@ public class Grupo {
 	public final static String DESCRIPCION = "descripcion";
 	
 	//Columnas de control interno
-	
+	public final static String _REMOTO_ID = "id"; //mapeo campo id en base de datos remota
 	
 	//Comandos de base de datos
 	public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + NOMBRE_TABLA +"; ";
@@ -24,6 +24,6 @@ public class Grupo {
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
 		ID + " INTEGER PRIMARY KEY NOT NULL, " +
 		NOMBRE + " TEXT NOT NULL, " +
-		DESCRIPCION + " TEXT NOT NULL "+
+		DESCRIPCION + " TEXT DEFAULT NULL "+
 		"); ";
 }

@@ -12,6 +12,7 @@ public class PersonaTutor {
 	//Columnas en la nube
 	public final static String ID_PERSONA = "_id"; //para adaptadores android
 	public final static String ID_TUTOR = "id_tutor";
+	public final static String ULTIMA_ACTUALIZACION = "ultima_actualizacion";
 	
 	//Columnas de control interno
 	
@@ -21,7 +22,8 @@ public class PersonaTutor {
 	
 	public final static String CREATE_TABLE =
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
-		ID_PERSONA + " INTEGER PRIMARY KEY NOT NULL, " + //para adaptadores android
-		ID_TUTOR + " INTEGER NOT NULL "+
+		ID_PERSONA + " TEXT PRIMARY KEY NOT NULL, " + //para adaptadores android
+		ID_TUTOR + " TEXT NOT NULL, "+
+		ULTIMA_ACTUALIZACION + " INTEGER NOT NULL DEFAULT(strftime('%s','now')) "+
 		"); ";
 }

@@ -23,7 +23,7 @@ public class PersonaAfiliacion {
 	public final static String CREATE_TABLE =
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
 		_ID + " INTEGER PRIMARY KEY NOT NULL, " +
-		ID_PERSONA + " INTEGER NOT NULL, " +
+		ID_PERSONA + " TEXT NOT NULL, " +
 		ID_AFILIACION + " INTEGER NOT NULL, " +
 		"UNIQUE (" + ID_PERSONA + "," + ID_AFILIACION + ")" +
 		"); ";

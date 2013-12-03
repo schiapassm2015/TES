@@ -21,7 +21,7 @@ public class Usuario {
 	public final static String ID_GRUPO	= "id_grupo";
 	
 	//Columnas de control interno
-	
+	public final static String _REMOTO_ID = "id"; //mapeo campo id en base de datos remota
 	
 	//Comandos de base de datos
 	public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + NOMBRE_TABLA +"; ";
