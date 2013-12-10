@@ -2,6 +2,7 @@ package com.siigs.tes.controles;
 
 import com.siigs.tes.DialogoAyuda;
 import com.siigs.tes.R;
+import com.siigs.tes.TesAplicacion;
 import com.siigs.tes.datos.SincronizacionTask;
 
 import android.app.AlertDialog;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 public class Sincronizacion extends Fragment {
 	/**
@@ -51,6 +53,11 @@ public class Sincronizacion extends Fragment {
 		btnSincronizar.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if(!((TesAplicacion)getActivity().getApplication()).hayInternet() ){
+					String msg="No existe conexión a la red en este momento";
+					Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+					return;
+				}
 				// PENDIENTE VERIFICAR SI HAY CONDICIONES PARA SINCRONIZAR
 				
 				//Confirmación

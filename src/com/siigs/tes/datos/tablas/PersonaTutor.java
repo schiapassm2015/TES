@@ -15,7 +15,7 @@ public class PersonaTutor {
 	public final static String ULTIMA_ACTUALIZACION = "ultima_actualizacion";
 	
 	//Columnas de control interno
-	
+	public final static String _REMOTO_ID_PERSONA = "id_persona"; //mapeo campo id en base de datos remota
 	
 	//Comandos de base de datos
 	public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + NOMBRE_TABLA +"; ";

@@ -7,7 +7,7 @@ package com.siigs.tes.datos.tablas;
  */
 public class ArbolSegmentacion {
 
-	public final static String NOMBRE_TABLA = "cns_afiliacion"; //nombre en BD
+	public final static String NOMBRE_TABLA = "asu_arbol_segmentacion"; //nombre en BD
 	
 	//Columnas en la nube
 	public final static String ID = "_id"; //para adaptadores android

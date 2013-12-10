@@ -16,7 +16,7 @@ public class Persona {
 	public final static String APELLIDO_PATERNO = "apellido_paterno";
 	public final static String APELLIDO_MATERNO = "apellido_materno";
 	public final static String SEXO = "sexo";
-	public final static String ID_ECE_TIPO_SANGUINEO = "id_ece_tipo_sanguineo";
+	public final static String ID_TIPO_SANGUINEO = "id_tipo_sanguineo";
 	public final static String FECHA_NACIMIENTO = "fecha_nacimiento";
 	public final static String ID_ASU_LOCALIDAD_NACIMIENTO = "id_asu_localidad_nacimiento";
 	public final static String CALLE_DOMICILIO = "calle_domicilio";
@@ -48,7 +48,7 @@ public class Persona {
 		APELLIDO_PATERNO + " TEXT NOT NULL, " +
 		APELLIDO_MATERNO + " TEXT NOT NULL, " +
 		SEXO + " INTEGER NOT NULL, " +
-		ID_ECE_TIPO_SANGUINEO + " INTEGER NOT NULL, " +
+		ID_TIPO_SANGUINEO + " INTEGER NOT NULL, " +
 		FECHA_NACIMIENTO + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), "+
 		ID_ASU_LOCALIDAD_NACIMIENTO + " INTEGER NOT NULL, "+
 		CALLE_DOMICILIO + " TEXT NOT NULL, "+
@@ -60,7 +60,7 @@ public class Persona {
 		TELEFONO_DOMICILIO + " TEXT DEFAULT NULL, "+
 		FECHA_REGISTRO + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), "+
 		ID_ASU_UM_TRATANTE + " INTEGER NOT NULL, "+
-		CELULAR + " TEXT, "+
+		CELULAR + " TEXT DEFAULT NULL, "+
 		ULTIMA_ACTUALIZACION + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), "+
 		ID_NACIONALIDAD + " INTEGER NOT NULL, "+
 		ID_OPERADORA_CELULAR + " INTEGER DEFAULT NULL, "+

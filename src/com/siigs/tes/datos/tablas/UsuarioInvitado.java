@@ -7,7 +7,7 @@ package com.siigs.tes.datos.tablas;
  */
 public class UsuarioInvitado {
 
-	public final static String NOMBRE_TABLA = "sis_invitado"; //nombre en BD
+	public final static String NOMBRE_TABLA = "invitado"; //nombre en BD
 	
 	//Columnas en la nube
 	public final static String ID_INVITADO = "_id";

@@ -69,4 +69,10 @@
         <item>@string/tres_anos</item>
         <item>@string/cuatro_anos</item>
     </string-array>
+        <string name="url_sincronizacion">Url Sincronización</string>
+        <string name="url_sincronizacion_summary">Dirección del servidor usado para sincronizar</string>
+        <string name="reintentos_conexion">Reintentos de Conexión</string>
+        <string name="reintentos_conexion_summary">El número de intentos para conectar con servidor en fallos de conexión</string>
+        <string name="tiempo_espera_reintento">Tiempo de espera de reintento</string>
+        <string name="tiempo_espera_reintento_summary">El tiempo de espera en milisegundos entre intentos al haber error de conexión al servidor</string>
 </resources>

@@ -231,6 +231,12 @@ public class ProveedorContenido extends ContentProvider {
 	public static final Uri OPERADORA_CELULAR_CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	        + "/" + OPERADORA_CELULAR_PATH);
 	
+	private static final String REGLA_VACUNA_PATH = ReglaVacuna.NOMBRE_TABLA;
+	public static final int REGLA_VACUNA_TODOS = 1600;
+	public static final int REGLA_VACUNA_ID = 1601;
+	public static final Uri REGLA_VACUNA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + REGLA_VACUNA_PATH);
+	
 	/*
 	public static final String CONTENT_ITEM_TYPE = 
 			ContentResolver.CURSOR_ITEM_BASE_TYPE + "/persona";
@@ -332,6 +338,9 @@ public class ProveedorContenido extends ContentProvider {
 	    
 	    sURIMatcher.addURI(AUTHORITY, OPERADORA_CELULAR_PATH, OPERADORA_CELULAR_TODOS);
 	    sURIMatcher.addURI(AUTHORITY, OPERADORA_CELULAR_PATH + "/#", OPERADORA_CELULAR_ID);
+	    
+	    sURIMatcher.addURI(AUTHORITY, REGLA_VACUNA_PATH, REGLA_VACUNA_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, REGLA_VACUNA_PATH + "/#", REGLA_VACUNA_ID);
 	}
 	
 	
@@ -522,7 +531,7 @@ public class ProveedorContenido extends ContentProvider {
 			
 		case ProveedorContenido.REGISTRO_CIVIL_ID:
 			builder.setTables(RegistroCivil.NOMBRE_TABLA);
-			builder.appendWhere(RegistroCivil.ID + "=?");
+			builder.appendWhere(RegistroCivil.ID_PERSONA + "=?");
 			parametros=new String[]{uri.getLastPathSegment()};
 			break;
 		case ProveedorContenido.REGISTRO_CIVIL_TODOS:
@@ -658,6 +667,15 @@ public class ProveedorContenido extends ContentProvider {
 			builder.setTables(OperadoraCelular.NOMBRE_TABLA);// No existe filtro
 			break;
 		
+		case ProveedorContenido.REGLA_VACUNA_ID:
+			builder.setTables(ReglaVacuna.NOMBRE_TABLA);
+			builder.appendWhere(ReglaVacuna.ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;			
+		case ProveedorContenido.REGLA_VACUNA_TODOS:
+			builder.setTables(ReglaVacuna.NOMBRE_TABLA);// No existe filtro
+			break;
+			
 		default:
 			throw new IllegalArgumentException("Uri desconocido "+tipoUri);
 		}
@@ -751,6 +769,45 @@ public class ProveedorContenido extends ContentProvider {
 		case ProveedorContenido.ARBOL_SEGMENTACION_TODOS:
 			tabla=ArbolSegmentacion.NOMBRE_TABLA;
 			break;
+		case ProveedorContenido.PERSONA_TUTOR_TODOS:
+			tabla=PersonaTutor.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ANTIGUA_UM_TODOS:
+			tabla=AntiguaUM.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ANTIGUO_DOMICILIO_TODOS:
+			tabla=AntiguoDomicilio.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.REGISTRO_CIVIL_TODOS:
+			tabla=RegistroCivil.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PERSONA_ALERGIA_TODOS:
+			tabla=PersonaAlergia.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PERSONA_AFILIACION_TODOS:
+			tabla=PersonaAfiliacion.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_VACUNA_TODOS:
+			tabla=ControlVacuna.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_IRA_TODOS:
+			tabla=ControlIra.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_EDA_TODOS:
+			tabla=ControlEda.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_ACCION_NUTRICIONAL_TODOS:
+			tabla=ControlAccionNutricional.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_NUTRICIONAL_TODOS:
+			tabla=ControlNutricional.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_CONSULTA_TODOS:
+			tabla=ControlConsulta.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.REGLA_VACUNA_TODOS:
+			tabla=ReglaVacuna.NOMBRE_TABLA;
+			break;
 			
 		default:
 			throw new IllegalArgumentException("Uri desconocido "+uri);
@@ -806,7 +863,5 @@ public class ProveedorContenido extends ContentProvider {
 		}
 		return salida;
 	}
-	
-	
 
-}
+}//fin clase

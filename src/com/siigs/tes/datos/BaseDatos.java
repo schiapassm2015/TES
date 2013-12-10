@@ -31,6 +31,7 @@ import com.siigs.tes.datos.tablas.PersonaAfiliacion;
 import com.siigs.tes.datos.tablas.PersonaAlergia;
 import com.siigs.tes.datos.tablas.PersonaTutor;
 import com.siigs.tes.datos.tablas.RegistroCivil;
+import com.siigs.tes.datos.tablas.ReglaVacuna;
 import com.siigs.tes.datos.tablas.TipoSanguineo;
 import com.siigs.tes.datos.tablas.Tutor;
 import com.siigs.tes.datos.tablas.Usuario;
@@ -65,7 +66,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 			PendientesTarjeta.CREATE_TABLE,	Permiso.CREATE_TABLE, Persona.CREATE_TABLE, 
 			PersonaAfiliacion.CREATE_TABLE, PersonaAlergia.CREATE_TABLE, PersonaTutor.CREATE_TABLE, 
 			RegistroCivil.CREATE_TABLE, TipoSanguineo.CREATE_TABLE, Tutor.CREATE_TABLE, 
-			Usuario.CREATE_TABLE, UsuarioInvitado.CREATE_TABLE, Vacuna.CREATE_TABLE
+			Usuario.CREATE_TABLE, UsuarioInvitado.CREATE_TABLE, Vacuna.CREATE_TABLE, ReglaVacuna.CREATE_TABLE
 			};
 	
 	private static final String DB_SCHEMA_DROP = "PRAGMA writable_schema = 1;"+

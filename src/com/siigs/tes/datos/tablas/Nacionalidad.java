@@ -13,6 +13,7 @@ public class Nacionalidad {
 	public final static String ID = "_id";
 	public final static String CODIGO = "codigo";
 	public final static String DESCRIPCION = "descripcion";
+	public final static String ACTIVO = "activo";
 	
 	//Columnas de control interno
 	public final static String _REMOTO_ID = "id"; //mapeo campo id en base de datos remota
@@ -24,6 +25,7 @@ public class Nacionalidad {
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
 		ID + " INTEGER PRIMARY KEY NOT NULL, " +
 		CODIGO + " TEXT NOT NULL, " +
-		DESCRIPCION + " TEXT NOT NULL "+
+		DESCRIPCION + " TEXT NOT NULL, "+
+		ACTIVO + " INTEGER NOT NULL "+
 		"); ";
 }

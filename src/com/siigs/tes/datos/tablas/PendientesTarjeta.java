@@ -7,7 +7,7 @@ package com.siigs.tes.datos.tablas;
  */
 public class PendientesTarjeta {
 
-	public final static String NOMBRE_TABLA = "pendientes_tarjeta"; //nombre en BD
+	public final static String NOMBRE_TABLA = "tes_pendientes_tarjeta"; //nombre en BD
 	
 	//Columnas en la nube
 	public final static String ID = "_id";
