@@ -15,14 +15,14 @@ public class RegistroCivil {
 	public final static String FECHA_REGISTRO = "fecha_registro";
 	
 	//Columnas de control interno
-	public final static String _REMOTO_ID_PERSONA = "id"; //mapeo campo id en base de datos remota
+	public final static String _REMOTO_ID_PERSONA = "id_persona"; //mapeo campo id en base de datos remota
 	
 	//Comandos de base de datos
 	public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + NOMBRE_TABLA +"; ";
 	
 	public final static String CREATE_TABLE =
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
-		ID_PERSONA + " INTEGER PRIMARY KEY NOT NULL, " + //para adaptadores android
+		ID_PERSONA + " TEXT PRIMARY KEY NOT NULL, " + //para adaptadores android
 		ID_LOCALIDAD_REGISTRO_CIVIL + " INTEGER NOT NULL, " +
 		FECHA_REGISTRO + " INTEGER NOT NULL DEFAULT(strftime('%s','now')) " +
 		"); ";

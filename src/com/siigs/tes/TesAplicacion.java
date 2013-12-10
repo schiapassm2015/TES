@@ -14,6 +14,12 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.CalendarView;
 
+/**
+ * Clase tipo Application invocada automáticamente al cargar la app.
+ * Implementa funciones básicas que son acceseibles desde varios módulos.
+ * @author Axel
+ *
+ */
 public class TesAplicacion extends Application {
 
 	private final static String TAG = "TesAplicacion";
@@ -44,7 +50,10 @@ public class TesAplicacion extends Application {
 //		});
 	}
 	
-	
+	/**
+	 * Indica si hay conectividad en Wifi, aunque no garantiza que haya internet.
+	 * @return
+	 */
 	public boolean hayInternet() {
 	    ConnectivityManager cm =
 	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -57,6 +66,10 @@ public class TesAplicacion extends Application {
 
 	//FUNCIONES DE MANEJO DE PREFERENCIAS
 	
+	/**
+	 * Preferencia disponible también para el usuario administrador
+	 * @return
+	 */
 	public String getUrlSincronizacion(){
 		return preferencias.getString(URL_SINCRONIZACION, "http://www.siigs.gob.mx");
 	}
