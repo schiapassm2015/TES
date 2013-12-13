@@ -1,5 +1,7 @@
 package com.siigs.tes.datos.tablas;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -15,7 +17,7 @@ public class TipoSanguineo {
 	public final static String ACTIVO = "activo";
 	
 	//Columnas de control interno
-	public final static String _REMOTO_ID = "id"; //mapeo campo id en base de datos remota
+	//public final static String _REMOTO_ID = "id"; //mapeo campo id en base de datos remota
 	
 	//Comandos de base de datos
 	public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + NOMBRE_TABLA +"; ";
@@ -26,4 +28,10 @@ public class TipoSanguineo {
 		DESCRIPCION + " TEXT NOT NULL, "+
 		ACTIVO + " INTEGER NOT NULL "+
 		"); ";
+	
+	//POJO
+	@SerializedName("id")
+	public int _id;
+	public String descripcion;
+	public int activo;
 }

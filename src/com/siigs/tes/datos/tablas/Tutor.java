@@ -41,6 +41,18 @@ public class Tutor {
 		ID_OPERADORA_CELULAR + " INTEGER DEFAULT NULL, "+
 		ULTIMA_ACTUALIZACION + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), "+
 		" UNIQUE (" + ID + ")"+
-		"); "; 
+		"); ";
+	
+	//POJO
+	public String id;
+	public String curp;
+	public String nombre;
+	public String apellido_paterno;
+	public String apellido_materno;
+	public String sexo;
+	public String telefono;
+	public String celular;
+	public Integer id_operadora_celular;
+	public String ultima_actualizacion;
 	
 }

@@ -34,4 +34,12 @@ public class ControlVacuna {
 		ID_INVITADO + " INTEGER DEFAULT NULL, "+
 		"UNIQUE (" + ID_PERSONA + "," + FECHA + ")" +
 		"); ";
+	
+	//POJO
+	public String id_persona;
+	public int id_vacuna;
+	public String fecha;
+	public int id_asu_um;
+	public String codigo_barras;
+	//id_invitado NO se envía en JSON
 }

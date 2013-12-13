@@ -1,5 +1,7 @@
 package com.siigs.tes.datos.tablas;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -29,4 +31,10 @@ public class Permiso {
 		FECHA + " INTEGER NOT NULL DEFAULT(strftime('%s','now')) "+
 		"); ";
 	
+	//POJO
+	@SerializedName("id")
+	public int _id;
+	public int id_grupo;
+	public int id_controlador_accion;
+	public String fecha;
 }

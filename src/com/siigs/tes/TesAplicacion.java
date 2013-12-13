@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.siigs.tes.datos.DatosUtil;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -77,6 +79,7 @@ public class TesAplicacion extends Application {
 		SharedPreferences.Editor editor = preferencias.edit();
 		editor.putString(URL_SINCRONIZACION, url);
 		editor.apply();
+		Log.d(TAG, "Cambiado url sincronización a:"+url);
 	}
 	
 	public int getReintentosConexion(){
@@ -86,6 +89,7 @@ public class TesAplicacion extends Application {
 		SharedPreferences.Editor editor = preferencias.edit();
 		editor.putInt(REINTENTOS_CONEXION, cantidad);
 		editor.apply();
+		Log.d(TAG, "Cambiado reintentos conexión a:"+cantidad);
 	}
 	
 	public int getTiempoEsperaReintento(){
@@ -95,6 +99,7 @@ public class TesAplicacion extends Application {
 		SharedPreferences.Editor editor = preferencias.edit();
 		editor.putInt(TIEMPO_ESPERA_REINTENTO, milisegundos);
 		editor.apply();
+		Log.d(TAG, "Cambiado tiempo espera reintento a:"+milisegundos);
 	}
 	
 	public int getTipoCenso(){
@@ -104,6 +109,7 @@ public class TesAplicacion extends Application {
 		SharedPreferences.Editor editor = preferencias.edit();
 		editor.putInt(TIPO_CENSO, tipo);
 		editor.apply();
+		Log.d(TAG, "Cambiado tipo censo a:"+tipo);
 	}
 	
 	public int getUnidadMedica(){
@@ -113,6 +119,7 @@ public class TesAplicacion extends Application {
 		SharedPreferences.Editor editor = preferencias.edit();
 		editor.putInt(UNIDAD_MEDICA, um);
 		editor.apply();
+		Log.d(TAG, "Cambiada unidad médica a:"+um);
 	}
 	
 	public boolean getEsInstalacionNueva(){
@@ -122,6 +129,7 @@ public class TesAplicacion extends Application {
 		SharedPreferences.Editor editor = preferencias.edit();
 		editor.putBoolean(ES_INSTALACION_NUEVA, valor);
 		editor.apply();
+		Log.d(TAG, "Cambiado instalación nueva a:"+valor);
 	}
 	
 	public String getFechaUltimaSincronizacion(){
@@ -144,13 +152,11 @@ public class TesAplicacion extends Application {
 	public void setFechaUltimaSincronizacion(Calendar cal){
 		SharedPreferences.Editor editor = preferencias.edit();
 		//editor.putString(FECHA_ULTIMA_SINCRONIZACION, valor.toString());
-		String salida= cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+
-				"-"+cal.get(Calendar.DAY_OF_MONTH)+" "+cal.get(Calendar.HOUR_OF_DAY)+
-				":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND);
+		String salida= DatosUtil.getAhora();
 		editor.putString(FECHA_ULTIMA_SINCRONIZACION, salida);
 		editor.apply();
+		Log.d(TAG, "Cambiada última sincronización a:"+salida);
 	}
 	
-
-	
+		
 }

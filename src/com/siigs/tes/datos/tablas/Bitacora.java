@@ -1,5 +1,7 @@
 package com.siigs.tes.datos.tablas;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -31,4 +33,11 @@ public class Bitacora {
 		PARAMETROS + " TEXT DEFAULT NULL "+
 		"); ";
 	
+	//POJO
+	@SerializedName("id")
+	public int _id;
+	public int id_usuario;
+	public int id_controlador_accion;
+	public String fecha_hora;
+	public String parametros;
 }

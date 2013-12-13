@@ -30,4 +30,10 @@ public class Notificacion {
 		FECHA_INICIO + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), "+
 		FECHA_FIN + " INTEGER DEFAULT(strftime('%s','now')) "+
 		"); ";
+	
+	//POJO
+	public String titulo;
+	public String contenido;
+	public String fecha_inicio;
+	public String fecha_fin;
 }

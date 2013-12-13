@@ -32,4 +32,11 @@ public class ControlAccionNutricional {
 		ID_INVITADO + " INTEGER DEFAULT NULL, "+
 		"UNIQUE (" + ID_PERSONA + "," + FECHA + ")" +
 		"); ";
+	
+	//POJO
+	public String id_persona;
+	public int id_accion_nutricional;
+	public String fecha;
+	public int id_asu_um;
+	//id_invitado NO se manda por JSON
 }

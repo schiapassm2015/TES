@@ -19,7 +19,7 @@ public class PendientesTarjeta {
 	public final static String RESUELTO = "resuelto";
 	
 	//Columnas de control interno
-	public final static String _REMOTO_ID = "id"; //mapeo campo id en base de datos remota
+	//public final static String _REMOTO_ID = "id"; //mapeo campo id en base de datos remota
 	
 	//Comandos de base de datos
 	public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + NOMBRE_TABLA +"; ";
@@ -28,11 +28,17 @@ public class PendientesTarjeta {
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
 		ID + " INTEGER PRIMARY KEY NOT NULL, " +
 		ID_PERSONA + " TEXT NOT NULL, "+
+		//ID_REMOTO + " INTEGER DEFAULT -1" + //YA_ESTA_EN_NUBE DEFINIRÍA SI TOMA UN VALOR
 		TABLA_PENDIENTE + " TEXT NOT NULL, "+
 		REGISTRO_JSON + " TEXT NOT NULL, " +
 		ES_PENDIENTE_LOCAL + " INTEGER NOT NULL DEFAULT (0), " +
 		YA_ESTA_EN_NUBE + " INTEGER NOT NULL DEFAULT (0), " +
 		RESUELTO + " INTEGER NOT NULL DEFAULT (0) "+
+		//", UNIQUE (" + ID_PERSONA + "," + REGISTRO_JSON + ") "
 		"); "; 
-	
+
+	//POJO
+	public String id_persona;
+	public String tabla_pendiente;
+	public String registro_json;
 }

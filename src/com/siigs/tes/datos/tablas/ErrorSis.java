@@ -31,4 +31,9 @@ public class ErrorSis {
 		DESCRIPCION + " TEXT NOT NULL "+
 		"); ";
 	
+	//POJO
+	public int id_usuario;
+	public int id_controlador_accion;
+	public String fecha_hora;
+	public String descripcion;
 }

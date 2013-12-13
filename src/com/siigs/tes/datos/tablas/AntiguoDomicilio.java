@@ -40,4 +40,13 @@ public class AntiguoDomicilio {
 		"UNIQUE (" + ID_PERSONA + "," + FECHA_CAMBIO + ")" +
 		"); ";
 	
+	//POJO
+	public String id_persona;
+	public String fecha_cambio;
+	public int id_asu_localidad_domicilio;
+	public String calle_domicilio;
+	public String numero_domicilio;
+	public String colonia_domicilio;
+	public String referencia_domicilio;
+	public int cp_domicilio;
 }

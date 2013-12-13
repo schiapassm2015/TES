@@ -36,4 +36,13 @@ public class ControlNutricional {
 		ID_INVITADO + " INTEGER DEFAULT NULL, "+
 		"UNIQUE (" + ID_PERSONA + "," + FECHA + ")" +
 		"); ";
+	
+	//POJO
+	public String id_persona;
+	public String fecha;
+	public int id_asu_um;
+	public double peso;
+	public int altura;
+	public int talla;
+	//id_invitado NO se envía en JSON
 }

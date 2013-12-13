@@ -74,5 +74,27 @@ public class Persona {
 			    );
 			*/
 	
-	
+	//POJO
+	public String id;
+	public String curp;
+	public String nombre;
+	public String apellido_paterno;
+	public String apellido_materno;
+	public String sexo;
+	public int id_tipo_sanguineo;
+	public String fecha_nacimiento;
+	public int id_asu_localidad_nacimiento;
+	public String calle_domicilio;
+	public String numero_domicilio;
+	public String colonia_domicilio;
+	public String referencia_domicilio;
+	public int id_asu_localidad_domicilio;
+	public int cp_domicilio;
+	public String telefono_domicilio;
+	public String fecha_registro;
+	public int id_asu_um_tratante;
+	public String celular;
+	public String ultima_actualizacion;
+	public int id_nacionalidad;
+	public Integer id_operadora_celular;
 }

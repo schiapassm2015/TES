@@ -1,5 +1,6 @@
 package com.siigs.tes.datos.tablas;
 
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -28,4 +29,9 @@ public class AntiguaUM {
 		ID_ASU_UM_TRATANTE + " INTEGER NOT NULL, "+
 		"UNIQUE (" + ID_PERSONA + "," + FECHA_CAMBIO + ")" +
 		"); ";
+	
+	//POJO
+	public String id_persona;
+	public String fecha_cambio;
+	public int id_asu_um_tratante;
 }

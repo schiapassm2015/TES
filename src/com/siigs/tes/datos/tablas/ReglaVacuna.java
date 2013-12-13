@@ -36,4 +36,14 @@ public class ReglaVacuna {
 		DIA_FIN_APLICACION_SECUENCIAL + " INTEGER DEFAULT NULL, " +
 		ULTIMA_ACTUALIZACION + " INTEGER NOT NULL DEFAULT(strftime('%s','now')) "+
 		"); ";
+	
+	//POJO
+	public int id;
+	public int id_vacuna;
+	public Integer dia_inicio_aplicacion_nacido;
+	public Integer dia_fin_aplicacion_nacido;
+	public Integer id_vacuna_secuencial;
+	public Integer dia_inicio_aplicacion_secuencial;
+	public Integer dia_fin_aplicacion_secuencial;
+	public String ultima_actualizacion;
 }

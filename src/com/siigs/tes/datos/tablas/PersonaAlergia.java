@@ -29,4 +29,9 @@ public class PersonaAlergia {
 		ULTIMA_ACTUALIZACION + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), "+
 		"UNIQUE (" + ID_PERSONA + "," + ID_ALERGIA + ")" +
 		"); ";
+	
+	//POJO
+	public String id_persona;
+	public int id_alergia;
+	public String ultima_actualizacion;
 }

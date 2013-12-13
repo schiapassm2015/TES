@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 import android.app.Activity;
+import android.app.Application;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -17,8 +19,12 @@ import android.widget.Toast;
 
 import com.siigs.tes.controles.ContenidoControles;
 import com.siigs.tes.datos.BaseDatos;
+import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
 import com.siigs.tes.datos.SincronizacionTask;
+import com.siigs.tes.datos.tablas.ControlVacuna;
+import com.siigs.tes.datos.tablas.Grupo;
+import com.siigs.tes.datos.tablas.Persona;
 import com.siigs.tes.datos.tablas.Usuario;
 
 /**
@@ -74,6 +80,8 @@ public class SeccionListFragment extends ListFragment {
 	//Guarda la lista de controles enlistados
 	private List<ContenidoControles.ItemControl> miListaControles;
 	
+	private TesAplicacion aplicacion;
+	
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
@@ -84,16 +92,19 @@ public class SeccionListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-				
+		
+		this.aplicacion = (TesAplicacion)this.getActivity().getApplication();
 //BaseDatos base =new BaseDatos(this.getActivity());
 //base.getReadableDatabase();
-getActivity().getContentResolver().query(ProveedorContenido.USUARIO_CONTENT_URI, new String[]{Usuario.ID,Usuario.NOMBRE}, null, null, null);
+/*getActivity().getContentResolver().query(ProveedorContenido.USUARIO_CONTENT_URI, new String[]{Usuario.ID,Usuario.NOMBRE}, null, null, null);
 ContentValues valores=new ContentValues();valores.put(Usuario.ID, 5);valores.put(Usuario.NOMBRE_USUARIO, "tu123");
 valores.put(Usuario.NOMBRE, "fulanito");valores.put(Usuario.CLAVE, "asdfasf");valores.put(Usuario.APELLIDO_PATERNO, "appat");
 valores.put(Usuario.APELLIDO_MATERNO, "apmat");valores.put(Usuario.CORREO, "agc@google.com");
 valores.put(Usuario.ACTIVO, 1);valores.put(Usuario.ID_GRUPO, 2);
-getActivity().getContentResolver().insert(ProveedorContenido.USUARIO_CONTENT_URI, valores);
-
+getActivity().getContentResolver().insert(ProveedorContenido.USUARIO_CONTENT_URI, valores);*/
+		
+		GenerarDatosFalsos();
+		
 String uuid= UUID.randomUUID().toString().replace("-", "");
 byte[] hex = hexStringToByteArray(uuid);
 String dec = ByteArrayTohexString(hex);
@@ -129,6 +140,30 @@ Log.i("Lista", "uuid:"+uuid+" en bytes:"+hex.length+ " decodificado:"+dec+" son 
 	    	salida[(i*2)+1] = Integer.toHexString(hex2).charAt(0);
 	    }
 	    return new String(salida);
+	}
+	
+	private void GenerarDatosFalsos(){
+		ContentResolver cr = this.getActivity().getContentResolver();
+		ContentValues valores = new ContentValues();
+		String where="";
+		String[] args = null;
+		
+		//PERSONA
+		where = Persona._ID + "=1";
+		//valores.put(Persona.NOMBRE, "Nuevo nombre");String s=null;
+		//valores.put(Persona.ID_OPERADORA_CELULAR, s);
+		valores.put(Persona.CP_DOMICILIO, 29001);
+		valores.put(Persona.ULTIMA_ACTUALIZACION, DatosUtil.getAhora());
+		//valores.put(Persona.REFERENCIA_DOMICILIO, "Aplicación, apostrofe (')");
+		int afectados=cr.update(ProveedorContenido.PERSONA_CONTENT_URI, valores, where, args);
+		afectados++;
+		
+		valores.clear();
+		valores.put(ControlVacuna.ID_PERSONA, "49a6cddb690074c1f8b5019ecaea25e7");
+		valores.put(ControlVacuna.FECHA, DatosUtil.getAhora());
+		valores.put(ControlVacuna.ID_VACUNA, 2);
+		valores.put(ControlVacuna.ID_ASU_UM, aplicacion.getUnidadMedica());
+		cr.insert(ProveedorContenido.CONTROL_VACUNA_CONTENT_URI, valores);
 	}
 	
 	

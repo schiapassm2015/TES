@@ -1,5 +1,7 @@
 package com.siigs.tes.datos.tablas;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -26,4 +28,10 @@ public class OperadoraCelular {
 		DESCRIPCION + " TEXT NOT NULL, "+
 		ACTIVO + " INTEGER NOT NULL "+
 		"); ";
+	
+	//POJO
+	@SerializedName("id")
+	public int _id;
+	public String descripcion;
+	public int activo;
 }

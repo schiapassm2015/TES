@@ -30,4 +30,10 @@ public class ControlIra {
 		ID_ASU_UM + " INTEGER NOT NULL, "+
 		"UNIQUE (" + ID_PERSONA + "," + FECHA + ")" +
 		"); ";
+	
+	//POJO
+	public String id_persona;
+	public int id_ira;
+	public String fecha;
+	public int id_asu_um;
 }

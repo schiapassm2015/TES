@@ -1,5 +1,7 @@
 package com.siigs.tes.datos.tablas;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -32,4 +34,13 @@ public class ArbolSegmentacion {
 		VISIBLE + " INTEGER NOT NULL, " +
 		DESCRIPCION + " TEXT NOT NULL "+
 		"); ";
+	
+	//POJO
+	@SerializedName("id")
+	public int _id;
+	public int grado_segmentacion;
+	public int id_padre;
+	public Integer orden;
+	public int visible;
+	public String descripcion;
 }

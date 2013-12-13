@@ -1,5 +1,7 @@
 package com.siigs.tes.datos.tablas;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -21,7 +23,7 @@ public class Usuario {
 	public final static String ID_GRUPO	= "id_grupo";
 	
 	//Columnas de control interno
-	public final static String _REMOTO_ID = "id"; //mapeo campo id en base de datos remota
+	//public final static String _REMOTO_ID = "id"; //mapeo campo id en base de datos remota
 	
 	//Comandos de base de datos
 	public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + NOMBRE_TABLA +"; ";
@@ -38,4 +40,17 @@ public class Usuario {
 		ACTIVO + " INTEGER NOT NULL, "+
 		ID_GRUPO + " INTEGER NOT NULL "+
 		"); ";
+	
+	//POJO
+	@SerializedName("id")
+	public int _id;
+	public String nombre_usuario;
+	public String clave;
+	public String nombre;
+	public String apellido_paterno;
+	public String apellido_materno;
+	public String correo;
+	public int activo;
+	public int id_grupo;
+	
 }

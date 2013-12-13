@@ -13,11 +13,13 @@ import android.content.ContentValues;
 import android.content.OperationApplicationException;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -826,14 +828,154 @@ public class ProveedorContenido extends ContentProvider {
 		}
 		
 		return null;
-	}
+	}//fin insert
 
+	
+	
 	@Override
-	public int update(Uri uri, ContentValues values, String arg2, String[] arg3) {
-		// TODO Auto-generated method stub
+	/**
+	 * Genera acciones UPDATE en base de datos según el tipo de uri. Una tabla puede tener
+	 * uri _TODOS o _ID. En tipo _ID genera updates basados en la columna ID de la tabla.
+	 * El tipo _TODOS permite agregar criterios libres de actualización que deberán
+	 * cumplir con los criterios mandado en parámetro {selection}
+	 * 
+	 * Notas: http://www.vogella.com/articles/AndroidSQLite/article.html
+	 */
+	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+		int tipoUri= sURIMatcher.match(uri);
+		SQLiteDatabase db=this.basedatos.getWritableDatabase();
+		int afectadas=0;
+		//helpers
+		String tabla="";
+		String where="1";
+		//id solicitado a modificar
+		String id= uri.getLastPathSegment();
+		if(!TextUtils.isEmpty(id))
+			id = DatabaseUtils.sqlEscapeString(id);
+		
+		switch(tipoUri){
+		case ProveedorContenido.PERSONA_TODOS:
+			tabla=Persona.NOMBRE_TABLA;
+			break;
+		//case ProveedorContenido.PERSONA_ID:
+		//	tabla=Persona.NOMBRE_TABLA;
+		//	where = Persona.ID + "=" + id;
+		//	break;
+		case ProveedorContenido.USUARIO_TODOS:
+			tabla=Usuario.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.USUARIO_INVITADO_TODOS:
+			tabla=UsuarioInvitado.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.TUTOR_TODOS:
+			tabla=Tutor.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.GRUPO_TODOS:
+			tabla=Grupo.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PERMISO_TODOS:
+			tabla=Permiso.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.NOTIFICACION_TODOS:
+			tabla=Notificacion.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.TIPO_SANGUINEO_TODOS:
+			tabla=TipoSanguineo.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.VACUNA_TODOS:
+			tabla=Vacuna.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ACCION_NUTRICIONAL_TODOS:
+			tabla=AccionNutricional.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.IRA_TODOS:
+			tabla=Ira.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.EDA_TODOS:
+			tabla=Eda.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONSULTA_TODOS:
+			tabla=Consulta.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ALERGIA_TODOS:
+			tabla=Alergia.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.AFILIACION_TODOS:
+			tabla=Afiliacion.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.NACIONALIDAD_TODOS:
+			tabla=Nacionalidad.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.OPERADORA_CELULAR_TODOS:
+			tabla=OperadoraCelular.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PENDIENTES_TARJETA_TODOS:
+			tabla=PendientesTarjeta.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ARBOL_SEGMENTACION_TODOS:
+			tabla=ArbolSegmentacion.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PERSONA_TUTOR_TODOS:
+			tabla=PersonaTutor.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ANTIGUA_UM_TODOS:
+			tabla=AntiguaUM.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ANTIGUO_DOMICILIO_TODOS:
+			tabla=AntiguoDomicilio.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.REGISTRO_CIVIL_TODOS:
+			tabla=RegistroCivil.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PERSONA_ALERGIA_TODOS:
+			tabla=PersonaAlergia.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PERSONA_AFILIACION_TODOS:
+			tabla=PersonaAfiliacion.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_VACUNA_TODOS:
+			tabla=ControlVacuna.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_IRA_TODOS:
+			tabla=ControlIra.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_EDA_TODOS:
+			tabla=ControlEda.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_ACCION_NUTRICIONAL_TODOS:
+			tabla=ControlAccionNutricional.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_NUTRICIONAL_TODOS:
+			tabla=ControlNutricional.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_CONSULTA_TODOS:
+			tabla=ControlConsulta.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.REGLA_VACUNA_TODOS:
+			tabla=ReglaVacuna.NOMBRE_TABLA;
+			break;
+			
+		default:
+			throw new IllegalArgumentException("Uri desconocido "+uri);
+		}//fin casos
+		
+		if(!TextUtils.isEmpty(selection))
+			where += " and " + selection;
+		
+		//actualizamos registros
+		try{
+			afectadas = db.update(tabla, values, where, selectionArgs);
+			if(afectadas>0)
+				this.getContext().getContentResolver().notifyChange(uri, null);
+			return afectadas;
+		}catch(SQLiteConstraintException ex){
+			Log.i(TAG, "Error de SQLite haciendo UPDATE de uri "+uri+ ", con valores "+values);
+		}
+		
 		return 0;
-	}
+	}//fin update
 
+	
 	@Override
 	public ContentProviderResult[] applyBatch(
 			ArrayList<ContentProviderOperation> operations)
