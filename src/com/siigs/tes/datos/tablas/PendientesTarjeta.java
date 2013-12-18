@@ -12,7 +12,7 @@ public class PendientesTarjeta {
 	//Columnas en la nube
 	public final static String ID = "_id";
 	public final static String ID_PERSONA = "id_persona";
-	public final static String TABLA_PENDIENTE = "tabla";
+	public final static String TABLA = "tabla";
 	public final static String REGISTRO_JSON = "registro_json";
 	public final static String ES_PENDIENTE_LOCAL = "es_pendiente_local";
 	public final static String YA_ESTA_EN_NUBE = "ya_esta_en_nube";
@@ -29,7 +29,7 @@ public class PendientesTarjeta {
 		ID + " INTEGER PRIMARY KEY NOT NULL, " +
 		ID_PERSONA + " TEXT NOT NULL, "+
 		//ID_REMOTO + " INTEGER DEFAULT -1" + //YA_ESTA_EN_NUBE DEFINIRÍA SI TOMA UN VALOR
-		TABLA_PENDIENTE + " TEXT NOT NULL, "+
+		TABLA + " TEXT NOT NULL, "+
 		REGISTRO_JSON + " TEXT NOT NULL, " +
 		ES_PENDIENTE_LOCAL + " INTEGER NOT NULL DEFAULT (0), " +
 		YA_ESTA_EN_NUBE + " INTEGER NOT NULL DEFAULT (0), " +
@@ -39,6 +39,6 @@ public class PendientesTarjeta {
 
 	//POJO
 	public String id_persona;
-	public String tabla_pendiente;
+	public String tabla;
 	public String registro_json;
 }

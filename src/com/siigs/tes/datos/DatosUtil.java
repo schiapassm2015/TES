@@ -3,10 +3,12 @@ package com.siigs.tes.datos;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,12 +16,16 @@ import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
+
 
 public class DatosUtil {
+	private static String TAG = DatosUtil.class.getSimpleName();
 
 	/**
 	 * Genera una estructura ContentValues a partir de los atributos NO estáticos de
-	 * la instancia del objeto o. Las tuplas se forman como (nombreAtributo, valorAtributo)
+	 * la instancia del objeto obj. Las tuplas se forman como (nombreAtributo, valorAtributo)
+	 * Esta función es útil para generar datos de inserción en base de datos desde la instancia de un objeto
 	 * @param obj objeto cuyos atributos se convierten a entradas para ContentValues
 	 * @return Estructura ContentValues
 	 * @throws IllegalArgumentException
@@ -45,6 +51,65 @@ public class DatosUtil {
 	        }
 	    }
 	    return cv;
+	}
+	
+	/**
+	 * Construye una instancia de la Clase {@clase} y asigna sus campos públicos NO estáticos
+	 * con los valores contenidos en el Cursor {@cur}. Para esto tanto los campos a asignar
+	 * en clase como los campos en el registro de cur deben tener los mismos nombres.  
+	 * @param cur
+	 * @param clase
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 */
+	public static <T> T ObjetoDesdeCursor(Cursor cur, Class clase) throws InstantiationException, IllegalAccessException{
+		T salida = (T)clase.newInstance();
+		
+		for (Field field : salida.getClass().getFields()) {
+	    	if( (Modifier.STATIC & field.getModifiers())== Modifier.STATIC)
+	    		continue;
+
+	    	int index = cur.getColumnIndex(field.getName());
+	    	switch(cur.getType(index)){
+	    	case Cursor.FIELD_TYPE_STRING:
+	    		field.set(salida, cur.getString(index));
+	    		break;
+	    	case Cursor.FIELD_TYPE_INTEGER:
+	    		field.set(salida, cur.getInt(index));
+	    		break;
+	    	case Cursor.FIELD_TYPE_NULL:
+	    		field.set(salida, null);
+	    		break;
+	    	case Cursor.FIELD_TYPE_FLOAT: //NO EXISTÍA DOUBLE ASÍ QUE USAMOS FLOAT
+	    		field.setDouble(salida, cur.getDouble(index));
+	    		break;
+	    	default:
+	    		throw new IllegalAccessException("No se reconoce el tipo de columna "+cur.getType(index)+" para el campo "+field.getName()+" de la clase "+clase.getName());
+	    	}
+	    }//fin ciclo
+		
+		return salida;
+	}
+	
+	/**
+	 * Genera dinámicamente una lista de instancias de Clase {@clase} a partir
+	 * del Cursor cur.
+	 * @param cur
+	 * @param clase
+	 * @return
+	 */
+	public static <T> List<T> ObjetosDesdeCursor(Cursor cur, Class clase){
+		List<T> salida = new ArrayList<T>();
+		try {
+			while(cur.moveToNext())
+				salida.add((T) ObjetoDesdeCursor(cur,clase));
+		} catch (InstantiationException e) {
+			Log.d(TAG, "No fue posible inicializar dinámicamente variable de tipo "+clase.getName()+":"+e);
+		} catch (IllegalAccessException e) {
+			Log.d(TAG, "No fue posible accesar a propiedades dinámicas en clase tipo "+clase.getName()+":"+e);
+		}
+		return salida;
 	}
 	
 	/**

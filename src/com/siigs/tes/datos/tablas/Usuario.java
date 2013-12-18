@@ -1,6 +1,10 @@
 package com.siigs.tes.datos.tablas;
 
+import android.content.Context;
+import android.database.Cursor;
+
 import com.google.gson.annotations.SerializedName;
+import com.siigs.tes.datos.ProveedorContenido;
 
 /**
  * Esquema de tabla de base de datos
@@ -53,4 +57,8 @@ public class Usuario {
 	public int activo;
 	public int id_grupo;
 	
+	public static Cursor getUsuariosActivos(Context context){
+		return context.getContentResolver().query(ProveedorContenido.USUARIO_CONTENT_URI, 
+				null, "activo=1", null, NOMBRE_USUARIO + " asc");
+	}
 }

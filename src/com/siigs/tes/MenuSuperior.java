@@ -148,7 +148,7 @@ public class MenuSuperior extends Fragment{
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 
-		/** Esta técnica usada por {@link SeccionListFragment} no se usa
+		/** Esta técnica usada por {@link PrincipalFragment} no se usa
 		// Activities containing this fragment must implement its callbacks.
 		if (!(activity instanceof Callbacks)) {
 			throw new IllegalStateException(
@@ -162,7 +162,7 @@ public class MenuSuperior extends Fragment{
 	public void onDetach() {
 		super.onDetach();
 
-		/** Esta técnica usada por {@link SeccionListFragment} no se usa
+		/** Esta técnica usada por {@link PrincipalFragment} no se usa
 		// Reset the active callbacks interface to the dummy implementation.
 		mCallbacks = sDummyCallbacks;
 		*/
@@ -171,7 +171,7 @@ public class MenuSuperior extends Fragment{
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		/** Esta técnica usada por {@link SeccionListFragment} no se usa
+		/** Esta técnica usada por {@link PrincipalFragment} no se usa
 		if (mActivatedPosition != ListView.INVALID_POSITION) {
 			// Serialize and persist the activated item position.
 			outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);

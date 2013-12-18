@@ -1,5 +1,7 @@
 package com.siigs.tes.datos.tablas;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -7,7 +9,7 @@ package com.siigs.tes.datos.tablas;
  */
 public class Notificacion {
 
-	public final static String NOMBRE_TABLA = "cns_notificacion"; //nombre en BD
+	public final static String NOMBRE_TABLA = "tes_notificacion"; //nombre en BD
 	
 	//Columnas en la nube
 	public final static String ID = "_id"; //para adaptadores android
@@ -32,6 +34,8 @@ public class Notificacion {
 		"); ";
 	
 	//POJO
+	@SerializedName("id")
+	public String _id;
 	public String titulo;
 	public String contenido;
 	public String fecha_inicio;

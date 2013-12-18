@@ -35,6 +35,8 @@ public class TesAplicacion extends Application {
 	private final static String UNIDAD_MEDICA = "unidad_medica";
 	private final static String ES_INSTALACION_NUEVA = "es_instalacion_nueva";
 	private final static String FECHA_ULTIMA_SINCRONIZACION = "fecha_ultima_sincronizacion";
+	private final static String REQUIERE_ACTUALIZAR_VERSION_APK = "requiere_actualizar_version_apk";
+	private final static String URL_ACTUALIZACION_APK = "url_actualizacion_apk";
 	
 	@Override
 	public void onCreate() {
@@ -130,6 +132,26 @@ public class TesAplicacion extends Application {
 		editor.putBoolean(ES_INSTALACION_NUEVA, valor);
 		editor.apply();
 		Log.d(TAG, "Cambiado instalación nueva a:"+valor);
+	}
+	
+	public boolean getRequiereActualizarApk(){
+		return preferencias.getBoolean(REQUIERE_ACTUALIZAR_VERSION_APK, false);
+	}
+	public void setRequiereActualizarApk(boolean valor){
+		SharedPreferences.Editor editor = preferencias.edit();
+		editor.putBoolean(REQUIERE_ACTUALIZAR_VERSION_APK, valor);
+		editor.apply();
+		Log.d(TAG, "Cambiado requiere actualizar APK a:"+valor);
+	}
+	
+	public String getUrlActualizacionApk(){
+		return preferencias.getString(URL_ACTUALIZACION_APK, "http://www.siigs.gob.mx");
+	}
+	public void setUrlActualizacionApk(String url){
+		SharedPreferences.Editor editor = preferencias.edit();
+		editor.putString(URL_ACTUALIZACION_APK, url);
+		editor.apply();
+		Log.d(TAG, "Cambiado url actualización APK a:"+url);
 	}
 	
 	public String getFechaUltimaSincronizacion(){

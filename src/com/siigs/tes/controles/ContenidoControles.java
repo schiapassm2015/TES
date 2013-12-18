@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.siigs.tes.SeccionDetailFragment;
+import com.siigs.tes.ControlFragment;
 
 /**
  * Helper class que provee contenido para listas de menús en panel izquierdo.
@@ -60,17 +60,17 @@ public class ContenidoControles {
 		CONTROLES_ATENCION.clear();CONTROLES_ATENCION_MAP.clear();
 		item=new ItemControl("101", "Paciente", AtencionPaciente.class);
 		addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
-		item=new ItemControl("102", "Control de Vacunación", SeccionDetailFragment.class);
+		item=new ItemControl("102", "Control de Vacunación", ControlFragment.class);
 		addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
-		item=new ItemControl("103", "Control Nutricional", SeccionDetailFragment.class);
+		item=new ItemControl("103", "Control Nutricional", ControlFragment.class);
 		addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
-		item=new ItemControl("104", "Acciones Nutricionales", SeccionDetailFragment.class);
+		item=new ItemControl("104", "Acciones Nutricionales", ControlFragment.class);
 		addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
-		item=new ItemControl("105", "Control IDAs", SeccionDetailFragment.class);
+		item=new ItemControl("105", "Control IDAs", ControlFragment.class);
 		addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
-		item=new ItemControl("106", "Control ERAs", SeccionDetailFragment.class);
+		item=new ItemControl("106", "Control ERAs", ControlFragment.class);
 		addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
-		item=new ItemControl("107", "Control Consultas", SeccionDetailFragment.class);
+		item=new ItemControl("107", "Control Consultas", ControlFragment.class);
 		addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
 		
 		//Controles de Censo
@@ -82,9 +82,9 @@ public class ContenidoControles {
 		CONTROLES_NOTIFICACIONES.clear();CONTROLES_NOTIFICACIONES_MAP.clear();
 		item=new ItemControl("301", "Notificaciones", Notificaciones.class);
 		addItem(item, CONTROLES_NOTIFICACIONES, CONTROLES_NOTIFICACIONES_MAP);
-		item=new ItemControl("302", "Esquema Incompleto", SeccionDetailFragment.class);
+		item=new ItemControl("302", "Esquema Incompleto", ControlFragment.class);
 		addItem(item, CONTROLES_NOTIFICACIONES, CONTROLES_NOTIFICACIONES_MAP);
-		item=new ItemControl("303", "Reporte de Desempeño", SeccionDetailFragment.class);
+		item=new ItemControl("303", "Reporte de Desempeño", ControlFragment.class);
 		addItem(item, CONTROLES_NOTIFICACIONES, CONTROLES_NOTIFICACIONES_MAP);
 		
 		//Controles de Sincronización
@@ -94,7 +94,7 @@ public class ContenidoControles {
 		
 		//Controles de Configuracion
 		CONTROLES_CONFIGURACION.clear();CONTROLES_CONFIGURACION_MAP.clear();
-		item=new ItemControl("501", "Configuración", SeccionDetailFragment.class);
+		item=new ItemControl("501", "Configuración", ControlFragment.class);
 		addItem(item, CONTROLES_CONFIGURACION, CONTROLES_CONFIGURACION_MAP);
 	}
 	

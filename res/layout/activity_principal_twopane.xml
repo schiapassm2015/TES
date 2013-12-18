@@ -1,0 +1,57 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <!-- Menú superior horizontal -->
+    <fragment
+        android:id="@+id/menu_superior"
+	    android:name="com.siigs.tes.MenuSuperior"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    tools:layout="@layout/menu_superior" />
+    
+    <!-- Resto de contenido de la pantalla dividido en 2 paneles -->
+	<LinearLayout
+	    android:id="@+id/contenedor_paneles"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_marginLeft="16dp"
+	    android:layout_marginRight="16dp"
+	    android:baselineAligned="false"
+	    android:divider="?android:attr/dividerHorizontal"
+	    android:orientation="horizontal"
+	    android:showDividers="middle"
+	    tools:context=".PrincipalActivity" 
+	    >
+	
+	    <!--
+	    This layout is a two-pane layout for the Secciones
+	    master/detail flow. See res/values-large/refs.xml and
+	    res/values-sw600dp/refs.xml for an example of layout aliases
+	    that replace the single-pane version of the layout with
+	    this two-pane version.
+	
+	    For more on layout aliases, see:
+	    http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
+	    -->
+	
+	    <fragment
+	        android:id="@+id/seccion_list"
+	        android:name="com.siigs.tes.PrincipalFragment"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="20"
+	        tools:layout="@android:layout/list_content" />
+	
+	    <FrameLayout
+	        android:id="@+id/seccion_detail_container"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="80" />
+	
+	</LinearLayout>
+
+</LinearLayout>

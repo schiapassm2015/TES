@@ -61,14 +61,22 @@ public class Sincronizacion extends Fragment {
 				// PENDIENTE VERIFICAR SI HAY CONDICIONES PARA SINCRONIZAR
 				
 				//Confirmación
+				String mensaje ="¿En verdad desea sincronizar?";
+				if(((TesAplicacion)getActivity().getApplication()).getEsInstalacionNueva())
+					mensaje="Está a punto de sincronizar por primera vez. " +
+							"Esta acción puede tardar más de 30 minutos y requiere de " +
+							"conexión a Internet y suficiente batería\n\n¿Desea continuar?";
 				AlertDialog.Builder dialogo=new AlertDialog.Builder(getActivity());
-				dialogo.setMessage("¿En verdad desea sincronizar?")
-				.setNegativeButton("Cancelar", null)
-				.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+				dialogo.setMessage(mensaje)
+				.setNegativeButton(android.R.string.cancel, null)
+				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						SincronizacionTask sinc = new SincronizacionTask(getActivity());
-						sinc.execute("lalala");
+						AlertDialog.Builder dlgResultado=new AlertDialog.Builder(getActivity());
+						dlgResultado.create();
+						
+						SincronizacionTask sinc = new SincronizacionTask(getActivity(), dlgResultado);
+						sinc.execute("");
 					}
 				} )
 				.create().show();

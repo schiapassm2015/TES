@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -19,6 +21,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,14 +31,18 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import com.siigs.tes.R;
 import com.siigs.tes.TesAplicacion;
 import com.siigs.tes.datos.tablas.*;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -47,42 +56,46 @@ import android.util.Log;
  * 
  * Los 3 tipos de datos son <Parametros, Progreso, Resultado>
  * 
- * El parseo de JSON se hace con la librería de Android. Existe la posibilidad de que
- * el texto recibido en post sea más grande que la capacidad de String o simplemente lo
- * bastante grande para que dicho parseo cause excepciones por falta de memoria.
- * Si eso pasara es necesario parsear desde el stream del post en vez de convertirlo a String.
- * Dado que es stream, hay que cambiar a una de dos: 
- * 1) Usar la clase android.util.JsonReader
- * 2) Usar gson {@link https://sites.google.com/site/gson/streaming}
  */
-public class SincronizacionTask extends AsyncTask<String, Integer, String> {
+public class SincronizacionTask extends AsyncTask<String, String, String> {
 
 	private final static String TAG= SincronizacionTask.class.getSimpleName();
-		
-	//Constantes de acciones en sincronización
-	private final static String PARAMETRO_ID_TAB="id_tab";
-	private final static String PARAMETRO_VERSION_APK = "version_apk";
-	private final static String PARAMETRO_SESION="id_sesion";
-	private final static String PARAMETRO_ACCION ="id_accion";
-	private final static String PARAMETRO_RESULTADO_MSG = "msg";
-	private final static String PARAMETRO_DATOS = "datos";
-	private final static String RESULTADO_OK = "ok";
-	private final static String RESULTADO_JSON_EXCEPTION = "JSONException";
-	private final static String RESULTADO_EXCEPTION = "Exception";
-	private final static String RESULTADO_NULL_POINTER_EXCEPTION = "NullPointerException";
-	private final static String RESULTADO_SQLITE_EXCEPTION = "SQLiteException";
+	
+	//Constantes de acciones realizables con servidor
 	private final static String ACCION_INICIAR_SESION="1";
 	private final static String ACCION_PRIMEROS_CATALOGOS="2";
 	private final static String ACCION_RESULTADO="3"; //Para informar resultado de una operación (ok/error/etc)
 	private final static String ACCION_PRIMEROS_DATOS = "4";
 	private final static String ACCION_ENVIAR_SERVIDOR = "5";
+	private final static String ACCION_RECIBIR_ACTUALIZACIONES = "6";
+	//Constantes de parámetros enviados dentro de acciones de sincronización
+	private final static String PARAMETRO_ID_TAB="id_tab";
+	private final static String PARAMETRO_VERSION_APK = "version_apk";
+	private final static String PARAMETRO_SESION ="id_sesion";
+	private final static String PARAMETRO_ACCION ="id_accion";
+	private final static String PARAMETRO_RESULTADO_MSG = "msg";
+	private final static String PARAMETRO_DATOS = "datos";
+	//Constantes de resultados enviables al servidor en ACCION_RESULTADO
+	private final static String RESULTADO_OK = "ok";
+	private final static String RESULTADO_JSON_EXCEPTION = "JSONException";
+	private final static String RESULTADO_EXCEPTION = "Exception";
+	private final static String RESULTADO_NULL_POINTER_EXCEPTION = "NullPointerException";
+	private final static String RESULTADO_SQLITE_EXCEPTION = "SQLiteException";
+	//Constantes de respuestas que puede devolver servidor en ACCION_INICIAR_SESION o ACCION_RESULTADO
+	private final static String RESPUESTA_SESION = "id_sesion";
+	private final static String RESPUESTA_INESPERADO = "id_resultado";
+		//Constantes de los valores que RESPUESTA_INESPERADO contiene en json
+		private final static String RESPUESTA_INESPERADO_DESACTUALIZADO = "Desactualizado";
+	private final static String RESPUESTA_URL = "url"; //cuando RESPUESTA_INESPERADO vale 
+											//RESPUESTA_INESPERADO_DESACTUALIZADO, esta constante es regresada también
 		
-	//Estados de comunicacióni HTTP
+	//Estados de comunicación HTTP
 	private final static int HTTP_STATUS_OK = 200;
 	private final static int HTTP_STATUS_NOT_FOUND = 404;
 	
 	
 	private ProgressDialog pdProgreso;
+	private AlertDialog.Builder dlgResultado; //guarda dialogo que visualizará salida
 	private Context contexto;
 	private Activity invocador;
 	private TesAplicacion aplicacion;
@@ -90,9 +103,10 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 	private HttpHelper webHelper;
 		
 	
-	public SincronizacionTask(Activity invocador){
+	public SincronizacionTask(Activity invocador, AlertDialog.Builder resultado){
 		super();
 		this.invocador=invocador;
+		this.dlgResultado=resultado;
 		this.aplicacion = (TesAplicacion)invocador.getApplication();
 		this.contexto=invocador.getApplicationContext();
 		this.webHelper = new HttpHelper();
@@ -105,9 +119,12 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();
+		String mensaje= "El dispositivo se está sincronizando. Por favor espere.";
+		if(aplicacion.getEsInstalacionNueva())
+			mensaje="Esta acción puede tardar 30 minutos. Por favor espere.";
 		boolean indeterminado=true, cancelable=false;
-		pdProgreso= ProgressDialog.show(invocador, "Título PreExecute", 
-				"pre-ejecutando",indeterminado, cancelable);
+		pdProgreso= ProgressDialog.show(invocador, "Sincronizando", 
+				mensaje, indeterminado, cancelable);
 	}
 
 
@@ -119,31 +136,76 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 		try{
 			Log.d(TAG, "Sincronización en fondo "+ Thread.currentThread().getName());
 			SincronizacionTotal();
+			return "Sincronización exitosa";
 		}catch(Exception ex){
 			Log.d(TAG, "Error:"+ex.toString());
+			if(ex.getCause()!=null && (ex.getCause() instanceof NoHttpResponseException 
+					||  ex.getCause() instanceof SocketTimeoutException) )
+				return "No se pudo comunicar con el servidor. Verifique su conexión a Internet e intente de nuevo.";
+			return "Hubo un problema al sincronizar" +
+					"\n\nDetalles: "+ex.toString();
 		}
-		return null;
 	}
 
 	/**
 	 * Se ejecuta en Thread de UI. Quitamos el diálogo de progreso.
 	 */
 	@Override
-	protected void onPostExecute(String result) {
-		super.onPostExecute(result);
+	protected void onPostExecute(String resultado) {
+		super.onPostExecute(resultado);
 		
 		Log.d(TAG, "Terminado proceso en fondo "+ Thread.currentThread().getName());
 		pdProgreso.dismiss();
-	} 	
+		
+		
+		//NOTA: ESTE CÓDIGO ES TEMPORAL Y DEBE SER REEMPLAZADO POR UNA FUNCIÓN ÚNICA QUE NOTIFICA
+		//EL MENSAJE DE ABAJO PARA EL CASO DE PEDIR ACTUALIZACIÓN DEL SOFTWARE
+		this.dlgResultado.setMessage(resultado);
+		
+		if(aplicacion.getRequiereActualizarApk()){
+			this.dlgResultado.setMessage("Esta aplicación requiere actualizarse. " +
+					"Puede presionar 'Actualizar' para ser enviado a la página de actualización");
+			this.dlgResultado.setPositiveButton(R.string.actualizar, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// Envía a la página de actualización
+					Intent i = new Intent(Intent.ACTION_VIEW);
+					i.setData(Uri.parse(aplicacion.getUrlActualizacionApk()));
+					invocador.startActivity(i);
+				}
+			}).setNegativeButton(android.R.string.cancel, null);
+		}
+		this.dlgResultado.show();
+		
+	}
+
+	/**
+	 * Se ejecuta en Thread de UI. 
+	 * Es llamado desde este thread asincrono con publishProgress()
+	 * Actualiza el contenido del mensaje de espera.
+	 * @param values
+	 */
+	@Override
+	protected void onProgressUpdate(String... values) {
+		super.onProgressUpdate(values);
+		
+		this.pdProgreso.setMessage(values[0]);
+		Log.d(TAG, values[0]);
+	}
 	
 
-	protected synchronized void SincronizacionTotal(){
-		aplicacion.setUrlSincronizacion("http://192.168.1.16/tes/servicios/prueba");///////BORRRRRRARRRR
+	/**
+	 * Implementa la sincronización de datos
+	 * @throws Exception 
+	 */
+	protected synchronized void SincronizacionTotal() throws Exception{
+		aplicacion.setUrlSincronizacion("http://10.5.4.27/tes/servicios2/prueba");///////BORRRRRRARRRR
 		
 		boolean esNueva= this.aplicacion.getEsInstalacionNueva();
 
 		String idSesion = AccionIniciarSesion();
 		Log.d(TAG,"Se ha obtenido llave de sesión:"+idSesion);
+		publishProgress("Sesión iniciada...");
 		
 		if(esNueva){
 			AccionPrimerosCatalogos(idSesion);
@@ -152,6 +214,8 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 		}else{
 			String ultimaSinc = this.aplicacion.getFechaUltimaSincronizacion();
 			AccionEnviarCambiosServidor(idSesion, ultimaSinc);
+			if(!this.aplicacion.getRequiereActualizarApk())
+				AccionRecibirActualizaciones(idSesion);
 		}
 		this.aplicacion.setFechaUltimaSincronizacion();
  	}
@@ -177,7 +241,12 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
         parametros.add(new BasicNameValuePair(PARAMETRO_RESULTADO_MSG, msgSalida.toString() ));
 		
         Log.d(TAG,"Enviando resultado de acción con mensaje:"+ idResultado+ " y descripción:"+descripcion);
-		return webHelper.RequestPost(aplicacion.getUrlSincronizacion(), parametros);
+		try {
+			return webHelper.RequestPost(aplicacion.getUrlSincronizacion(), parametros);
+		} catch (Exception e) {
+			Log.d(TAG,"No se pudo enviar resultado. "+e);
+		}
+		return null;
 	}
 	
 	/**
@@ -185,7 +254,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 	 * @return id de la sesión
 	 * @throws Exception 
 	 */
-	private String AccionIniciarSesion() {
+	private String AccionIniciarSesion() throws Exception {
 		WifiManager wifi=(WifiManager)contexto.getSystemService(Context.WIFI_SERVICE);
 		String macaddress = wifi.getConnectionInfo().getMacAddress();
 		if(macaddress == null)macaddress="";
@@ -206,31 +275,46 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
         parametros.add(new BasicNameValuePair(PARAMETRO_ID_TAB, macaddress));
         parametros.add(new BasicNameValuePair(PARAMETRO_VERSION_APK, version+"" ));
 		
-        Log.d(TAG,"Request Inicio de sesión");
+        Log.d(TAG, "Request Inicio de sesión");
+        publishProgress("Conectando con servidor...");
 		String json = webHelper.RequestPost(aplicacion.getUrlSincronizacion(), parametros);
 		
+		JSONObject jo;
 		try {
-			JSONObject jo=new JSONObject(json);
-			return jo.getString(PARAMETRO_SESION);
+			jo = new JSONObject(json);
 		} catch (JSONException e) {
-			Log.e(TAG, "No se interpretó llave sesión en json:"+json+" "+e.toString());
+			String msgError="No se interpretó el resultado del servidor como json:"+json+"\n"+e.toString();
+			Log.e(TAG, msgError);
+			throw new Exception(msgError);
 		}
-		return null;
+		
+		if(jo.has(PARAMETRO_SESION))
+			return jo.getString(RESPUESTA_SESION);
+		
+		//Como no llegó id sesión, asumimos que hay un mensaje detallado en RESPUESTA_INESPERADO
+		String inesperado = jo.getString(RESPUESTA_INESPERADO);
+		if(inesperado.equalsIgnoreCase(RESPUESTA_INESPERADO_DESACTUALIZADO)){
+			DefinirComoDispositivoSinActualizar(jo.getString(RESPUESTA_URL));
+			throw new Exception("Esta aplicación requiere actualizarse antes de sincronizarse");
+		}
+		
+		throw new Exception(inesperado);
 	}//fin AccionIniciarSesion
 	
 	
 	/**
 	 * Esta acción manda credenciales y recibe primeros catálogos a insertar en base de datos
 	 * @param idSesion
+	 * @throws Exception 
 	 */
-	private void AccionPrimerosCatalogos(String idSesion){
+	private void AccionPrimerosCatalogos(String idSesion) throws Exception{
 		String msgError;
 		
 		List<NameValuePair> parametros = new ArrayList<NameValuePair>();
         parametros.add(new BasicNameValuePair(PARAMETRO_SESION, idSesion));
         parametros.add(new BasicNameValuePair(PARAMETRO_ACCION, ACCION_PRIMEROS_CATALOGOS));
 
-        Log.d(TAG, "Request primeros catálogos");
+        publishProgress("Solicitando primeros catálogos");
 		InputStream stream = webHelper.RequestStreamPost(aplicacion.getUrlSincronizacion(), parametros);
 		
 		try {
@@ -242,14 +326,17 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 			msgError = "Error al interpretar primeros catálogos en base de datos local:" + e.toString(); 
 			Log.e(TAG, msgError);
 			EnviarResultado(idSesion, RESULTADO_SQLITE_EXCEPTION, msgError);
+			throw e;
 		}catch (NullPointerException e){
 			msgError = "Error al interpretar primeros catálogos. Se intentó accesar algo que no existe:"+ e.toString();
 			Log.e(TAG, msgError);
 			EnviarResultado(idSesion, RESULTADO_NULL_POINTER_EXCEPTION, msgError);
+			throw e;
 		} catch (Exception e){
 			msgError = "Error desconocido al interpretar primeros catálogos:"+e.toString();
 			Log.e(TAG, msgError);
 			EnviarResultado(idSesion, RESULTADO_EXCEPTION, msgError);
+			throw e;
 		}
 		//... validar llegó lo mínimo, caso contrario, error
 	}
@@ -257,15 +344,16 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 	/**
 	 * Esta acción manda credenciales y recibe primeras tablas transaccionales a insertar en base de datos
 	 * @param idSesion
+	 * @throws Exception 
 	 */
-	private void AccionPrimerosDatos(String idSesion){
+	private void AccionPrimerosDatos(String idSesion) throws Exception{
 		String msgError;
 		
 		List<NameValuePair> parametros = new ArrayList<NameValuePair>();
         parametros.add(new BasicNameValuePair(PARAMETRO_SESION, idSesion));
         parametros.add(new BasicNameValuePair(PARAMETRO_ACCION, ACCION_PRIMEROS_DATOS));
 
-        Log.d(TAG, "Request primeros datos");
+        publishProgress("Solicitando primeros datos transaccionales");
 		InputStream stream = webHelper.RequestStreamPost(aplicacion.getUrlSincronizacion(), parametros);
 		
 		try {
@@ -277,14 +365,55 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 			msgError = "Error al interpretar primeros catálogos en base de datos local:" + e.toString(); 
 			Log.e(TAG, msgError);
 			EnviarResultado(idSesion, RESULTADO_SQLITE_EXCEPTION, msgError);
+			throw e;
 		}catch (NullPointerException e){
 			msgError = "Error al interpretar primeros catálogos. Se intentó accesar algo que no existe:"+ e.toString();
 			Log.e(TAG, msgError);
 			EnviarResultado(idSesion, RESULTADO_NULL_POINTER_EXCEPTION, msgError);
+			throw e;
 		} catch (Exception e){
 			msgError = "Error desconocido al interpretar primeros catálogos:"+e.toString();
 			Log.e(TAG, msgError);
 			EnviarResultado(idSesion, RESULTADO_EXCEPTION, msgError);
+			throw e;
+		}
+	}
+	
+	/**
+	 * Esta acción manda credenciales y recibe cambios a realizar en base de datos
+	 * @param idSesion
+	 * @throws Exception 
+	 */
+	private void AccionRecibirActualizaciones(String idSesion) throws Exception{
+		String msgError;
+		
+		List<NameValuePair> parametros = new ArrayList<NameValuePair>();
+        parametros.add(new BasicNameValuePair(PARAMETRO_SESION, idSesion));
+        parametros.add(new BasicNameValuePair(PARAMETRO_ACCION, ACCION_RECIBIR_ACTUALIZACIONES));
+
+        publishProgress("Solicitando actualizaciones de datos");
+		InputStream stream = webHelper.RequestStreamPost(aplicacion.getUrlSincronizacion(), parametros);
+		
+		try {
+			InterpretarDatosServidor(stream);
+			
+			EnviarResultado(idSesion, RESULTADO_OK,null);
+			
+		}catch (SQLiteException e){
+			msgError = "Error al interpretar actualizaciones recibidas para base de datos local:" + e.toString(); 
+			Log.e(TAG, msgError);
+			EnviarResultado(idSesion, RESULTADO_SQLITE_EXCEPTION, msgError);
+			throw e;
+		}catch (NullPointerException e){
+			msgError = "Error al interpretar actualizaciones. Se intentó accesar algo que no existe:"+ e.toString();
+			Log.e(TAG, msgError);
+			EnviarResultado(idSesion, RESULTADO_NULL_POINTER_EXCEPTION, msgError);
+			throw e;
+		} catch (Exception e){
+			msgError = "Error desconocido al interpretar actualizaciones:"+e.toString();
+			Log.e(TAG, msgError);
+			EnviarResultado(idSesion, RESULTADO_EXCEPTION, msgError);
+			throw e;
 		}
 	}
 	
@@ -309,13 +438,17 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 			//Lectura de catálogos/datos fijos
 			while(reader.hasNext()){
 				atributo=reader.nextName();
+				
 				if(atributo.equalsIgnoreCase("id_tipo_censo")){
+					publishProgress("Asignando tipo de senso");
 					aplicacion.setTipoCenso( reader.nextInt() );
 					
 				}else if(atributo.equalsIgnoreCase("id_asu_um")){
+					publishProgress("Asignando unidad médica");
 					aplicacion.setUnidadMedica( reader.nextInt() );
 					
 				}else if(atributo.equalsIgnoreCase(Grupo.NOMBRE_TABLA)){
+					publishProgress("Interpretando Grupos");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Grupo grupo = gson.fromJson(reader, Grupo.class);
@@ -327,6 +460,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(Usuario.NOMBRE_TABLA)){
+					publishProgress("Interpretando Usuarios");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Usuario usuario = gson.fromJson(reader, Usuario.class);
@@ -338,6 +472,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(Permiso.NOMBRE_TABLA)){
+					publishProgress("Interpretando Permisos");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Permiso permiso = gson.fromJson(reader, Permiso.class);
@@ -349,6 +484,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(Notificacion.NOMBRE_TABLA)){
+					publishProgress("Interpretando Notificaciones");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Notificacion notificacion = gson.fromJson(reader, Notificacion.class);
@@ -360,6 +496,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(TipoSanguineo.NOMBRE_TABLA)){
+					publishProgress("Interpretando Tipo Sanguineo");
 					reader.beginArray();
 					while(reader.hasNext()){
 						TipoSanguineo tipoSangre = gson.fromJson(reader, TipoSanguineo.class);
@@ -371,6 +508,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(Vacuna.NOMBRE_TABLA)){
+					publishProgress("Interpretando Vacunas");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Vacuna vacuna = gson.fromJson(reader, Vacuna.class);
@@ -382,6 +520,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(AccionNutricional.NOMBRE_TABLA)){
+					publishProgress("Interpretando Acciones Nutricionales");
 					reader.beginArray();
 					while(reader.hasNext()){
 						AccionNutricional accion = gson.fromJson(reader, AccionNutricional.class);
@@ -393,6 +532,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(Ira.NOMBRE_TABLA)){
+					publishProgress("Interpretando Iras");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Ira ira = gson.fromJson(reader, Ira.class);
@@ -404,6 +544,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(Eda.NOMBRE_TABLA)){
+					publishProgress("Interpretando Edas");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Eda eda = gson.fromJson(reader, Eda.class);
@@ -415,6 +556,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(Consulta.NOMBRE_TABLA)){
+					publishProgress("Interpretando Consultas");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Consulta consulta = gson.fromJson(reader, Consulta.class);
@@ -426,6 +568,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(Alergia.NOMBRE_TABLA)){
+					publishProgress("Interpretando Alergias");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Alergia alergia = gson.fromJson(reader, Alergia.class);
@@ -437,6 +580,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(Afiliacion.NOMBRE_TABLA)){
+					publishProgress("Interpretando Afiliaciones");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Afiliacion afiliacion = gson.fromJson(reader, Afiliacion.class);
@@ -448,6 +592,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(Nacionalidad.NOMBRE_TABLA)){
+					publishProgress("Interpretando Nacionalidades");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Nacionalidad nacionalidad = gson.fromJson(reader, Nacionalidad.class);
@@ -459,6 +604,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(OperadoraCelular.NOMBRE_TABLA)){
+					publishProgress("Interpretando Operadoras Celulares");
 					reader.beginArray();
 					while(reader.hasNext()){
 						OperadoraCelular operadora = gson.fromJson(reader, OperadoraCelular.class);
@@ -470,6 +616,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(PendientesTarjeta.NOMBRE_TABLA)){
+					publishProgress("Interpretando Pendientes para Tarjetas");
 					reader.beginArray();
 					while(reader.hasNext()){
 						PendientesTarjeta pendiente = gson.fromJson(reader, PendientesTarjeta.class);
@@ -482,37 +629,10 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(ArbolSegmentacion.NOMBRE_TABLA)){
-					int limite=500;
-					List<ArbolSegmentacion> lista = new ArrayList<ArbolSegmentacion>(limite);
-					reader.beginArray();
-					while(reader.hasNext()){
-						lista.add((ArbolSegmentacion) gson.fromJson(reader, ArbolSegmentacion.class));
-						if(lista.size()==limite){
-							Log.d(TAG, "Va a insertar "+lista.size()+" arbolitos");
-							ContentValues[] filas = new ContentValues[lista.size()];int n=0;
-							for(ArbolSegmentacion arbol : lista){
-								filas[n++] = DatosUtil.ContentValuesDesdeObjeto(arbol);
-							}
-							uri = ProveedorContenido.ARBOL_SEGMENTACION_CONTENT_URI;
-							cr.bulkInsert(uri, filas);
-							//	cr.update(uri, fila, ArbolSegmentacion.ID+"="+arbol._id,null);
-							lista.clear();
-						}
-					}
-					if(lista.size()>0){
-						Log.d(TAG, "Va a insertar "+lista.size()+" arbolitos finales");
-						ContentValues[] filas = new ContentValues[lista.size()];int n=0;
-						for(ArbolSegmentacion arbol : lista){
-							filas[n++] = DatosUtil.ContentValuesDesdeObjeto(arbol);
-						}
-						uri = ProveedorContenido.ARBOL_SEGMENTACION_CONTENT_URI;
-						cr.bulkInsert(uri, filas);
-						//	cr.update(uri, fila, ArbolSegmentacion.ID+"="+arbol._id,null);
-						lista.clear();
-					}
-					reader.endArray();
+					InterpretarArbolSegmentacion(gson, reader, cr);
 					
 				}else if(atributo.equalsIgnoreCase(ReglaVacuna.NOMBRE_TABLA)){
+					publishProgress("Interpretando Reglas de vacunación");
 					reader.beginArray();
 					while(reader.hasNext()){
 						ReglaVacuna regla = gson.fromJson(reader, ReglaVacuna.class);
@@ -525,50 +645,55 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					
 				//////////////////TABLAS TRANSACCIONALES/////////////////
 				}else if(atributo.equalsIgnoreCase(Tutor.NOMBRE_TABLA)){
+					publishProgress("Interpretando Tutores");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Tutor tutor = gson.fromJson(reader, Tutor.class);
 						fila = DatosUtil.ContentValuesDesdeObjeto(tutor);
 						uri = ProveedorContenido.TUTOR_CONTENT_URI;
 						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, Tutor.ID+"="+tutor.id,null);
+							cr.update(uri, fila, Tutor.ID+"=?",new String[]{tutor.id});
 					}
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(Persona.NOMBRE_TABLA)){
+					publishProgress("Interpretando Personas");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Persona persona = gson.fromJson(reader, Persona.class);
 						fila = DatosUtil.ContentValuesDesdeObjeto(persona);
 						uri = ProveedorContenido.PERSONA_CONTENT_URI;
 						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, Persona.ID+"="+persona.id,null);
+							cr.update(uri, fila, Persona.ID+"=?",new String[]{persona.id});
 					}
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(PersonaTutor.NOMBRE_TABLA)){
+					publishProgress("Interpretando Personas con Tutores");
 					reader.beginArray();
 					while(reader.hasNext()){
 						PersonaTutor persona_tutor = gson.fromJson(reader, PersonaTutor.class);
 						fila = DatosUtil.ContentValuesDesdeObjeto(persona_tutor);
 						uri = ProveedorContenido.PERSONA_TUTOR_CONTENT_URI;
 						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, PersonaTutor.ID_PERSONA+"="+persona_tutor.id_persona,null);
+							cr.update(uri, fila, PersonaTutor.ID_PERSONA+"=?",new String[]{persona_tutor.id_persona});
 					}
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(PersonaAlergia.NOMBRE_TABLA)){
+					publishProgress("Interpretando Personas con alergias");
 					reader.beginArray();
 					while(reader.hasNext()){
 						PersonaAlergia persona_alergia = gson.fromJson(reader, PersonaAlergia.class);
 						fila = DatosUtil.ContentValuesDesdeObjeto(persona_alergia);
 						uri = ProveedorContenido.PERSONA_ALERGIA_CONTENT_URI;
 						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, PersonaAlergia.ID_PERSONA+"="+persona_alergia.id_persona,null);
+							cr.update(uri, fila, PersonaAlergia.ID_PERSONA+"=?",new String[]{persona_alergia.id_persona});
 					}
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(PersonaAfiliacion.NOMBRE_TABLA)){
+					publishProgress("Interpretando Personas con afiliaciones");
 					reader.beginArray();
 					while(reader.hasNext()){
 						PersonaAfiliacion persona_afiliacion = gson.fromJson(reader, PersonaAfiliacion.class);
@@ -582,17 +707,19 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(RegistroCivil.NOMBRE_TABLA)){
+					publishProgress("Interpretando Registro Civil");
 					reader.beginArray();
 					while(reader.hasNext()){
 						RegistroCivil registro = gson.fromJson(reader, RegistroCivil.class);
 						fila = DatosUtil.ContentValuesDesdeObjeto(registro);
 						uri = ProveedorContenido.REGISTRO_CIVIL_CONTENT_URI;
 						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, RegistroCivil.ID_PERSONA+"="+registro.id_persona,null);
+							cr.update(uri, fila, RegistroCivil.ID_PERSONA+"=?",new String[]{registro.id_persona});
 					}
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(AntiguaUM.NOMBRE_TABLA)){
+					publishProgress("Interpretando Antiguas unidades médicas");
 					reader.beginArray();
 					while(reader.hasNext()){
 						AntiguaUM antiguaUM = gson.fromJson(reader, AntiguaUM.class);
@@ -605,6 +732,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(AntiguoDomicilio.NOMBRE_TABLA)){
+					publishProgress("Interpretando Antiguos domicilios");
 					reader.beginArray();
 					while(reader.hasNext()){
 						AntiguoDomicilio domicilio = gson.fromJson(reader, AntiguoDomicilio.class);
@@ -617,6 +745,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(ControlVacuna.NOMBRE_TABLA)){
+					publishProgress("Interpretando Controles de Vacunas");
 					reader.beginArray();
 					while(reader.hasNext()){
 						ControlVacuna control_vacuna = gson.fromJson(reader, ControlVacuna.class);
@@ -629,6 +758,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(ControlIra.NOMBRE_TABLA)){
+					publishProgress("Interpretando Controles de Iras");
 					reader.beginArray();
 					while(reader.hasNext()){
 						ControlIra control_ira = gson.fromJson(reader, ControlIra.class);
@@ -641,6 +771,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(ControlEda.NOMBRE_TABLA)){
+					publishProgress("Interpretando Controles de Edas");
 					reader.beginArray();
 					while(reader.hasNext()){
 						ControlEda control_eda = gson.fromJson(reader, ControlEda.class);
@@ -653,6 +784,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(ControlConsulta.NOMBRE_TABLA)){
+					publishProgress("Interpretando Controles de Consultas");
 					reader.beginArray();
 					while(reader.hasNext()){
 						ControlConsulta control_consulta = gson.fromJson(reader, ControlConsulta.class);
@@ -665,6 +797,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(ControlAccionNutricional.NOMBRE_TABLA)){
+					publishProgress("Interpretando Controles de Acciones Nutricionales");
 					reader.beginArray();
 					while(reader.hasNext()){
 						ControlAccionNutricional control_accion = gson.fromJson(reader, ControlAccionNutricional.class);
@@ -677,6 +810,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(ControlNutricional.NOMBRE_TABLA)){
+					publishProgress("Interpretando Controles Nutricionales");
 					reader.beginArray();
 					while(reader.hasNext()){
 						ControlNutricional control_nutricional = gson.fromJson(reader, ControlNutricional.class);
@@ -709,6 +843,47 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 	}//fin InterpretarDatosServidor
 	
 	
+	private void InterpretarArbolSegmentacion(Gson gson, JsonReader reader, ContentResolver cr) throws IOException, IllegalAccessException{
+		publishProgress("Interpretando Arbol de Segmentación");
+		Uri uri = ProveedorContenido.ARBOL_SEGMENTACION_CONTENT_URI;
+		int registros=0; //contador de registros procesados
+		int limite=500; //límite para acumular bulkinsert (en instalación nueva) o reportar progreso (no nueva)
+		
+		reader.beginArray();
+		
+		if(this.aplicacion.getEsInstalacionNueva()){
+			List<ArbolSegmentacion> lista = new ArrayList<ArbolSegmentacion>(limite);
+			
+			while(reader.hasNext()){
+				lista.add((ArbolSegmentacion) gson.fromJson(reader, ArbolSegmentacion.class));
+				
+				if(lista.size()==limite || !reader.hasNext()){
+					ContentValues[] filas = new ContentValues[lista.size()];
+					publishProgress("Generandoo "+lista.size()+" ramas");
+					int n=0;
+					for(ArbolSegmentacion arbol : lista)
+						filas[n++] = DatosUtil.ContentValuesDesdeObjeto(arbol);
+					registros+=lista.size();
+					publishProgress("Insertando "+lista.size()+" ramas de "+registros+" hasta ahora");
+					cr.bulkInsert(uri, filas);
+					//	cr.update(uri, fila, ArbolSegmentacion.ID+"="+arbol._id,null);
+					lista.clear();
+				}
+			}
+		}else{
+			
+			while(reader.hasNext()){
+				ArbolSegmentacion arbol = gson.fromJson(reader, ArbolSegmentacion.class);
+				ContentValues fila = DatosUtil.ContentValuesDesdeObjeto(arbol);
+				if(cr.insert(uri, fila)==null)
+					cr.update(uri, fila, ArbolSegmentacion.ID+"="+ arbol._id, null);
+				if( ++registros % limite == 0 )
+					publishProgress("Procesadas "+registros+" ramas");
+			}
+		}
+		
+		reader.endArray();
+	}//fin InterpretarArbolSegmentacion
 		
 	
 	
@@ -716,8 +891,9 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 	 * Envia al servidor los cambios desde la última actualización
 	 * @param idSesion
 	 * @param ultimaSinc
+	 * @throws Exception 
 	 */
-	private void AccionEnviarCambiosServidor(String idSesion, String ultimaSinc){
+	private void AccionEnviarCambiosServidor(String idSesion, String ultimaSinc) throws Exception{
 		String msgError = null;
 		
 		//VARIABLES PARA CONSULTAR BASE DE DATOS
@@ -729,7 +905,7 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 		//String[] columnas = null;
 		
 		JSONObject datosSalida = new JSONObject(); //Contenedor del json final
-		
+		publishProgress("Generando datos a enviar al servidor...");
 		String[] excepciones= null;
 		
 		try {
@@ -740,20 +916,6 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 			if(cur.getCount()>0){
 				excepciones= new String[]{Tutor._ID};
 				JSONArray filas = DatosUtil.CrearJsonArray(cur,excepciones);
-				/*while(cur.moveToNext()){
-					JSONObject fila = new JSONObject()
-					.put(Tutor.ID, cur.getString(cur.getColumnIndex(Tutor.ID)))
-					.put(Tutor.CURP, cur.getString(cur.getColumnIndex(Tutor.CURP)))
-					.put(Tutor.NOMBRE, cur.getString(cur.getColumnIndex(Tutor.NOMBRE)))
-					.put(Tutor.APELLIDO_PATERNO, cur.getString(cur.getColumnIndex(Tutor.APELLIDO_PATERNO)))
-					.put(Tutor.APELLIDO_MATERNO, cur.getString(cur.getColumnIndex(Tutor.APELLIDO_MATERNO)))
-					.put(Tutor.SEXO, cur.getString(cur.getColumnIndex(Tutor.SEXO)))
-					.put(Tutor.TELEFONO, cur.getString(cur.getColumnIndex(Tutor.TELEFONO)))
-					.put(Tutor.CELULAR, cur.getString(cur.getColumnIndex(Tutor.CELULAR)))
-					.put(Tutor.ID_OPERADORA_CELULAR, cur.getInt(cur.getColumnIndex(Tutor.ID_OPERADORA_CELULAR)))
-					.put(Tutor.ULTIMA_ACTUALIZACION, cur.getString(cur.getColumnIndex(Tutor.ULTIMA_ACTUALIZACION)));
-					filas.put(fila);
-				}*/
 				datosSalida.put(Tutor.NOMBRE_TABLA, filas);
 			}
 			cur.close();
@@ -766,13 +928,6 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 			if(cur.getCount()>0){
 				excepciones= new String[]{AntiguaUM._ID};
 				JSONArray filas = DatosUtil.CrearJsonArray(cur,excepciones);
-				/*while(cur.moveToNext()){
-					JSONObject fila = new JSONObject()
-					.put(AntiguaUM.ID_PERSONA, cur.getString(cur.getColumnIndex(AntiguaUM.ID_PERSONA)))
-					.put(AntiguaUM.ID_ASU_UM_TRATANTE, cur.getInt(cur.getColumnIndex(AntiguaUM.ID_ASU_UM_TRATANTE)))
-					.put(AntiguaUM.FECHA_CAMBIO, cur.getString(cur.getColumnIndex(AntiguaUM.FECHA_CAMBIO)));
-					filas.put(fila);
-				}*/
 				datosSalida.put(AntiguaUM.NOMBRE_TABLA, filas);
 			}
 			cur.close();
@@ -784,18 +939,6 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 			if(cur.getCount()>0){
 				excepciones= new String[]{AntiguoDomicilio._ID};
 				JSONArray filas = DatosUtil.CrearJsonArray(cur,excepciones);
-				/*while(cur.moveToNext()){
-					JSONObject fila = new JSONObject()
-					.put(AntiguoDomicilio.ID_PERSONA, cur.getString(cur.getColumnIndex(AntiguoDomicilio.ID_PERSONA)))
-					.put(AntiguoDomicilio.CALLE_DOMICILIO, cur.getString(cur.getColumnIndex(AntiguoDomicilio.CALLE_DOMICILIO)))
-					.put(AntiguoDomicilio.NUMERO_DOMICILIO, cur.getString(cur.getColumnIndex(AntiguoDomicilio.NUMERO_DOMICILIO)))
-					.put(AntiguoDomicilio.COLONIA_DOMICILIO, cur.getString(cur.getColumnIndex(AntiguoDomicilio.COLONIA_DOMICILIO)))
-					.put(AntiguoDomicilio.REFERENCIA_DOMICILIO, cur.getString(cur.getColumnIndex(AntiguoDomicilio.REFERENCIA_DOMICILIO)))
-					.put(AntiguoDomicilio.ID_ASU_LOCALIDAD_DOMICILIO, cur.getString(cur.getColumnIndex(AntiguoDomicilio.ID_ASU_LOCALIDAD_DOMICILIO)))
-					.put(AntiguoDomicilio.CP_DOMICILIO, cur.getString(cur.getColumnIndex(AntiguoDomicilio.CP_DOMICILIO)))
-					.put(AntiguoDomicilio.FECHA_CAMBIO, cur.getString(cur.getColumnIndex(AntiguoDomicilio.FECHA_CAMBIO)));
-					filas.put(fila);
-				}*/
 				datosSalida.put(AntiguoDomicilio.NOMBRE_TABLA, filas);
 			}
 			cur.close();
@@ -807,38 +950,6 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 			if(cur.getCount()>0){
 				excepciones= new String[]{Persona._ID};
 				JSONArray filas = DatosUtil.CrearJsonArray(cur,excepciones);
-				/*while(cur.moveToNext()){
-					JSONObject fila = new JSONObject()
-					.put(Persona.ID, cur.getString(cur.getColumnIndex(Persona.ID)))
-					.put(Persona.CURP, cur.getString(cur.getColumnIndex(Persona.CURP)))
-					.put(Persona.NOMBRE, cur.getString(cur.getColumnIndex(Persona.NOMBRE)))
-					.put(Persona.APELLIDO_PATERNO, cur.getString(cur.getColumnIndex(Persona.APELLIDO_PATERNO)))
-					.put(Persona.APELLIDO_MATERNO, cur.getString(cur.getColumnIndex(Persona.APELLIDO_MATERNO)))
-					.put(Persona.SEXO, cur.getString(cur.getColumnIndex(Persona.SEXO)))
-					.put(Persona.ID_TIPO_SANGUINEO, cur.getInt(cur.getColumnIndex(Persona.ID_TIPO_SANGUINEO)))
-					.put(Persona.FECHA_NACIMIENTO, cur.getString(cur.getColumnIndex(Persona.FECHA_NACIMIENTO)))
-					.put(Persona.ID_ASU_LOCALIDAD_NACIMIENTO, cur.getInt(cur.getColumnIndex(Persona.ID_ASU_LOCALIDAD_NACIMIENTO)))
-					.put(Persona.CALLE_DOMICILIO, cur.getString(cur.getColumnIndex(Persona.CALLE_DOMICILIO)));
-					nuleable= cur.getString(cur.getColumnIndex(Persona.NUMERO_DOMICILIO));
-					fila.put(Persona.NUMERO_DOMICILIO, nuleable==null? JSONObject.NULL : nuleable);
-					nuleable= cur.getString(cur.getColumnIndex(Persona.COLONIA_DOMICILIO));
-					fila.put(Persona.COLONIA_DOMICILIO, nuleable==null? JSONObject.NULL : nuleable);
-					nuleable= cur.getString(cur.getColumnIndex(Persona.REFERENCIA_DOMICILIO));
-					fila.put(Persona.REFERENCIA_DOMICILIO, nuleable==null? JSONObject.NULL : nuleable)
-					.put(Persona.ID_ASU_LOCALIDAD_DOMICILIO, cur.getInt(cur.getColumnIndex(Persona.ID_ASU_LOCALIDAD_DOMICILIO)))
-					.put(Persona.CP_DOMICILIO, cur.getInt(cur.getColumnIndex(Persona.CP_DOMICILIO)));
-					nuleable= cur.getString(cur.getColumnIndex(Persona.TELEFONO_DOMICILIO));
-					fila.put(Persona.TELEFONO_DOMICILIO, nuleable==null? JSONObject.NULL : nuleable);
-					fila.put(Persona.FECHA_REGISTRO, cur.getString(cur.getColumnIndex(Persona.FECHA_REGISTRO)))
-					.put(Persona.ID_ASU_UM_TRATANTE, cur.getInt(cur.getColumnIndex(Persona.ID_ASU_UM_TRATANTE)));
-					nuleable= cur.getString(cur.getColumnIndex(Persona.CELULAR));
-					fila.put(Persona.CELULAR, nuleable==null? JSONObject.NULL : nuleable)
-					.put(Persona.ULTIMA_ACTUALIZACION, cur.getString(cur.getColumnIndex(Persona.ULTIMA_ACTUALIZACION)))
-					.put(Persona.ID_NACIONALIDAD, cur.getInt(cur.getColumnIndex(Persona.ID_NACIONALIDAD)));
-					nuleable= cur.getString(cur.getColumnIndex(Persona.ID_OPERADORA_CELULAR));
-					fila.put(Persona.ID_OPERADORA_CELULAR, nuleable==null? JSONObject.NULL : nuleable);
-					filas.put(fila);
-				}*/
 				datosSalida.put(Persona.NOMBRE_TABLA, filas);
 			}
 			cur.close();
@@ -850,13 +961,6 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 			if(cur.getCount()>0){
 				excepciones= new String[]{PersonaAlergia._ID};
 				JSONArray filas = DatosUtil.CrearJsonArray(cur,excepciones);
-				/*while(cur.moveToNext()){
-					JSONObject fila = new JSONObject()
-					.put(PersonaAlergia.ID_PERSONA, cur.getString(cur.getColumnIndex(PersonaAlergia.ID_PERSONA)))
-					.put(PersonaAlergia.ID_ALERGIA, cur.getInt(cur.getColumnIndex(PersonaAlergia.ID_ALERGIA)))
-					.put(PersonaAlergia.ULTIMA_ACTUALIZACION, cur.getString(cur.getColumnIndex(PersonaAlergia.ULTIMA_ACTUALIZACION)));
-					filas.put(fila);
-				}*/
 				datosSalida.put(PersonaAlergia.NOMBRE_TABLA, filas);
 			}
 			cur.close();
@@ -991,26 +1095,46 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 
 ///////////////////////TES_PENDIENTES_TARJETA..... PENDIENTE
 	        
-	        Log.d(TAG, "Request envío de cambios a servidor");
+	        publishProgress("Enviando a servidor datos de "+datosSalida.length()+" tablas");
 			String json = webHelper.RequestPost(aplicacion.getUrlSincronizacion(), parametros);
 			
-			//Evaluar si json dice OK y entonces llamar acción 6 para recibir actualizaciones
 			
-			//EnviarResultado(idSesion, RESULTADO_OK);
+			//CHECAMOS SI SERVIDOR NOS PIDE ACTUALIZAR LA VERSIÓN DEL SOFTWARE
+			JSONObject jo;
+			try {
+				jo = new JSONObject(json);
+			} catch (JSONException e) {
+				msgError="Se enviaron los datos con éxito a servidor, pero éste respondió " +
+						"con el siguiente mensaje desconocido:"+json;
+				Log.e(TAG, msgError);
+				throw new Exception(msgError);
+			}
+			if(jo.has(RESPUESTA_INESPERADO) && 
+					jo.getString(RESPUESTA_INESPERADO).equalsIgnoreCase(RESPUESTA_INESPERADO_DESACTUALIZADO))
+				DefinirComoDispositivoSinActualizar(jo.getString(RESPUESTA_URL));
 			
 		} catch (JSONException e) {
 			msgError = "Error en json:"+e.toString(); 
 			Log.e(TAG, msgError);
-			//EnviarResultado(idSesion, msgError);
+			EnviarResultado(idSesion, RESULTADO_JSON_EXCEPTION, msgError);
+			throw new Exception(msgError);
 		} catch (Exception e){
 			msgError = "Error desconocido:"+e.toString();
 			Log.e(TAG, msgError);
-			//EnviarResultado(idSesion, msgError);
+			EnviarResultado(idSesion, RESULTADO_EXCEPTION, msgError);
+			throw new Exception(msgError);
 		}finally{
 			if(cur!=null)cur.close();
 		}
 	}//fin AccionEnviarServidor
 	
+	/**
+	 * Cambia el estado de este dispositivo para no permitir uso
+	 */
+	private void DefinirComoDispositivoSinActualizar(String urlActualizacion){
+		this.aplicacion.setRequiereActualizarApk(true);
+		this.aplicacion.setUrlActualizacionApk(urlActualizacion);
+	}
 		
 	private void GenerarAccionX(){
 		String jsonString="{\"llave_sesion\":\"milla'veSe,sion\",\"unidad_medica\":321,\"atributo2\":\"\",\"atributo3\":\"abc\",\"catalogo1\":[{\"id\":789,\"campo2\":\"qwe\",\"campo3\":\"valCampo3\"},{\"id\":456,\"campo2\":\"txt\",\"campo3\":\"bvc\"}],\"catalogo2\":[{\"id\":987,\"campo2\":\"poi\",\"campo3\":\"rfv\"},{\"id\":963,\"campo2\":\"kjh\",\"campo3\":\"olm\"}],\"catalogo3\":[{\"id\":741,\"campo2\":\"c3val2\",\"campo3\":\"c3val3\"},{\"id\":147,\"campo2\":\"c3f2v2\",\"campo3\":\"c3f2v3\"}]}";
@@ -1063,7 +1187,11 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 		//HttpContext contextoHttp;
 		
 		public HttpHelper(){
-			cliente = new DefaultHttpClient();
+			//Para limitar el tiempo de espera...
+			final HttpParams parametros = new BasicHttpParams();
+			HttpConnectionParams.setSoTimeout(parametros, 15000);
+
+			cliente = new DefaultHttpClient(parametros);
 			//contextoHttp = new BasicHttpContext();
 		}
 		
@@ -1072,8 +1200,9 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 		 * @param url Dirección a conectar
 		 * @param parametros Valores a incluir en request
 		 * @return String con resultado del request
+		 * @throws Exception 
 		 */
-		public synchronized String RequestPost(String url, List<NameValuePair> parametros){
+		public synchronized String RequestPost(String url, List<NameValuePair> parametros) throws Exception{
 			String salida=null;
 			byte[] buffer=new byte[1024];
 
@@ -1088,11 +1217,10 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 				//Gson gson=new Gson();gson.
 				salida= contenido.toString(); //new String( contenido.toByteArray());
 
-				Log.d(TAG, "POST descargó datos "+ (salida.length()>1000000? salida.length()+" caracteres" : salida));
+				Log.d(TAG, "POST descargó datos: "+ (salida.length()>1000000? salida.length()+" caracteres" : salida));
 			}catch(Exception ex){
-				Exception e2 = new Exception("Error en request tipo POST a url:"+url+"\n"+ex.toString(),ex);
-				Log.d(TAG, e2.toString());
-				//throw e2;
+				Log.d(TAG, "Error en request tipo POST a url:"+url+"\n"+ex.toString() );
+				throw ex;
 			}
 			return salida;
 		}
@@ -1102,8 +1230,9 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 		 * @param url Dirección a conectar
 		 * @param parametros Valores a incluir en request
 		 * @return InputStream apuntando a la respuesta del servidor
+		 * @throws Exception 
 		 */
-		public synchronized InputStream RequestStreamPost(String url, List<NameValuePair> parametros){
+		public synchronized InputStream RequestStreamPost(String url, List<NameValuePair> parametros) throws Exception{
 			HttpPost request = new HttpPost(url);
 
 			try{
@@ -1122,9 +1251,8 @@ public class SincronizacionTask extends AsyncTask<String, Integer, String> {
 			}catch(Exception ex){
 				Exception e2 = new Exception("Error en request tipo POST a url:"+url+"\n"+ex.toString(),ex);
 				Log.d(TAG, e2.toString());
-				//throw e2;
+				throw e2;
 			}
-			return null;
 		}
 
 		public synchronized InputStream RequestGet(String url){

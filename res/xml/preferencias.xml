@@ -12,6 +12,8 @@
     <EditTextPreference android:enabled="false" android:key="unidad_medica" android:defaultValue="-1"/>
     <CheckBoxPreference android:key="es_instalacion_nueva" android:enabled="false" android:defaultValue="true"/><EditTextPreference android:enabled="false" android:key="fecha_ultima_sincronizacion"/>
     <CheckBoxPreference android:key="ultima_sincronizacion_exitosa" android:defaultValue="false" android:enabled="false"/>
+    <CheckBoxPreference android:key="requiere_actualizar_version_apk" android:defaultValue="false" android:enabled="false"/>
+    <EditTextPreference android:key="url_actualizacion_apk" android:defaultValue="http://www.servidor.com"/>
     
     
 
