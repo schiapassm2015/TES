@@ -58,7 +58,6 @@ public class Sincronizacion extends Fragment {
 					Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
 					return;
 				}
-				// PENDIENTE VERIFICAR SI HAY CONDICIONES PARA SINCRONIZAR
 				
 				//Confirmación
 				String mensaje ="¿En verdad desea sincronizar?";
@@ -72,9 +71,16 @@ public class Sincronizacion extends Fragment {
 				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						//Un dialogo vacío que la sincronización puede usar para mostrar resultados
 						AlertDialog.Builder dlgResultado=new AlertDialog.Builder(getActivity());
+						dlgResultado.setOnDismissListener(new DialogInterface.OnDismissListener() {
+							@Override
+							public void onDismiss(DialogInterface arg0) {
+								ActualizarInformacion();
+							}
+						});
 						dlgResultado.create();
-						
+
 						SincronizacionTask sinc = new SincronizacionTask(getActivity(), dlgResultado);
 						sinc.execute("");
 					}
@@ -83,7 +89,16 @@ public class Sincronizacion extends Fragment {
 			}
 		});
 		
+		ActualizarInformacion();
+		
 		return rootView;
+	}
+	
+	/**
+	 * Actualiza widgets con la información actual
+	 */
+	private void ActualizarInformacion(){
+		//TODO crear variables privadas de cada widget actualizable en clase y poner actualizarlos aquí
 	}
 		
 	

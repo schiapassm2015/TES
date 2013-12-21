@@ -1,6 +1,10 @@
 package com.siigs.tes.datos.tablas;
 
+import android.content.Context;
+import android.database.Cursor;
+
 import com.google.gson.annotations.SerializedName;
+import com.siigs.tes.datos.ProveedorContenido;
 
 /**
  * Esquema de tabla de base de datos
@@ -37,4 +41,9 @@ public class Permiso {
 	public int id_grupo;
 	public int id_controlador_accion;
 	public String fecha;
+	
+	public static Cursor getPermisosGrupo(Context context, int idGrupo){
+		return context.getContentResolver().query(ProveedorContenido.PERMISO_CONTENT_URI, 
+				null, ID_GRUPO + "="+idGrupo, null, null);
+	}
 }

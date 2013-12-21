@@ -4,14 +4,24 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
+import com.siigs.tes.controles.ContenidoControles;
 import com.siigs.tes.datos.DatosUtil;
+import com.siigs.tes.datos.tablas.Permiso;
+import com.siigs.tes.datos.tablas.Usuario;
+import com.siigs.tes.datos.tablas.UsuarioInvitado;
 
+import android.app.AlertDialog.Builder;
 import android.app.Application;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.CalendarView;
@@ -37,6 +47,8 @@ public class TesAplicacion extends Application {
 	private final static String FECHA_ULTIMA_SINCRONIZACION = "fecha_ultima_sincronizacion";
 	private final static String REQUIERE_ACTUALIZAR_VERSION_APK = "requiere_actualizar_version_apk";
 	private final static String URL_ACTUALIZACION_APK = "url_actualizacion_apk";
+
+	private Sesion sesion = null; //La sesión de uso
 	
 	@Override
 	public void onCreate() {
@@ -141,7 +153,7 @@ public class TesAplicacion extends Application {
 		SharedPreferences.Editor editor = preferencias.edit();
 		editor.putBoolean(REQUIERE_ACTUALIZAR_VERSION_APK, valor);
 		editor.apply();
-		Log.d(TAG, "Cambiado requiere actualizar APK a:"+valor);
+		Log.i(TAG, "Cambiado requiere actualizar APK a:"+valor);
 	}
 	
 	public String getUrlActualizacionApk(){
@@ -153,6 +165,42 @@ public class TesAplicacion extends Application {
 		editor.apply();
 		Log.d(TAG, "Cambiado url actualización APK a:"+url);
 	}
+	
+	/**
+	 * Valida si se requiere actualizar el apk y en tal caso muestra el mensaje apropiado
+	 * usando Builder dialogo.
+	 * Inicia 2 Intent, el primero para mandar un mensaje a la actividad principal pidiéndole
+	 * cerrar la sesión de usuario. Dicha actividad valida este mensaje usando getIntent()
+	 * 
+	 * El segundo Intent inicia el navegador para ir al URL de actualización.
+	 * @param dialogo
+	 */
+	public void ValidarRequiereActualizarApk(Builder dialogo){
+		if(getRequiereActualizarApk()){
+			dialogo.setMessage("Esta aplicación requiere actualizarse. " +
+					"Puede presionar 'Actualizar' para ser enviado a la página de actualización");
+			
+			dialogo.setPositiveButton(R.string.actualizar, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Intent i = getBaseContext().getPackageManager()
+				             .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+					i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					i.putExtra(PrincipalActivity.FORZAR_CIERRE_SESION_USUARIO, true);
+					startActivity(i);
+					
+					// Envía a la página de actualización
+					i = new Intent(Intent.ACTION_VIEW);
+					i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					i.setData(Uri.parse(getUrlActualizacionApk()));
+					startActivity(i);
+				}
+			});
+		}
+		
+		dialogo.show();
+	}
+	
 	
 	public String getFechaUltimaSincronizacion(){
 		String fecha = preferencias.getString(FECHA_ULTIMA_SINCRONIZACION, "2000-01-01 00:00:00");
@@ -180,5 +228,36 @@ public class TesAplicacion extends Application {
 		Log.d(TAG, "Cambiada última sincronización a:"+salida);
 	}
 	
+	/**
+	 * Genera una nueva sesión para usuario normal
+	 * @param usuario
+	 * @param invitado
+	 */
+	public void IniciarSesion(int idUsuario){
+		Usuario usuario = Usuario.getUsuarioConId(this, idUsuario);
+		Cursor cur = Permiso.getPermisosGrupo(this, usuario.id_grupo);
+		List<Permiso> permisos = DatosUtil.ObjetosDesdeCursor(cur, Permiso.class);
+		cur.close();
+		this.sesion = new Sesion(usuario, null, permisos); //Asigna nueva sesión
 		
+		//Actualiza las listas usadas para crear los submenús izquierdos y menú superior
+		ContenidoControles.RecargarControles(permisos);
+	}
+	public void IniciarSesionInvitado(int idInvitado){
+		UsuarioInvitado invitado = UsuarioInvitado.getUsuarioInvitadoConId(this, idInvitado);
+		Usuario usuario = Usuario.getUsuarioConId(this, invitado.id_usuario_creador);
+		Cursor cur = Permiso.getPermisosGrupo(this, UsuarioInvitado.ID_GRUPO);
+		List<Permiso> permisos = DatosUtil.ObjetosDesdeCursor(cur, Permiso.class);
+		cur.close();
+		this.sesion = new Sesion(usuario, invitado, permisos);
+		
+		//Actualiza las listas usadas para crear los submenús izquierdos y menú superior
+		ContenidoControles.RecargarControles(permisos);
+	}
+	public void CerrarSesion(){
+		//Registrar status relevantes
+		this.sesion = null;
+	}
+	public boolean haySesion(){return this.sesion != null;}
+	public Sesion getSesion(){return this.sesion;}
 }

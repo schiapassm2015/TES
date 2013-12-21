@@ -41,5 +41,5 @@ public class ControlVacuna {
 	public String fecha;
 	public int id_asu_um;
 	public String codigo_barras;
-	//id_invitado NO se envía en JSON
+	public transient Integer id_invitado; //transient pues no se envía en JSON
 }

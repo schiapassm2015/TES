@@ -2,10 +2,13 @@
 <resources>
 
     <string name="app_name">TES</string>
+    <string name="caracteres_permitidos">abcdefghijklmnñopqrstuvwxyz0123456789 ABCDEFGHIJKLMNÑOPQRSTUVWXYZáéíóúÁÉÍÓÚüÜ\'</string>
     <string name="title_seccion_detail">Seccion Detail</string>
     <string name="acerque_tes">Acerque la TES al lector</string>
     <string name="cancelar">Cancelar</string>
     <string name="ayuda">Ayuda</string>
+    <string name="usuario">Usuario</string>
+    <string name="invitado">Invitado</string>
     
     <string name="nombre">Nombre</string>
     <string name="curp">Curp</string>
@@ -41,6 +44,8 @@
     <string name="atencion">Atención</string>
     <string name="censo_nominal">Censo Nominal</string>
     <string name="notificaciones">Notificaciones</string>
+    <string name="invitados">Invitados</string>
+    <string name="esquemas">Esquemas</string>
     <string name="sincronizacion">Sincronización</string>
     <string name="configuracion">Configuración</string>
     <string name="cerrar_sesion">Cerrar Sesión</string>

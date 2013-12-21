@@ -44,5 +44,5 @@ public class ControlNutricional {
 	public double peso;
 	public int altura;
 	public int talla;
-	//id_invitado NO se envía en JSON
+	public transient Integer id_invitado; //transient pues no se envía en JSON
 }

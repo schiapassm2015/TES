@@ -4,29 +4,22 @@ import java.util.List;
 import java.util.UUID;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.siigs.tes.controles.ContenidoControles;
-import com.siigs.tes.datos.BaseDatos;
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
-import com.siigs.tes.datos.SincronizacionTask;
 import com.siigs.tes.datos.tablas.ControlVacuna;
-import com.siigs.tes.datos.tablas.Grupo;
 import com.siigs.tes.datos.tablas.Persona;
-import com.siigs.tes.datos.tablas.Usuario;
+import com.siigs.tes.datos.tablas.UsuarioInvitado;
 
 /**
  * A list fragment representing a list of {@link ItemControl}. This fragment also supports
@@ -43,8 +36,9 @@ public class PrincipalFragment extends ListFragment {
 	 * The serialization (saved instance state) Bundle key representing the
 	 * activated item position. Only used on tablets.
 	 */
-	private static final String STATE_ACTIVATED_POSITION = "activated_position";
-
+	private static final String ESTADO_ACTIVATED_POSITION = "activated_position";
+	private static final String ESTADO_ESCONDIDO = "escondido";
+	
 	/**
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
@@ -114,6 +108,7 @@ Log.i("Lista", "uuid:"+uuid+" en bytes:"+hex.length+ " decodificado:"+dec+" son 
 
 		//Lista vacía
 		LlenarLista(new java.util.ArrayList<ContenidoControles.ItemControl>());
+		
 	}
 	
 	public static byte[] hexStringToByteArray(String cadena) {
@@ -168,6 +163,13 @@ Log.i("Lista", "uuid:"+uuid+" en bytes:"+hex.length+ " decodificado:"+dec+" son 
 		cr.insert(ProveedorContenido.CONTROL_VACUNA_CONTENT_URI, valores);
 		
 		try {
+			UsuarioInvitado invitado = new UsuarioInvitado();
+			invitado.nombre="nuevo2";invitado.id_usuario_creador=4;invitado.fecha_creacion=aplicacion.getFechaUltimaSincronizacion();
+			invitado.activo=1;
+			ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(invitado);
+			cv.remove(UsuarioInvitado.ID_INVITADO);
+			cr.insert(ProveedorContenido.USUARIO_INVITADO_CONTENT_URI, cv  );
+			
 			Cursor res = cr.query(ProveedorContenido.PERSONA_CONTENT_URI, null, null, null, null);
 			while(res.moveToNext()){
 				Persona p =DatosUtil.ObjetoDesdeCursor( res, Persona.class);
@@ -213,33 +215,19 @@ Log.i("Lista", "uuid:"+uuid+" en bytes:"+hex.length+ " decodificado:"+dec+" son 
 		super.onViewCreated(view, savedInstanceState);
 
 		// Restore the previously serialized activated item position.
-		if (savedInstanceState != null
-				&& savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-			setActivatedPosition(savedInstanceState
-					.getInt(STATE_ACTIVATED_POSITION));
+		if (savedInstanceState != null){
+			if(savedInstanceState.containsKey(ESTADO_ACTIVATED_POSITION))
+				setActivatedPosition(savedInstanceState.getInt(ESTADO_ACTIVATED_POSITION));
+			
+			if(savedInstanceState.containsKey(ESTADO_ESCONDIDO)){
+				if(savedInstanceState.getBoolean(ESTADO_ESCONDIDO))
+					getFragmentManager().beginTransaction().show(this).commit();
+				else
+					getFragmentManager().beginTransaction().hide(this).commit();
+			}
 		}
 	}
 	
-	
-	@Override
-	/**
-	 * NOTA: Sobreescrito solo para login. Si esto se mantiene así, investigar
-	 * posibilidad de pasar este código a onViewCreated()
-	 */
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		
-		
-		//Por default pedimos una TES al usuario en un diálogo modal
-		Login login=new Login();
-		login.setTargetFragment(this, DialogoTesLogin.REQUEST_CODE);
-		login.show(getFragmentManager(),
-						//.beginTransaction().setCustomAnimations(android.R.animator.fade_out, android.R.animator.fade_in), 
-				DialogoTesLogin.TAG);
-		//Este diálogo avisará su fin en onActivityResult()
-		
-		return super.onCreateView(inflater, container, savedInstanceState);
-	}
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -282,9 +270,11 @@ Log.i("Lista", "uuid:"+uuid+" en bytes:"+hex.length+ " decodificado:"+dec+" son 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+		outState.putBoolean(ESTADO_ESCONDIDO, this.isHidden());
+		
 		if (mActivatedPosition != ListView.INVALID_POSITION) {
 			// Serialize and persist the activated item position.
-			outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+			outState.putInt(ESTADO_ACTIVATED_POSITION, mActivatedPosition);
 		}
 	}
 

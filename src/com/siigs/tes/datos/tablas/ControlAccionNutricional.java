@@ -38,5 +38,5 @@ public class ControlAccionNutricional {
 	public int id_accion_nutricional;
 	public String fecha;
 	public int id_asu_um;
-	//id_invitado NO se manda por JSON
+	public transient Integer id_invitado; //transient pues no se envía en JSON
 }

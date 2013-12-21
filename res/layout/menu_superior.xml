@@ -41,6 +41,11 @@
 		        android:text="@string/notificaciones" />
 		    
 		    <TextView
+		        android:id="@+id/mnEsquemas"
+		        style="@style/boton_menu_superior"
+		        android:text="@string/esquemas" />
+		    
+		    <TextView
 		        android:id="@+id/mnSincronizacion"
 		        style="@style/boton_menu_superior"
 		        android:text="@string/sincronizacion" />
@@ -49,6 +54,11 @@
 		        android:id="@+id/mnConfiguracion" 
 		        style="@style/boton_menu_superior"
 		        android:text="@string/configuracion" />
+		    
+		    <TextView
+		        android:id="@+id/mnInvitados" 
+		        style="@style/boton_menu_superior"
+		        android:text="@string/invitados" />
 		    
 		    <TextView
 		        android:id="@+id/mnCerrar"

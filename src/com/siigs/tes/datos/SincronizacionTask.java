@@ -2,6 +2,7 @@ package com.siigs.tes.datos;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -163,20 +164,10 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 		this.dlgResultado.setMessage(resultado);
 		
 		if(aplicacion.getRequiereActualizarApk()){
-			this.dlgResultado.setMessage("Esta aplicación requiere actualizarse. " +
-					"Puede presionar 'Actualizar' para ser enviado a la página de actualización");
-			this.dlgResultado.setPositiveButton(R.string.actualizar, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// Envía a la página de actualización
-					Intent i = new Intent(Intent.ACTION_VIEW);
-					i.setData(Uri.parse(aplicacion.getUrlActualizacionApk()));
-					invocador.startActivity(i);
-				}
-			}).setNegativeButton(android.R.string.cancel, null);
+			aplicacion.ValidarRequiereActualizarApk(dlgResultado);
+		}else{
+			this.dlgResultado.show();
 		}
-		this.dlgResultado.show();
-		
 	}
 
 	/**
@@ -199,7 +190,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	 * @throws Exception 
 	 */
 	protected synchronized void SincronizacionTotal() throws Exception{
-		aplicacion.setUrlSincronizacion("http://10.5.4.27/tes/servicios2/prueba");///////BORRRRRRARRRR
+		aplicacion.setUrlSincronizacion("http://172.28.7.144/tes/servicios/prueba");///////BORRRRRRARRRR
 		
 		boolean esNueva= this.aplicacion.getEsInstalacionNueva();
 
@@ -214,8 +205,10 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 		}else{
 			String ultimaSinc = this.aplicacion.getFechaUltimaSincronizacion();
 			AccionEnviarCambiosServidor(idSesion, ultimaSinc);
-			if(!this.aplicacion.getRequiereActualizarApk())
+			if(!this.aplicacion.getRequiereActualizarApk()){
+				BorrarDatosAntesSinc();
 				AccionRecibirActualizaciones(idSesion);
+			}
 		}
 		this.aplicacion.setFechaUltimaSincronizacion();
  	}
@@ -393,7 +386,12 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 
         publishProgress("Solicitando actualizaciones de datos");
 		InputStream stream = webHelper.RequestStreamPost(aplicacion.getUrlSincronizacion(), parametros);
-		
+FileOutputStream fsalida = contexto.openFileOutput("descarga.json", 0);//TODO Borrar estas líneas
+final byte[] buffer = new byte[1024];int read;
+while ((read = stream.read(buffer)) != -1)
+    fsalida.write(buffer, 0, read);
+fsalida.flush();fsalida.close();
+stream = contexto.openFileInput("descarga.json");
 		try {
 			InterpretarDatosServidor(stream);
 			
@@ -458,7 +456,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 							cr.update(uri, fila, Grupo.ID+"="+grupo._id,null);
 					}
 					reader.endArray();
-					
+
 				}else if(atributo.equalsIgnoreCase(Usuario.NOMBRE_TABLA)){
 					publishProgress("Interpretando Usuarios");
 					reader.beginArray();
@@ -822,14 +820,28 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 					}
 					reader.endArray();
 					
+				}else if(atributo.equalsIgnoreCase(EsquemaIncompleto.NOMBRE_TABLA)){
+					publishProgress("Interpretando Esquemas incompletos");
+					reader.beginArray();
+					while(reader.hasNext()){
+						EsquemaIncompleto esquema = gson.fromJson(reader, EsquemaIncompleto.class);
+						fila = DatosUtil.ContentValuesDesdeObjeto(esquema);
+						uri = ProveedorContenido.ESQUEMA_INCOMPLETO_CONTENT_URI;
+						cr.insert(uri, fila); //No hay updates en caso de haber repetidos (tabla debería estar vacía antes)
+					}
+					reader.endArray();
+					
 				}
 			}//fin while reader.hasNext			
 			
+			//reader.endObject();
 			reader.close();
 		}catch(UnsupportedEncodingException e) {
 			//Sucede al intentar leer UTF-8. Nunca debería suceder
 		}catch (IllegalAccessException e){
-			Log.d(TAG, "Error al generar ContentValues en tabla '"+atributo+"' "+e);
+			Exception ex = new Exception("Error al generar ContentValues en tabla '"+atributo+"' "+e);
+			Log.d(TAG, ex.toString());
+			throw ex;
 		}catch (IOException e) {
 			//Error de lectura json
 			Exception ex = new Exception("Error al leer json en atributo '"+atributo+"' "+e);
@@ -848,15 +860,20 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 		Uri uri = ProveedorContenido.ARBOL_SEGMENTACION_CONTENT_URI;
 		int registros=0; //contador de registros procesados
 		int limite=500; //límite para acumular bulkinsert (en instalación nueva) o reportar progreso (no nueva)
-		
+List<Integer> ultimaExtraida=new ArrayList<Integer>(); int indexActual=0; String indices=""; //TODO remover esta línea		
 		reader.beginArray();
 		
 		if(this.aplicacion.getEsInstalacionNueva()){
 			List<ArbolSegmentacion> lista = new ArrayList<ArbolSegmentacion>(limite);
 			
 			while(reader.hasNext()){
+				//TODO Remover líneas de try catch ingresadas para debugear un but
+				try{
 				lista.add((ArbolSegmentacion) gson.fromJson(reader, ArbolSegmentacion.class));
-				
+				ultimaExtraida.add(lista.get(indexActual++)._id); if(ultimaExtraida.size()>5)ultimaExtraida.remove(0);
+				}catch(com.google.gson.JsonSyntaxException ex){
+					indices="";for(Integer i : ultimaExtraida)indices+=i+", ";indices+="al final";
+					Log.d(TAG,"últimas ramas leídas exitosamente tienen id:"+indices+" Tronó al leer rama #"+indexActual+". Después el error fue "+ex);throw ex;}
 				if(lista.size()==limite || !reader.hasNext()){
 					ContentValues[] filas = new ContentValues[lista.size()];
 					publishProgress("Generandoo "+lista.size()+" ramas");
@@ -884,7 +901,15 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 		
 		reader.endArray();
 	}//fin InterpretarArbolSegmentacion
-		
+	
+	/**
+	 * Algunos datos deben vaciarse/borrarse antes de recibir datos del servidor. Aquí se borran esos datos
+	 */
+	private void BorrarDatosAntesSinc(){
+		ContentResolver cr = contexto.getContentResolver();
+		cr.delete(ProveedorContenido.ESQUEMA_INCOMPLETO_CONTENT_URI, null, null);
+		cr.delete(ProveedorContenido.PENDIENTES_TARJETA_CONTENT_URI, null, null);
+	}
 	
 	
 	/**
@@ -1093,7 +1118,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	        parametros.add(new BasicNameValuePair(PARAMETRO_ACCION, ACCION_ENVIAR_SERVIDOR));
 	        parametros.add(new BasicNameValuePair(PARAMETRO_DATOS, datosSalida.toString() ));
 
-///////////////////////TES_PENDIENTES_TARJETA..... PENDIENTE
+///////////////////////TODO TES_PENDIENTES_TARJETA..... PENDIENTE
 	        
 	        publishProgress("Enviando a servidor datos de "+datosSalida.length()+" tablas");
 			String json = webHelper.RequestPost(aplicacion.getUrlSincronizacion(), parametros);
@@ -1136,7 +1161,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 		this.aplicacion.setUrlActualizacionApk(urlActualizacion);
 	}
 		
-	private void GenerarAccionX(){
+	private void GenerarAccionX(){//TODO Borrar esta función
 		String jsonString="{\"llave_sesion\":\"milla'veSe,sion\",\"unidad_medica\":321,\"atributo2\":\"\",\"atributo3\":\"abc\",\"catalogo1\":[{\"id\":789,\"campo2\":\"qwe\",\"campo3\":\"valCampo3\"},{\"id\":456,\"campo2\":\"txt\",\"campo3\":\"bvc\"}],\"catalogo2\":[{\"id\":987,\"campo2\":\"poi\",\"campo3\":\"rfv\"},{\"id\":963,\"campo2\":\"kjh\",\"campo3\":\"olm\"}],\"catalogo3\":[{\"id\":741,\"campo2\":\"c3val2\",\"campo3\":\"c3val3\"},{\"id\":147,\"campo2\":\"c3f2v2\",\"campo3\":\"c3f2v3\"}]}";
 		
 		try {

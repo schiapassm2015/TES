@@ -37,9 +37,13 @@ public class ControlActivity extends FragmentActivity {
 			// Create the detail fragment and add it to the activity
 			// using a fragment transaction.
 			Bundle arguments = new Bundle();
-			arguments.putString(ControlFragment.ARG_ITEM_ID, getIntent()
-					.getStringExtra(ControlFragment.ARG_ITEM_ID));
+			//arguments.putString(ControlFragment.ARG_ITEM_ID, getIntent()
+			//		.getStringExtra(ControlFragment.ARG_ITEM_ID));
+			String clase = getIntent().getStringExtra("clase");
+			
+			//leer dinámicamente fragmento clase en vez de este estático de prueba
 			ControlFragment fragment = new ControlFragment();
+			
 			fragment.setArguments(arguments);
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.seccion_detail_container, fragment).commit();

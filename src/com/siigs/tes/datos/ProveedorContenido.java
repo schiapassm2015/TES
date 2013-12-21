@@ -239,6 +239,12 @@ public class ProveedorContenido extends ContentProvider {
 	public static final Uri REGLA_VACUNA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	        + "/" + REGLA_VACUNA_PATH);
 	
+	private static final String ESQUEMA_INCOMPLETO_PATH = EsquemaIncompleto.NOMBRE_TABLA;
+	public static final int ESQUEMA_INCOMPLETO_TODOS = 1700;
+	public static final int ESQUEMA_INCOMPLETO_ID = 1701;
+	public static final Uri ESQUEMA_INCOMPLETO_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + ESQUEMA_INCOMPLETO_PATH);
+	
 	/*
 	public static final String CONTENT_ITEM_TYPE = 
 			ContentResolver.CURSOR_ITEM_BASE_TYPE + "/persona";
@@ -343,6 +349,9 @@ public class ProveedorContenido extends ContentProvider {
 	    
 	    sURIMatcher.addURI(AUTHORITY, REGLA_VACUNA_PATH, REGLA_VACUNA_TODOS);
 	    sURIMatcher.addURI(AUTHORITY, REGLA_VACUNA_PATH + "/#", REGLA_VACUNA_ID);
+	    
+	    sURIMatcher.addURI(AUTHORITY, ESQUEMA_INCOMPLETO_PATH, ESQUEMA_INCOMPLETO_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, ESQUEMA_INCOMPLETO_PATH + "/#", ESQUEMA_INCOMPLETO_ID);
 	}
 	
 	
@@ -677,7 +686,15 @@ public class ProveedorContenido extends ContentProvider {
 		case ProveedorContenido.REGLA_VACUNA_TODOS:
 			builder.setTables(ReglaVacuna.NOMBRE_TABLA);// No existe filtro
 			break;
-			
+		
+		case ProveedorContenido.ESQUEMA_INCOMPLETO_ID:
+			builder.setTables(EsquemaIncompleto.NOMBRE_TABLA);
+			//builder.appendWhere(EsquemaIncompleto.ID + "=?");
+			//parametros=new String[]{uri.getLastPathSegment()};
+			break;			
+		case ProveedorContenido.ESQUEMA_INCOMPLETO_TODOS:
+			builder.setTables(EsquemaIncompleto.NOMBRE_TABLA);// No existe filtro
+			break;
 		default:
 			throw new IllegalArgumentException("Uri desconocido "+tipoUri);
 		}
@@ -694,10 +711,142 @@ public class ProveedorContenido extends ContentProvider {
 	}
 	
 	@Override
-	public int delete(Uri uri, String arg1, String[] arg2) {
-		// TODO Auto-generated method stub
+	public int delete(Uri uri, String selection, String[] selectionArgs) {
+		int tipoUri= sURIMatcher.match(uri);
+		SQLiteDatabase db=this.basedatos.getWritableDatabase();
+		int afectadas=0;
+		//helpers
+		String tabla="";
+		String where="1";
+		//id solicitado a modificar
+		String id= uri.getLastPathSegment();
+		if(!TextUtils.isEmpty(id))
+			id = DatabaseUtils.sqlEscapeString(id);
+		
+		switch(tipoUri){
+		case ProveedorContenido.PERSONA_TODOS:
+			tabla=Persona.NOMBRE_TABLA;
+			break;
+		//case ProveedorContenido.PERSONA_ID:
+		//	tabla=Persona.NOMBRE_TABLA;
+		//	where = Persona.ID + "=" + id;
+		//	break;
+		case ProveedorContenido.USUARIO_TODOS:
+			tabla=Usuario.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.USUARIO_INVITADO_TODOS:
+			tabla=UsuarioInvitado.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.TUTOR_TODOS:
+			tabla=Tutor.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.GRUPO_TODOS:
+			tabla=Grupo.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PERMISO_TODOS:
+			tabla=Permiso.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.NOTIFICACION_TODOS:
+			tabla=Notificacion.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.TIPO_SANGUINEO_TODOS:
+			tabla=TipoSanguineo.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.VACUNA_TODOS:
+			tabla=Vacuna.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ACCION_NUTRICIONAL_TODOS:
+			tabla=AccionNutricional.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.IRA_TODOS:
+			tabla=Ira.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.EDA_TODOS:
+			tabla=Eda.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONSULTA_TODOS:
+			tabla=Consulta.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ALERGIA_TODOS:
+			tabla=Alergia.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.AFILIACION_TODOS:
+			tabla=Afiliacion.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.NACIONALIDAD_TODOS:
+			tabla=Nacionalidad.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.OPERADORA_CELULAR_TODOS:
+			tabla=OperadoraCelular.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PENDIENTES_TARJETA_TODOS:
+			tabla=PendientesTarjeta.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ARBOL_SEGMENTACION_TODOS:
+			tabla=ArbolSegmentacion.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PERSONA_TUTOR_TODOS:
+			tabla=PersonaTutor.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ANTIGUA_UM_TODOS:
+			tabla=AntiguaUM.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ANTIGUO_DOMICILIO_TODOS:
+			tabla=AntiguoDomicilio.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.REGISTRO_CIVIL_TODOS:
+			tabla=RegistroCivil.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PERSONA_ALERGIA_TODOS:
+			tabla=PersonaAlergia.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.PERSONA_AFILIACION_TODOS:
+			tabla=PersonaAfiliacion.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_VACUNA_TODOS:
+			tabla=ControlVacuna.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_IRA_TODOS:
+			tabla=ControlIra.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_EDA_TODOS:
+			tabla=ControlEda.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_ACCION_NUTRICIONAL_TODOS:
+			tabla=ControlAccionNutricional.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_NUTRICIONAL_TODOS:
+			tabla=ControlNutricional.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.CONTROL_CONSULTA_TODOS:
+			tabla=ControlConsulta.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.REGLA_VACUNA_TODOS:
+			tabla=ReglaVacuna.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ESQUEMA_INCOMPLETO_TODOS:
+			tabla=EsquemaIncompleto.NOMBRE_TABLA;
+			break;
+			
+		default:
+			throw new IllegalArgumentException("Uri desconocido "+uri);
+		}//fin casos
+		
+		if(!TextUtils.isEmpty(selection))
+			where += " and " + selection;
+		
+		//actualizamos registros
+		try{
+			afectadas = db.delete(tabla, where, selectionArgs);
+			if(afectadas>0)
+				this.getContext().getContentResolver().notifyChange(uri, null);
+			return afectadas;
+		}catch(SQLiteConstraintException ex){
+			Log.i(TAG, "Error de SQLite haciendo DELETE de uri "+uri+ ", con where= "+where);
+		}
+		
 		return 0;
-	}
+	}//fin delete
 
 	@Override
 	public String getType(Uri uri) {
@@ -809,6 +958,9 @@ public class ProveedorContenido extends ContentProvider {
 			break;
 		case ProveedorContenido.REGLA_VACUNA_TODOS:
 			tabla=ReglaVacuna.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ESQUEMA_INCOMPLETO_TODOS:
+			tabla=EsquemaIncompleto.NOMBRE_TABLA;
 			break;
 			
 		default:
@@ -953,6 +1105,9 @@ public class ProveedorContenido extends ContentProvider {
 			break;
 		case ProveedorContenido.REGLA_VACUNA_TODOS:
 			tabla=ReglaVacuna.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ESQUEMA_INCOMPLETO_TODOS:
+			tabla=EsquemaIncompleto.NOMBRE_TABLA;
 			break;
 			
 		default:

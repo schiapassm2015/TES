@@ -9,8 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.view.View;
-import android.widget.Toast;
+import android.util.Log;
 
 /**
  * An activity representing a list of Secciones. This activity has different
@@ -31,6 +30,9 @@ import android.widget.Toast;
 public class PrincipalActivity extends FragmentActivity implements
 		PrincipalFragment.Callbacks {
 
+	public final static String TAG = PrincipalActivity.class.getSimpleName();
+	public final static String FORZAR_CIERRE_SESION_USUARIO = "flag_forzar_cierre_sesion_usuario";
+	
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
 	 * device.
@@ -39,12 +41,16 @@ public class PrincipalActivity extends FragmentActivity implements
 	
 	private PrincipalFragment lfMenuIzquierdo;
 	private MenuSuperior miMenuSuperior;
+	private TesAplicacion aplicacion;
 
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_principal_onepane);
 
+		this.aplicacion = (TesAplicacion)getApplication();
+		
 		if (findViewById(R.id.seccion_detail_container) != null) {
 			// The detail container view will be present only in the
 			// large-screen layouts (res/values-large and
@@ -59,7 +65,7 @@ public class PrincipalActivity extends FragmentActivity implements
 			lfMenuIzquierdo.setActivateOnItemClick(true);
 			
 			//Escuchamos seleccion de menú superior
-			MenuSuperior.OnSeleccionarMenuListener listener=new MenuSuperior.OnSeleccionarMenuListener() {
+			MenuSuperior.OnAccionMenuListener listener=new MenuSuperior.OnAccionMenuListener() {
 				@Override
 				public void onSeleccionarMenu(List<ItemControl> lista) {
 					if(!lfMenuIzquierdo.LlenarLista(lista))
@@ -79,17 +85,54 @@ public class PrincipalActivity extends FragmentActivity implements
 						.show(lfMenuIzquierdo).commit();
 					}
 				}//fin onSeleccionarMenu
+				
+				@Override 
+				public void onIniciarSesionUsuario(int idUsuario, boolean esInvitado){
+					if(esInvitado){
+						aplicacion.IniciarSesionInvitado(idUsuario);
+						miMenuSuperior.setTitulo(aplicacion.getSesion().getUsuarioInvitado().nombre);
+					}else {
+						aplicacion.IniciarSesion(idUsuario);
+						miMenuSuperior.setTitulo(aplicacion.getSesion().getUsuario().nombre);
+					}
+				}
+				@Override
+				public void onClickCerrarSesionUsuario(){
+					CerrarSesionUsuario();
+				}
 			};
 			miMenuSuperior=(MenuSuperior)getSupportFragmentManager()
 				.findFragmentById(R.id.menu_superior);
-			miMenuSuperior.setOnSeleccionarMenuListener(listener);
-		}
+			miMenuSuperior.setOnAccionMenuListener(listener);
 
-		// TODO: If exposing deep links into your app, handle intents here.
+			//Si NO es cambio de orientación y NO hay sesión
+			if(savedInstanceState==null && aplicacion.getSesion()==null) {
+				miMenuSuperior.PedirLoginUsuario();
+			}
+		}//fin si es doble panel
+
 		
+		//Si se le pide cerrar el usuario ahora... (solo pasaría desde TesAplicacion.ValidarRequiereActualizarApk() )
+		if(getIntent()!=null && getIntent().hasExtra(FORZAR_CIERRE_SESION_USUARIO))
+				if(getIntent().getBooleanExtra(FORZAR_CIERRE_SESION_USUARIO, false))
+					CerrarSesionUsuario();
 	}//fin onCreate
 	
 
+	/**
+	 * Manda a cerrar la sesión actual en curso
+	 */
+	private void CerrarSesionUsuario(){
+		//if(aplicacion.getSesion()==null)return;
+		
+		Log.i(TAG, "Cierra sesión");
+		aplicacion.CerrarSesion();
+		getSupportFragmentManager().beginTransaction().hide(lfMenuIzquierdo).commit();
+		getSupportFragmentManager().beginTransaction().replace(
+				R.id.seccion_detail_container, new ControlFragment()).commit();
+		miMenuSuperior.PedirLoginUsuario();
+	}
+	
 
 	/**
 	 * Callback method from {@link PrincipalFragment.Callbacks} indicating
@@ -122,9 +165,8 @@ public class PrincipalActivity extends FragmentActivity implements
 		} else {
 			// In single-pane mode, simply start the detail activity
 			// for the selected item ID.
-			Intent detailIntent = new Intent(this, 
-					ContenidoControles.CONTROLES_TODOS_MAP.get(id).clase);
-			detailIntent.putExtra(ControlFragment.ARG_ITEM_ID, id);
+			Intent detailIntent = new Intent(this, ControlActivity.class);
+			detailIntent.putExtra("clase", ContenidoControles.CONTROLES_TODOS_MAP.get(id).clase.getName());
 			startActivity(detailIntent);
 		}
 	}

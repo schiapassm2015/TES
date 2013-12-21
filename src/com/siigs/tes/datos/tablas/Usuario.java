@@ -2,8 +2,10 @@ package com.siigs.tes.datos.tablas;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
 import com.google.gson.annotations.SerializedName;
+import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
 
 /**
@@ -59,6 +61,19 @@ public class Usuario {
 	
 	public static Cursor getUsuariosActivos(Context context){
 		return context.getContentResolver().query(ProveedorContenido.USUARIO_CONTENT_URI, 
-				null, "activo=1", null, NOMBRE_USUARIO + " asc");
+				null, ACTIVO + "=1", null, NOMBRE_USUARIO + " asc");
+	}
+	
+	public static Usuario getUsuarioConId(Context context, int id){
+		Uri uri = Uri.withAppendedPath(ProveedorContenido.USUARIO_CONTENT_URI, String.valueOf(id));
+		Cursor cur = context.getContentResolver().query(uri, null, null, null, null);
+		cur.moveToNext(); //debería haber resultados
+		Usuario salida = null;
+		try {
+			salida = DatosUtil.ObjetoDesdeCursor(cur, Usuario.class);
+		} catch (InstantiationException e) {
+		} catch (IllegalAccessException e) {}
+		cur.close();
+		return salida;
 	}
 }
