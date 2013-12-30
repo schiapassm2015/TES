@@ -32,7 +32,8 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import com.siigs.tes.R;
+import com.google.gson.stream.JsonToken;
+
 import com.siigs.tes.TesAplicacion;
 import com.siigs.tes.datos.tablas.*;
 
@@ -42,8 +43,6 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -94,9 +93,11 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	private final static int HTTP_STATUS_OK = 200;
 	private final static int HTTP_STATUS_NOT_FOUND = 404;
 	
+	private final static String ARCHIVO_JSON = "descarga.json";
+	
 	
 	private ProgressDialog pdProgreso;
-	private AlertDialog.Builder dlgResultado; //guarda dialogo que visualizará salida
+	private AlertDialog dlgResultado; //guarda dialogo que visualizará salida
 	private Context contexto;
 	private Activity invocador;
 	private TesAplicacion aplicacion;
@@ -104,7 +105,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	private HttpHelper webHelper;
 		
 	
-	public SincronizacionTask(Activity invocador, AlertDialog.Builder resultado){
+	public SincronizacionTask(Activity invocador, AlertDialog resultado){
 		super();
 		this.invocador=invocador;
 		this.dlgResultado=resultado;
@@ -190,7 +191,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	 * @throws Exception 
 	 */
 	protected synchronized void SincronizacionTotal() throws Exception{
-		aplicacion.setUrlSincronizacion("http://172.28.7.144/tes/servicios/prueba");///////BORRRRRRARRRR
+		aplicacion.setUrlSincronizacion("http://192.168.3.14/tes/servicios/prueba");///////TODO BORRRRRRARRRR
 		
 		boolean esNueva= this.aplicacion.getEsInstalacionNueva();
 
@@ -309,6 +310,8 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 
         publishProgress("Solicitando primeros catálogos");
 		InputStream stream = webHelper.RequestStreamPost(aplicacion.getUrlSincronizacion(), parametros);
+
+		stream = GuardarAbrirStream(stream);
 		
 		try {
 			InterpretarDatosServidor(stream);
@@ -349,6 +352,8 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
         publishProgress("Solicitando primeros datos transaccionales");
 		InputStream stream = webHelper.RequestStreamPost(aplicacion.getUrlSincronizacion(), parametros);
 		
+		stream = GuardarAbrirStream(stream);
+		
 		try {
 			InterpretarDatosServidor(stream);
 			
@@ -386,12 +391,9 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 
         publishProgress("Solicitando actualizaciones de datos");
 		InputStream stream = webHelper.RequestStreamPost(aplicacion.getUrlSincronizacion(), parametros);
-FileOutputStream fsalida = contexto.openFileOutput("descarga.json", 0);//TODO Borrar estas líneas
-final byte[] buffer = new byte[1024];int read;
-while ((read = stream.read(buffer)) != -1)
-    fsalida.write(buffer, 0, read);
-fsalida.flush();fsalida.close();
-stream = contexto.openFileInput("descarga.json");
+		
+		stream = GuardarAbrirStream(stream);
+		
 		try {
 			InterpretarDatosServidor(stream);
 			
@@ -831,11 +833,20 @@ stream = contexto.openFileInput("descarga.json");
 					}
 					reader.endArray();
 					
+				}else{
+					//Se recibió algo que NO se puede interpretar (así pues mal formado)
+					//Se intentará leer esto que no comprendemos pero si hay error, saldrá esto de evidencia
+					atributo = "atributo NO ESPERADO "+atributo;
+					publishProgress("Interpretando " + atributo);
+					//Se intentará leer lo no reconocido
+					if(reader.hasNext())
+						reader.skipValue(); //Se salta valor, objeto o arreglo hasta terminarlo
 				}
-			}//fin while reader.hasNext			
+			}//fin while reader.hasNext
 			
 			//reader.endObject();
 			reader.close();
+			contexto.deleteFile(ARCHIVO_JSON);
 		}catch(UnsupportedEncodingException e) {
 			//Sucede al intentar leer UTF-8. Nunca debería suceder
 		}catch (IllegalAccessException e){
@@ -860,20 +871,14 @@ stream = contexto.openFileInput("descarga.json");
 		Uri uri = ProveedorContenido.ARBOL_SEGMENTACION_CONTENT_URI;
 		int registros=0; //contador de registros procesados
 		int limite=500; //límite para acumular bulkinsert (en instalación nueva) o reportar progreso (no nueva)
-List<Integer> ultimaExtraida=new ArrayList<Integer>(); int indexActual=0; String indices=""; //TODO remover esta línea		
+
 		reader.beginArray();
 		
 		if(this.aplicacion.getEsInstalacionNueva()){
 			List<ArbolSegmentacion> lista = new ArrayList<ArbolSegmentacion>(limite);
 			
 			while(reader.hasNext()){
-				//TODO Remover líneas de try catch ingresadas para debugear un but
-				try{
 				lista.add((ArbolSegmentacion) gson.fromJson(reader, ArbolSegmentacion.class));
-				ultimaExtraida.add(lista.get(indexActual++)._id); if(ultimaExtraida.size()>5)ultimaExtraida.remove(0);
-				}catch(com.google.gson.JsonSyntaxException ex){
-					indices="";for(Integer i : ultimaExtraida)indices+=i+", ";indices+="al final";
-					Log.d(TAG,"últimas ramas leídas exitosamente tienen id:"+indices+" Tronó al leer rama #"+indexActual+". Después el error fue "+ex);throw ex;}
 				if(lista.size()==limite || !reader.hasNext()){
 					ContentValues[] filas = new ContentValues[lista.size()];
 					publishProgress("Generandoo "+lista.size()+" ramas");
@@ -901,6 +906,38 @@ List<Integer> ultimaExtraida=new ArrayList<Integer>(); int indexActual=0; String
 		
 		reader.endArray();
 	}//fin InterpretarArbolSegmentacion
+	
+	/**
+	 * Guarda stream en disco. Cierra el stream original y regresa el archivo generado al principio
+	 * en un FileInputStream abierto y listo para consumirse
+	 * @param stream Stream a guardar en disco.
+	 * @return FileInputStream abierto y listo apuntando al archivo generado que contiene información de stream
+	 * @throws Exception
+	 */
+	private InputStream GuardarAbrirStream(InputStream stream) throws Exception{
+		FileOutputStream fsalida = contexto.openFileOutput(ARCHIVO_JSON, 0);
+		final byte[] buffer = new byte[1024];
+		int read;
+		int bloque = 100000, bloqueLeido=0 ;
+		try {
+			while ((read = stream.read(buffer)) != -1){
+			    fsalida.write(buffer, 0, read);
+			    bloqueLeido += read;
+			    if(bloqueLeido > bloque){
+			    	publishProgress("Descargando "+bloqueLeido + "bytes");
+			    	bloqueLeido=0;
+			    }
+			}
+			fsalida.flush();
+			fsalida.close();
+			stream.close();
+		} catch (IOException e) {
+			String desc = "Hubo un error al descargar stream a "+ARCHIVO_JSON;
+			Log.d(TAG, desc);
+			throw new Exception(desc, e);
+		}
+		return contexto.openFileInput(ARCHIVO_JSON);
+	}
 	
 	/**
 	 * Algunos datos deben vaciarse/borrarse antes de recibir datos del servidor. Aquí se borran esos datos

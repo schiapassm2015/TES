@@ -1,6 +1,5 @@
 package com.siigs.tes.datos.tablas;
 
-import com.google.gson.annotations.SerializedName;
 
 /**
  * Tabla interna que NO se envía a la nube

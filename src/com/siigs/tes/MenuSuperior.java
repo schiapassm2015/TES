@@ -150,11 +150,7 @@ public class MenuSuperior extends Fragment{
 		switch(view.getId()){
 		case R.id.mnAtencion:
 			//Por default pedimos una TES al usuario en un diálogo modal
-			DialogoTesLogin dialogo=new DialogoTesLogin();
-			dialogo.setTargetFragment(this, DialogoTesLogin.REQUEST_CODE);
-			dialogo.show(getFragmentManager(),
-					//.beginTransaction().setCustomAnimations(android.R.animator.fade_out, android.R.animator.fade_in), 
-					DialogoTesLogin.TAG);
+			DialogoTes.IniciarNuevo(this, DialogoTes.ModoOperacion.LOGIN);
 			//Este diálogo avisará su fin en onActivityResult()
 			break;
 		case R.id.mnCenso:
@@ -214,13 +210,11 @@ public class MenuSuperior extends Fragment{
 			ActualizarBotonesMenu(); //Quizás cambiaron permisos, así que actualiza
 			break;
 			
-		case DialogoTesLogin.REQUEST_CODE:			
-			if(resultCode==DialogoTesLogin.RESULT_OK){
+		case DialogoTes.REQUEST_CODE:			
+			if(resultCode==DialogoTes.RESULT_OK){
 				//procedimiento tes CORRECTA
 				miListener.onSeleccionarMenu(ContenidoControles.CONTROLES_ATENCION);
-			}else if(resultCode==DialogoTesLogin.RESULT_CANCELAR){/*NADA*/}
-			//String dato=data.getStringExtra("dato");
-			//Toast.makeText(getActivity(), "Tes recibido req:"+requestCode+" res:"+resultCode, Toast.LENGTH_SHORT).show();
+			}else if(resultCode==DialogoTes.RESULT_CANCELAR){/*NADA*/}
 			break;
 		}//fin switch
 	}

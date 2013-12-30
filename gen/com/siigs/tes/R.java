@@ -27,7 +27,8 @@ public final class R {
         public static final int gradiente_verde=0x7f020008;
         public static final int ic_launcher=0x7f020009;
         public static final int popup_ninepatch=0x7f02000a;
-        public static final int tarjeta=0x7f02000b;
+        public static final int selector_principalfragment=0x7f02000b;
+        public static final int tarjeta=0x7f02000c;
     }
     public static final class id {
         public static final int accion_agregar_control_nutricional=0x7f080008;
@@ -36,7 +37,7 @@ public final class R {
         public static final int accion_ver_datos_paciente=0x7f08000b;
         public static final int barra_botones=0x7f080035;
         public static final int barra_resultado=0x7f080038;
-        public static final int btnAcceder=0x7f080041;
+        public static final int btnAcceder=0x7f080042;
         public static final int btnActualizarAlergias=0x7f080022;
         public static final int btnActualizarDireccion=0x7f08001e;
         public static final int btnActualizarUM=0x7f080020;
@@ -48,14 +49,15 @@ public final class R {
         public static final int btnCerrar=0x7f080004;
         public static final int btnEscribirTes=0x7f080036;
         public static final int btnFiltrar=0x7f080026;
-        public static final int btnInvitado=0x7f080042;
+        public static final int btnInvitado=0x7f080043;
         public static final int btnSincronizar=0x7f080033;
         public static final int btnTodos=0x7f080025;
         public static final int chkBCG_U=0x7f08003b;
         public static final int contenedor_paneles=0x7f080003;
         public static final int grafica_linear=0x7f080007;
-        public static final int lblTitulo=0x7f080043;
-        public static final int lblUsuario=0x7f08003d;
+        public static final int imgIcono=0x7f08003c;
+        public static final int lblTitulo=0x7f080044;
+        public static final int lblUsuario=0x7f08003e;
         public static final int linea=0x7f080034;
         public static final int lsAlergias=0x7f080021;
         public static final int lsAlergiasActuales=0x7f080018;
@@ -63,26 +65,26 @@ public final class R {
         public static final int lvResultados=0x7f08002b;
         public static final int materno=0x7f080029;
         public static final int menu_superior=0x7f080002;
-        public static final int mnAtencion=0x7f080044;
-        public static final int mnCenso=0x7f080045;
-        public static final int mnCerrar=0x7f08004b;
-        public static final int mnConfiguracion=0x7f080049;
-        public static final int mnEsquemas=0x7f080047;
-        public static final int mnInvitados=0x7f08004a;
-        public static final int mnNotificaciones=0x7f080046;
-        public static final int mnSincronizacion=0x7f080048;
+        public static final int mnAtencion=0x7f080045;
+        public static final int mnCenso=0x7f080046;
+        public static final int mnCerrar=0x7f08004c;
+        public static final int mnConfiguracion=0x7f08004a;
+        public static final int mnEsquemas=0x7f080048;
+        public static final int mnInvitados=0x7f08004b;
+        public static final int mnNotificaciones=0x7f080047;
+        public static final int mnSincronizacion=0x7f080049;
         public static final int nombre=0x7f08002a;
         public static final int nombre_apellidos=0x7f080027;
         public static final int paterno=0x7f080028;
-        public static final int pnPassword=0x7f08003f;
-        public static final int seccion_detail=0x7f08003c;
+        public static final int pnPassword=0x7f080040;
+        public static final int seccion_detail=0x7f08003d;
         public static final int seccion_detail_container=0x7f080000;
         public static final int seccion_list=0x7f080001;
         public static final int spEdad=0x7f080024;
         public static final int spLocalidad=0x7f08001d;
         public static final int spSexo=0x7f080023;
         public static final int spUM=0x7f08001f;
-        public static final int spUsuario=0x7f08003e;
+        public static final int spUsuario=0x7f08003f;
         public static final int txtActualizacionesPacientes=0x7f080031;
         public static final int txtCP=0x7f080012;
         public static final int txtCalle=0x7f08001a;
@@ -98,7 +100,7 @@ public final class R {
         public static final int txtLocalidadRegistroCivil=0x7f080015;
         public static final int txtNombre=0x7f08000c;
         public static final int txtNumero=0x7f08001b;
-        public static final int txtPassword=0x7f080040;
+        public static final int txtPassword=0x7f080041;
         public static final int txtSangre=0x7f080010;
         public static final int txtSexo=0x7f08000f;
         public static final int txtTESactualizar=0x7f080032;
@@ -136,10 +138,11 @@ public final class R {
         public static final int dialogo_tes_guardar=0x7f03000a;
         public static final int dialogo_tes_login=0x7f03000b;
         public static final int fila_censo_nominal=0x7f03000c;
-        public static final int fragment_control=0x7f03000d;
-        public static final int login=0x7f03000e;
-        public static final int menu_superior=0x7f03000f;
-        public static final int temporal=0x7f030010;
+        public static final int fila_principalfragment=0x7f03000d;
+        public static final int fragment_control=0x7f03000e;
+        public static final int login=0x7f03000f;
+        public static final int menu_superior=0x7f030010;
+        public static final int temporal=0x7f030011;
     }
     public static final class string {
         public static final int acerque_tes=0x7f050003;

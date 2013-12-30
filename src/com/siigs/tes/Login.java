@@ -10,7 +10,7 @@ import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.SincronizacionTask;
 import com.siigs.tes.datos.tablas.Usuario;
 import com.siigs.tes.datos.tablas.UsuarioInvitado;
-import com.siigs.tes.ui.AdaptadorArrayGenerico;
+import com.siigs.tes.ui.AdaptadorArrayMultiTextView;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -62,8 +62,8 @@ public class Login extends DialogFragment {
 	private Usuario usuarioElegido; //El usuario escogido en spinner
 	private UsuarioInvitado invitadoElegido; //El invitado escogido en spinner
 	
-	private AdaptadorArrayGenerico<Usuario> adaptadorNormal;
-	private AdaptadorArrayGenerico<UsuarioInvitado> adaptadorInvitados;
+	private AdaptadorArrayMultiTextView<Usuario> adaptadorNormal;
+	private AdaptadorArrayMultiTextView<UsuarioInvitado> adaptadorInvitados;
 	
 	private TesAplicacion aplicacion;
 	
@@ -117,6 +117,11 @@ public class Login extends DialogFragment {
 			@Override
 			public void onClick(View v) {
 				if(!modoInvitado){
+					if(usuarioElegido == null){
+						Toast.makeText(getActivity(), "No ha elegido un usuario", Toast.LENGTH_SHORT).show();
+						return;
+					}
+					
 					//Validamos usuario normal
 					String clave = ((TextView)view.findViewById(R.id.txtPassword)).getText().toString();
 					if(usuarioElegido.clave.equals(clave)){
@@ -141,7 +146,7 @@ public class Login extends DialogFragment {
 		btnInvitado.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				setModoInvitado(true);Sincronizar();
+				setModoInvitado(true);
 			}
 		});
 		
@@ -214,7 +219,7 @@ public class Login extends DialogFragment {
 		Cursor cur = Usuario.getUsuariosActivos(getActivity());
 		List<Usuario> usuarios = DatosUtil.ObjetosDesdeCursor(cur, Usuario.class);
 		cur.close();
-		adaptadorNormal = new AdaptadorArrayGenerico<Usuario>(
+		adaptadorNormal = new AdaptadorArrayMultiTextView<Usuario>(
 				getActivity(), android.R.layout.simple_spinner_item, usuarios, 
 				new String[]{Usuario.NOMBRE_USUARIO}, new int[]{android.R.id.text1});
 		adaptadorNormal.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -222,7 +227,7 @@ public class Login extends DialogFragment {
 		cur = UsuarioInvitado.getUsuariosInvitadosActivos(getActivity());
 		List<UsuarioInvitado> invitados = DatosUtil.ObjetosDesdeCursor(cur, UsuarioInvitado.class);
 		cur.close();
-		adaptadorInvitados = new AdaptadorArrayGenerico<UsuarioInvitado>(
+		adaptadorInvitados = new AdaptadorArrayMultiTextView<UsuarioInvitado>(
 				getActivity(), android.R.layout.simple_spinner_item, invitados,
 				new String[]{UsuarioInvitado.NOMBRE}, new int[]{android.R.id.text1});
 		adaptadorInvitados.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -247,7 +252,7 @@ public class Login extends DialogFragment {
 	 * la instalación de la app es nueva Ó cuando requiere actualizar su apk.
 	 */
 	private void Sincronizar(){
-		AlertDialog.Builder dialogoAviso=new AlertDialog.Builder(getActivity());
+		AlertDialog dialogoAviso=new AlertDialog.Builder(getActivity()).create();
 		
 		if(aplicacion.getRequiereActualizarApk()){
 			aplicacion.ValidarRequiereActualizarApk(dialogoAviso);
@@ -263,14 +268,15 @@ public class Login extends DialogFragment {
 		txtUrl.setText(aplicacion.getUrlSincronizacion());
 		
 		
-		dialogoAviso.setMessage(mensaje)
-		.setView(txtUrl)
-		//.setNegativeButton(android.R.string.cancel, null)
-		.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+		dialogoAviso.setMessage(mensaje);
+		dialogoAviso.setView(txtUrl);
+		//dialogoAviso.setNegativeButton(android.R.string.cancel, null);
+		dialogoAviso.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.ok), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				//Un dialogo vacío que la sincronización puede usar para mostrar resultados
-				AlertDialog.Builder dlgResultado=new AlertDialog.Builder(getActivity());
+				//AlertDialog.Builder dlgResultado=new AlertDialog.Builder(getActivity());
+				AlertDialog dlgResultado=new AlertDialog.Builder(getActivity()).create();
 				dlgResultado.setOnDismissListener(new DialogInterface.OnDismissListener() {
 					@Override
 					public void onDismiss(DialogInterface arg0) {
@@ -278,15 +284,15 @@ public class Login extends DialogFragment {
 						setModoInvitado(modoInvitado);
 					}
 				});
-				dlgResultado.create();
+				//dlgResultado.create();
 
 				aplicacion.setUrlSincronizacion(txtUrl.getText().toString());
 				
 				SincronizacionTask sinc = new SincronizacionTask(getActivity(), dlgResultado);
 				sinc.execute("");
 			}
-		} )
-		.create().show();
+		} );
+		dialogoAviso.show();
 	}
 
 }//fin clase

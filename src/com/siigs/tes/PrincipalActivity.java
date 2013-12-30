@@ -6,6 +6,8 @@ import com.siigs.tes.controles.ContenidoControles;
 import com.siigs.tes.controles.ContenidoControles.ItemControl;
 
 import android.content.Intent;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -28,7 +30,7 @@ import android.util.Log;
  * selections.
  */
 public class PrincipalActivity extends FragmentActivity implements
-		PrincipalFragment.Callbacks {
+		PrincipalFragment.Callbacks, DialogoTes.Callbacks {
 
 	public final static String TAG = PrincipalActivity.class.getSimpleName();
 	public final static String FORZAR_CIERRE_SESION_USUARIO = "flag_forzar_cierre_sesion_usuario";
@@ -42,7 +44,7 @@ public class PrincipalActivity extends FragmentActivity implements
 	private PrincipalFragment lfMenuIzquierdo;
 	private MenuSuperior miMenuSuperior;
 	private TesAplicacion aplicacion;
-
+	private DialogoTes miDialogoTes;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +137,41 @@ public class PrincipalActivity extends FragmentActivity implements
 	
 
 	/**
+	 * Recibe avisos diversos. Nos enfocamos en los de NFC
+	 */
+	@Override
+	protected void onNewIntent(Intent intent) {
+		if(intent == null) return;
+		
+		if(intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)){
+			if(miDialogoTes!=null){
+				Tag nfcTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+				miDialogoTes.onTagNfcDetectado(nfcTag);
+			}
+		}
+	}
+	
+	/**
+	 * Callback de {@link DialogoTes.Callbacks} indicando
+	 * que el dialogo está listo para recibir avisos de tags NFC
+	 * @param llamador
+	 */
+	@Override
+	public void onIniciarDialogoTes(DialogoTes llamador){
+		miDialogoTes = llamador;
+	}
+	
+	/**
+	 * Callback de {@link DialogoTes.Callbacks} indicando
+	 * que el dialogo ya no requiere recibir avisos de tags NFC
+	 */
+	@Override
+	public void onDetenerDialogoTes(DialogoTes llamador){
+		miDialogoTes = null;
+	}
+
+
+	/**
 	 * Callback method from {@link PrincipalFragment.Callbacks} indicating
 	 * that the item with the given ID was selected.
 	 */
@@ -151,10 +188,8 @@ public class PrincipalActivity extends FragmentActivity implements
 				fragment = (Fragment)ContenidoControles.CONTROLES_TODOS_MAP
 						.get(id).clase.newInstance();
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			fragment.setArguments(arguments);
@@ -170,5 +205,18 @@ public class PrincipalActivity extends FragmentActivity implements
 			startActivity(detailIntent);
 		}
 	}
+
+
+	@Override
+	/**
+	 * Captura el presionado del botón back haciendo que su comportamiento sea
+	 * igual al botón HOME, para mandar la aplicación al fondo, en vez de destruir
+	 * esta actividad, lo cual irónicamente NO destruye {@link TesAplicacion} ni las
+	 * clases estáticas y sus valores generados como sucede con {@link ContenidoControles}
+	 */
+	public void onBackPressed() {
+		this.moveTaskToBack(true);
+	}
+
 	
 }//fin clase

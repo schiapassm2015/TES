@@ -19,6 +19,7 @@ import com.siigs.tes.datos.tablas.ControlNutricional;
 import com.siigs.tes.datos.tablas.ControlVacuna;
 import com.siigs.tes.datos.tablas.Eda;
 import com.siigs.tes.datos.tablas.ErrorSis;
+import com.siigs.tes.datos.tablas.EsquemaIncompleto;
 import com.siigs.tes.datos.tablas.Grupo;
 import com.siigs.tes.datos.tablas.Ira;
 import com.siigs.tes.datos.tablas.Nacionalidad;
@@ -61,7 +62,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 			ArbolSegmentacion.CREATE_TABLE, Bitacora.CREATE_TABLE, Consulta.CREATE_TABLE, 
 			ControlAccionNutricional.CREATE_TABLE, ControlConsulta.CREATE_TABLE, ControlEda.CREATE_TABLE, 
 			ControlIra.CREATE_TABLE, ControlNutricional.CREATE_TABLE, ControlVacuna.CREATE_TABLE, 
-			Eda.CREATE_TABLE, ErrorSis.CREATE_TABLE, Grupo.CREATE_TABLE, Ira.CREATE_TABLE, 
+			Eda.CREATE_TABLE, ErrorSis.CREATE_TABLE, EsquemaIncompleto.CREATE_TABLE, Grupo.CREATE_TABLE, Ira.CREATE_TABLE, 
 			Nacionalidad.CREATE_TABLE, Notificacion.CREATE_TABLE, OperadoraCelular.CREATE_TABLE, 
 			PendientesTarjeta.CREATE_TABLE,	Permiso.CREATE_TABLE, Persona.CREATE_TABLE, 
 			PersonaAfiliacion.CREATE_TABLE, PersonaAlergia.CREATE_TABLE, PersonaTutor.CREATE_TABLE, 

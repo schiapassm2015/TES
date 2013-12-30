@@ -97,7 +97,7 @@ public class ContenidoControles {
 		if(permisos == null)return;
 		
 		if(ExistePermiso(ICA_PACIENTE_LISTAR, permisos)){
-			item=new ItemControl(ICA_PACIENTE_LISTAR, "Paciente", AtencionPaciente.class);
+			item=new ItemControl(ICA_PACIENTE_LISTAR, "Paciente", AtencionPaciente.class, android.R.drawable.btn_plus);
 			addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
 		}
 		if(ExistePermiso(ICA_CONTROLVACUNA_LISTAR, permisos)){
@@ -214,12 +214,22 @@ public class ContenidoControles {
 		public String id;
 		public String titulo;
 		public Class<?> clase;
-		public List<Integer> acciones=new ArrayList<Integer>(); //TODO: pendiente a implementar
+		public int resIdIcono; //Id de icono a usar
+		public List<Integer> acciones=new ArrayList<Integer>(); //TODO: pendiente a implementar O borrar
 
-		public ItemControl(int id, String content, Class<?> clase) {
+		public ItemControl(int id, String titulo, Class<?> clase) {
+			Construir(id, titulo, clase, android.R.drawable.btn_star_big_on);
+		}
+		
+		public ItemControl(int id, String titulo, Class<?> clase, int idIcono){
+			Construir(id, titulo, clase, idIcono);
+		}
+		
+		private void Construir(int id, String titulo, Class<?> clase, int idIcono){
 			this.id = id+"";
-			this.titulo = content;
+			this.titulo = titulo;
 			this.clase=clase;
+			this.resIdIcono = idIcono;
 		}
 
 		@Override

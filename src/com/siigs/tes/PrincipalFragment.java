@@ -1,5 +1,7 @@
 package com.siigs.tes;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -7,19 +9,27 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.siigs.tes.controles.ContenidoControles;
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
 import com.siigs.tes.datos.tablas.ControlVacuna;
+import com.siigs.tes.datos.tablas.Grupo;
+import com.siigs.tes.datos.tablas.Permiso;
 import com.siigs.tes.datos.tablas.Persona;
+import com.siigs.tes.datos.tablas.Usuario;
 import com.siigs.tes.datos.tablas.UsuarioInvitado;
+import com.siigs.tes.ui.AdaptadorArrayMultiView;
 
 /**
  * A list fragment representing a list of {@link ItemControl}. This fragment also supports
@@ -40,17 +50,6 @@ public class PrincipalFragment extends ListFragment {
 	private static final String ESTADO_ESCONDIDO = "escondido";
 	
 	/**
-	 * The fragment's current callback object, which is notified of list item
-	 * clicks.
-	 */
-	private Callbacks mCallbacks = sDummyCallbacks;
-
-	/**
-	 * The current activated item position. Only used on tablets.
-	 */
-	private int mActivatedPosition = ListView.INVALID_POSITION;
-
-	/**
 	 * A callback interface that all activities containing this fragment must
 	 * implement. This mechanism allows activities to be notified of item
 	 * selections.
@@ -61,7 +60,7 @@ public class PrincipalFragment extends ListFragment {
 		 */
 		public void onItemSelected(String id);
 	}
-
+	
 	/**
 	 * A dummy implementation of the {@link Callbacks} interface that does
 	 * nothing. Used only when this fragment is not attached to an activity.
@@ -71,6 +70,19 @@ public class PrincipalFragment extends ListFragment {
 		public void onItemSelected(String id) {
 		}
 	};
+	
+	/**
+	 * The fragment's current callback object, which is notified of list item
+	 * clicks.
+	 */
+	private Callbacks mCallbacks = sDummyCallbacks;
+
+	/**
+	 * The current activated item position. Only used on tablets.
+	 */
+	private int mActivatedPosition = ListView.INVALID_POSITION;
+
+
 
 	//Guarda la lista de controles enlistados
 	private List<ContenidoControles.ItemControl> miListaControles;
@@ -88,27 +100,16 @@ public class PrincipalFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		//Retendrá el estado del fragmento de forma que onCreate no será llamado
+		//nuevamente si {@link PrincipalActivity} es creado de nuevo
+		this.setRetainInstance(true);
+		
 		this.aplicacion = (TesAplicacion)this.getActivity().getApplication();
-//BaseDatos base =new BaseDatos(this.getActivity());
-//base.getReadableDatabase();
-/*getActivity().getContentResolver().query(ProveedorContenido.USUARIO_CONTENT_URI, new String[]{Usuario.ID,Usuario.NOMBRE}, null, null, null);
-ContentValues valores=new ContentValues();valores.put(Usuario.ID, 5);valores.put(Usuario.NOMBRE_USUARIO, "tu123");
-valores.put(Usuario.NOMBRE, "fulanito");valores.put(Usuario.CLAVE, "asdfasf");valores.put(Usuario.APELLIDO_PATERNO, "appat");
-valores.put(Usuario.APELLIDO_MATERNO, "apmat");valores.put(Usuario.CORREO, "agc@google.com");
-valores.put(Usuario.ACTIVO, 1);valores.put(Usuario.ID_GRUPO, 2);
-getActivity().getContentResolver().insert(ProveedorContenido.USUARIO_CONTENT_URI, valores);*/
 		
-		GenerarDatosFalsos();
-		
-String uuid= UUID.randomUUID().toString().replace("-", "");
-byte[] hex = hexStringToByteArray(uuid);
-String dec = ByteArrayTohexString(hex);
-Log.i("Lista", "uuid:"+uuid+" en bytes:"+hex.length+ " decodificado:"+dec+" son iguales?"+uuid.equalsIgnoreCase(dec) );
-
-
 		//Lista vacía
 		LlenarLista(new java.util.ArrayList<ContenidoControles.ItemControl>());
 		
+		GenerarDatosFalsos(); //TODO eliminar esto
 	}
 	
 	public static byte[] hexStringToByteArray(String cadena) {
@@ -140,6 +141,11 @@ Log.i("Lista", "uuid:"+uuid+" en bytes:"+hex.length+ " decodificado:"+dec+" son 
 	}
 	
 	private void GenerarDatosFalsos(){
+		String uuid= UUID.randomUUID().toString().replace("-", "");
+		byte[] hex = hexStringToByteArray(uuid);
+		String dec = ByteArrayTohexString(hex);
+		Log.i("Lista", "uuid:"+uuid+" en bytes:"+hex.length+ " decodificado:"+dec+" son iguales?"+uuid.equalsIgnoreCase(dec) );
+		
 		ContentResolver cr = this.getActivity().getContentResolver();
 		ContentValues valores = new ContentValues();
 		String where="";
@@ -169,6 +175,22 @@ Log.i("Lista", "uuid:"+uuid+" en bytes:"+hex.length+ " decodificado:"+dec+" son 
 			ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(invitado);
 			cv.remove(UsuarioInvitado.ID_INVITADO);
 			cr.insert(ProveedorContenido.USUARIO_INVITADO_CONTENT_URI, cv  );
+			/*//TODO Borrar estas creaciones
+			aplicacion.setEsInstalacionNueva(false);
+			Usuario usuario = new Usuario();
+			usuario._id=4; usuario.nombre="usuario";usuario.nombre_usuario="loginusuario";usuario.id_grupo=4;
+			usuario.activo=1;usuario.apellido_materno="";usuario.apellido_paterno="";usuario.clave="";usuario.correo="";
+			cv = DatosUtil.ContentValuesDesdeObjeto(usuario);
+			cr.insert(ProveedorContenido.USUARIO_CONTENT_URI, cv);
+			
+			Grupo grupo = new Grupo();grupo._id=4;grupo.descripcion="fabricado"; grupo.nombre="fabricado";
+			cv = DatosUtil.ContentValuesDesdeObjeto(grupo);
+			cr.insert(ProveedorContenido.GRUPO_CONTENT_URI, cv);
+			
+			Permiso permiso = new Permiso();permiso._id=214;permiso.id_grupo=4;permiso.id_controlador_accion=96;permiso.fecha=DatosUtil.getAhora();
+			cv = DatosUtil.ContentValuesDesdeObjeto(permiso);
+			cr.insert(ProveedorContenido.PERMISO_CONTENT_URI, cv);
+			*/
 			
 			Cursor res = cr.query(ProveedorContenido.PERSONA_CONTENT_URI, null, null, null, null);
 			while(res.moveToNext()){
@@ -177,10 +199,8 @@ Log.i("Lista", "uuid:"+uuid+" en bytes:"+hex.length+ " decodificado:"+dec+" son 
 			}
 			res.close();
 		} catch (java.lang.InstantiationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -200,9 +220,17 @@ Log.i("Lista", "uuid:"+uuid+" en bytes:"+hex.length+ " decodificado:"+dec+" son 
 				&& lista!=ContenidoControles.CONTROLES_ATENCION)return false;
 		
 		miListaControles=lista;
-		setListAdapter(new ArrayAdapter<ContenidoControles.ItemControl>(getActivity(),
-				android.R.layout.simple_list_item_activated_1,
-				android.R.id.text1, miListaControles));
+		//Reglas de mapeo entre atributos del item de menú y el layout del item
+		AdaptadorArrayMultiView.Mapeo[] reglasMapeo = new AdaptadorArrayMultiView.Mapeo[]{
+			new AdaptadorArrayMultiView.Mapeo("titulo", android.R.id.text1, "setText", CharSequence.class),
+			new AdaptadorArrayMultiView.Mapeo("resIdIcono", R.id.imgIcono, "setBackgroundResource", int.class)
+		};
+		AdaptadorArrayMultiView<ContenidoControles.ItemControl> adaptador = 
+				new AdaptadorArrayMultiView<ContenidoControles.ItemControl>(getActivity(), 
+						R.layout.fila_principalfragment, miListaControles, reglasMapeo);
+		
+		setListAdapter(adaptador);
+
 		if(lista.size()>0){
 			setActivatedPosition(0);
 			AvisarItemSeleccionado(0);
@@ -230,6 +258,9 @@ Log.i("Lista", "uuid:"+uuid+" en bytes:"+hex.length+ " decodificado:"+dec+" son 
 	
 
 	@Override
+	/**
+	 * Llamado al incrustar este fragmento en actividad contenedora durante su construcción
+	 */
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 

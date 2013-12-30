@@ -1,9 +1,6 @@
 package com.siigs.tes;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import com.siigs.tes.controles.ContenidoControles;
@@ -12,7 +9,7 @@ import com.siigs.tes.datos.tablas.Permiso;
 import com.siigs.tes.datos.tablas.Usuario;
 import com.siigs.tes.datos.tablas.UsuarioInvitado;
 
-import android.app.AlertDialog.Builder;
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,7 +21,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.CalendarView;
 
 /**
  * Clase tipo Application invocada automáticamente al cargar la app.
@@ -175,12 +171,12 @@ public class TesAplicacion extends Application {
 	 * El segundo Intent inicia el navegador para ir al URL de actualización.
 	 * @param dialogo
 	 */
-	public void ValidarRequiereActualizarApk(Builder dialogo){
+	public void ValidarRequiereActualizarApk(AlertDialog dialogo){
 		if(getRequiereActualizarApk()){
 			dialogo.setMessage("Esta aplicación requiere actualizarse. " +
 					"Puede presionar 'Actualizar' para ser enviado a la página de actualización");
-			
-			dialogo.setPositiveButton(R.string.actualizar, new DialogInterface.OnClickListener() {
+			dialogo.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.actualizar), new DialogInterface.OnClickListener() {
+			//dialogo.setPositiveButton(R.string.actualizar, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					Intent i = getBaseContext().getPackageManager()
@@ -230,8 +226,7 @@ public class TesAplicacion extends Application {
 	
 	/**
 	 * Genera una nueva sesión para usuario normal
-	 * @param usuario
-	 * @param invitado
+	 * @param idUsuario
 	 */
 	public void IniciarSesion(int idUsuario){
 		Usuario usuario = Usuario.getUsuarioConId(this, idUsuario);
@@ -243,6 +238,10 @@ public class TesAplicacion extends Application {
 		//Actualiza las listas usadas para crear los submenús izquierdos y menú superior
 		ContenidoControles.RecargarControles(permisos);
 	}
+	/**
+	 * Genera una nueva nueva sesión para usuario invitado 
+	 * @param idInvitado
+	 */
 	public void IniciarSesionInvitado(int idInvitado){
 		UsuarioInvitado invitado = UsuarioInvitado.getUsuarioInvitadoConId(this, idInvitado);
 		Usuario usuario = Usuario.getUsuarioConId(this, invitado.id_usuario_creador);
@@ -254,10 +253,22 @@ public class TesAplicacion extends Application {
 		//Actualiza las listas usadas para crear los submenús izquierdos y menú superior
 		ContenidoControles.RecargarControles(permisos);
 	}
+	/**
+	 * Cierra la sesión del usuario actual
+	 */
 	public void CerrarSesion(){
 		//Registrar status relevantes
 		this.sesion = null;
 	}
+	/**
+	 * Indica si existe una sesión de usuario
+	 * @return
+	 */
 	public boolean haySesion(){return this.sesion != null;}
+	/**
+	 * Devuelve la sesión de usuario actual
+	 * @return
+	 */
 	public Sesion getSesion(){return this.sesion;}
+	
 }
