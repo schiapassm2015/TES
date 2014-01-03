@@ -17,36 +17,9 @@
 
             <!-- Título -->
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:text="Ver Datos del Paciente"
-                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
-
-                <ImageButton
-                    android:id="@+id/btnAyuda_ver"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentRight="true"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/ayuda"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ayuda" />
-
-                <!-- Línea horizontal -->
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@+id/btnAyuda_ver"
-                    android:background="@android:color/darker_gray" />
-            </RelativeLayout>
+            <include 
+                android:id="@+id/barra_titulo_ver"
+                layout="@layout/barra_titulo"/>
 
             <!-- Contenido -->
 
@@ -96,7 +69,7 @@
 
                 <EditText
                     android:id="@+id/txtEdad"
-                    android:layout_width="40dp"
+                    android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:enabled="false"
                     android:inputType="text" />
@@ -108,7 +81,7 @@
 
                 <EditText
                     android:id="@+id/txtSexo"
-                    android:layout_width="30dp"
+                    android:layout_width="40dp"
                     android:layout_height="wrap_content"
                     android:enabled="false"
                     android:inputType="text" />
@@ -116,13 +89,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Gpo. Sang." />
+                    android:text="@string/grupo_sanguineo" />
 
                 <EditText
                     android:id="@+id/txtSangre"
-                    android:layout_width="40dp"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:enabled="false"
+                    android:gravity="center_horizontal"
                     android:inputType="text" />
             </LinearLayout>
 
@@ -244,20 +218,31 @@
                     android:inputType="text" />
             </LinearLayout>
             
-            <TextView android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reacciones Alérgicas"/>
-            
-            <ListView
+                android:textStyle="bold"
+                android:text="Reacciones Alérgicas:" />
+
+            <com.siigs.tes.ui.ListaSimple
+                android:orientation="vertical"
                 android:id="@+id/lsAlergiasActuales"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:listitem="@android:layout/simple_list_item_checked" />
             
+            <!-- Si no hay alergias, este view debe visualizarse -->
+            <TextView
+                android:id="@+id/lblSinAlergiasVer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="(Sin alergias)" />
+            
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/accion_editar_datos_paciente"
+            android:id="@+id/accion_editar_domicilio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
@@ -265,36 +250,9 @@
 
             <!-- Título -->
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:text="Editar Datos del Paciente"
-                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
-
-                <ImageButton
-                    android:id="@+id/btnAyuda_editar"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentRight="true"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/ayuda"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ayuda" />
-
-                <!-- Línea horizontal -->
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@+id/btnAyuda_editar"
-                    android:background="@android:color/darker_gray" />
-            </RelativeLayout>
+            <include 
+                android:id="@+id/barra_titulo_domicilio"
+                layout="@layout/barra_titulo"/>
 
             
             <!-- Domicilio -->
@@ -334,7 +292,6 @@
                     android:id="@+id/txtNumero"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberSigned"
                     android:singleLine="true" />
             </LinearLayout>
 
@@ -351,7 +308,6 @@
                     android:id="@+id/txtColonia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberSigned"
                     android:singleLine="true" />
             </LinearLayout>
 
@@ -362,21 +318,42 @@
                 <TextView
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/localidad" />
+                    android:text="@string/localidad"/>
 
-                <Spinner
-                    android:id="@+id/spLocalidad"
+                <AutoCompleteTextView
+                    android:id="@+id/acLocalidad"
+                    android:completionThreshold="1"
+                    android:hint="Debe seleccionar una localidad"
+                    android:lines="3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+                    android:ems="10"
+                    android:digits="@string/caracteres_permitidos">
+                </AutoCompleteTextView>
+                
             </LinearLayout>
             
             <Button android:id="@+id/btnActualizarDireccion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:text="Actualizar Domicilio"/>
+                android:text="@string/actualizar_domicilio"/>
             
+        </LinearLayout>
+            
+        
+        <LinearLayout
+            android:id="@+id/accion_editar_um"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:orientation="vertical" >
+
+            <!-- Título -->
+
+            <include 
+                android:id="@+id/barra_titulo_um"
+                layout="@layout/barra_titulo"/>
             
             
             <!-- Unidad Médica -->
@@ -387,18 +364,38 @@
                 android:layout_height="wrap_content"
                 android:text="UM Tratante" />
             
-            <Spinner
-                android:id="@+id/spUM"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+            <AutoCompleteTextView
+                    android:id="@+id/acUM"
+                    android:completionThreshold="1"
+                    android:hint="Debe seleccionar una Unidad Médica"
+                    android:lines="3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:digits="@string/caracteres_permitidos">
+            </AutoCompleteTextView>
             
             <Button android:id="@+id/btnActualizarUM"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:text="Actualizar UM Tratante"/>
+                android:text="@string/actualizar_um"/>
             
+        </LinearLayout>
+        
+        
+        <LinearLayout
+            android:id="@+id/accion_editar_alergias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:orientation="vertical" >
+
+            <!-- Título -->
+
+            <include 
+                android:id="@+id/barra_titulo_alergias"
+                layout="@layout/barra_titulo"/>
             
             <!-- Reacciones alérgicas -->
             <TextView
@@ -421,7 +418,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:text="Actualizar Alergias"/>
+                android:text="@string/actualizar_alergias"/>
             
         </LinearLayout>
     </LinearLayout>

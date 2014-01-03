@@ -39,69 +39,15 @@
 	        android:layout_centerInParent="true"
 	        android:src="@drawable/tarjeta"
 	        android:contentDescription="@string/acerque_tes"/>
-    
 	    
 	    
-	    <LinearLayout android:layout_alignParentBottom="true" 
-	        android:orientation="vertical"
-	        android:layout_width="match_parent"
+	    <!-- El comportamiento de este botón es solo de salir -->
+	    <Button
+	        android:id="@+id/btnCancelar"
+	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:gravity="center">
-	        
-	        <LinearLayout android:id="@+id/barra_botones"
-	            android:orientation="horizontal"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:gravity="center">
-	            
-	            <!-- Si todo sale bien al presionar este botón, la barra
-	            de botones desaparece y se hace visible la barra de resultado
-	            para que la interfaz espere 3 segundos antes de cerrarse.
-	            
-	            Si en cambio hay error, se muestra dialgoo sencillo con
-	            botón "aceptar" notificando el error y que intente de nuevo -->
-			    <Button 
-			        android:id="@+id/btnEscribirTes"
-			        android:layout_width="0dp"
-			        android:layout_height="wrap_content"
-			        android:layout_weight="40"
-			        android:text="Grabar en TES"/>
-			    
-			    <Space android:layout_width="0dp"
-			        android:layout_height="wrap_content"
-			        android:layout_weight="20"/>
-			    
-			    <!-- El comportamiento de este botón es solo de salir -->
-			    <Button
-			        android:id="@+id/btnCancelar"
-			        android:layout_width="0dp"
-			        android:layout_height="wrap_content"
-			        android:layout_weight="40"
-			        android:text="Continuar sin Grabar en TES"/>
-			</LinearLayout>
-			
-	        <!-- Al iniciar el frame se le debe poner en visibility GONE  -->
-	        <LinearLayout android:id="@+id/barra_resultado"
-	            android:visibility="visible"
-	            android:orientation="horizontal"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:gravity="center">
-			    
-	            <TextView android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:textColor="@android:color/holo_green_dark"
-	                android:text="Datos guardados en TES"/>
-	            
-	            <!-- Imagen temporal mientras se pone versión final -->
-	        	<ImageView
-	            	android:layout_width="wrap_content"
-	            	android:layout_height="wrap_content"
-	            	android:src="@android:drawable/btn_star_big_on"/>
-	            
-	        </LinearLayout>
-	        
-	        
-	    </LinearLayout>
+	        android:layout_alignParentBottom="true"
+	        android:layout_centerHorizontal="true"
+	        android:text="Continuar sin Grabar en TES" />
 	    
     </RelativeLayout>

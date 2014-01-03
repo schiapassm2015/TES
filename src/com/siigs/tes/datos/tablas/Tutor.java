@@ -1,5 +1,12 @@
 package com.siigs.tes.datos.tablas;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+
+import com.siigs.tes.datos.DatosUtil;
+import com.siigs.tes.datos.ProveedorContenido;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -55,4 +62,19 @@ public class Tutor {
 	public Integer id_operadora_celular;
 	public String ultima_actualizacion;
 	
+	
+	public static Tutor getTutorDePersona(Context context, String idPersona){
+		String idTutor = PersonaTutor.getIdTutorDePersona(context, idPersona);
+		
+		Uri uri = Uri.withAppendedPath(ProveedorContenido.TUTOR_CONTENT_URI, String.valueOf(idTutor));
+		Cursor cur = context.getContentResolver().query(uri, null, null, null, null);
+		cur.moveToNext(); //debería haber resultados
+		Tutor salida = null;
+		try {
+			salida = DatosUtil.ObjetoDesdeCursor(cur, Tutor.class);
+		} catch (InstantiationException e) {
+		} catch (IllegalAccessException e) {}
+		cur.close();
+		return salida;
+	}
 }

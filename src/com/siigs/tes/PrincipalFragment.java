@@ -1,7 +1,5 @@
 package com.siigs.tes;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,27 +7,22 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.siigs.tes.controles.ContenidoControles;
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
 import com.siigs.tes.datos.tablas.ControlVacuna;
+import com.siigs.tes.datos.tablas.UsuarioInvitado;
+import com.siigs.tes.ui.AdaptadorArrayMultiView;
 import com.siigs.tes.datos.tablas.Grupo;
 import com.siigs.tes.datos.tablas.Permiso;
 import com.siigs.tes.datos.tablas.Persona;
 import com.siigs.tes.datos.tablas.Usuario;
-import com.siigs.tes.datos.tablas.UsuarioInvitado;
-import com.siigs.tes.ui.AdaptadorArrayMultiView;
 
 /**
  * A list fragment representing a list of {@link ItemControl}. This fragment also supports

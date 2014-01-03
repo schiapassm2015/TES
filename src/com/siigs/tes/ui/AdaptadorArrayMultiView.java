@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
 /**
  * Este es un adaptador genérico para mapear una lista de objetos genéricos contra 
@@ -69,16 +68,12 @@ public class AdaptadorArrayMultiView<T> extends ArrayAdapter<T> {
 			try {
 				destino.getClass().getMethod(regla.metodoInvocarEnIdView, regla.tipoDatoMetodoInvocarEnIdView).invoke(destino, valor);
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}catch(Exception e){
 				Log.d(TAG, "algo pasó:"+e);

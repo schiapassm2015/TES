@@ -1,6 +1,15 @@
 package com.siigs.tes.datos.tablas;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+
 import com.google.gson.annotations.SerializedName;
+import com.siigs.tes.datos.DatosUtil;
+import com.siigs.tes.datos.ProveedorContenido;
 
 /**
  * Esquema de tabla de base de datos
@@ -37,4 +46,30 @@ public class Alergia {
 	public String tipo;
 	public String descripcion;
 	public int activo;
+	
+	
+	public static List<Alergia> getAlergias(Context context){
+		Uri uri = ProveedorContenido.ALERGIA_CONTENT_URI;
+		Cursor cur = context.getContentResolver().query(uri, null, ACTIVO+"=1", null, null);
+		
+		List<Alergia> salida = DatosUtil.ObjetosDesdeCursor(cur, Alergia.class);
+		cur.close();
+		return salida;
+	}
+	
+	public static List<Alergia> getAlergiasEnLista(Context context, List<PersonaAlergia> alergiasDePersona){
+		String whereIn = ACTIVO +"=1 and " + ID + " in (";
+		for(PersonaAlergia pa : alergiasDePersona)
+			whereIn += pa.id_alergia + ",";
+		if(alergiasDePersona.size()>0)
+			whereIn = whereIn.substring(0, whereIn.length()-1);
+		whereIn += ")";
+		
+		Uri uri = ProveedorContenido.ALERGIA_CONTENT_URI;
+		Cursor cur = context.getContentResolver().query(uri, null, whereIn, null, null);
+		List<Alergia> salida = new ArrayList<Alergia>();
+		salida = DatosUtil.ObjetosDesdeCursor(cur, Alergia.class);
+		cur.close();
+		return salida;
+	}
 }

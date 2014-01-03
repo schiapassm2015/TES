@@ -57,6 +57,11 @@ public class ContenidoControles {
 	//ICA viene de id_controlador_accion
 	//
 	public final static int ICA_PACIENTE_LISTAR = 96;
+		//Acciones internas
+		public final static int ICA_PACIENTE_VER = 00;
+		public final static int ICA_PACIENTE_EDITAR_DOMICILIO = 98;
+		public final static int ICA_PACIENTE_ASIGNAR_UM = 97;
+		public final static int ICA_PACIENTE_AGREGAR_ALERGIAS = 99;
 	public final static int ICA_CONTROLVACUNA_LISTAR = 106;
 	public final static int ICA_CONTROLNUTRICIONAL_LISTAR = 89;
 	public final static int ICA_CONTROLACCIONNUTRICIONAL_LISTAR = 76;
@@ -139,13 +144,13 @@ public class ContenidoControles {
 			addItem(item, CONTROLES_ESQUEMAS, CONTROLES_ESQUEMAS_MAP);
 		}
 		
-		//Controles de Notificaciones //TODO:*********************PENDIENTE QUE JAIME DECIDA CUANTAS PANTALLAS SON
+		//Controles de Notificaciones
 		CONTROLES_NOTIFICACIONES.clear();CONTROLES_NOTIFICACIONES_MAP.clear();
 		if(ExistePermiso(ICA_NOTIFICACION_LISTAR, permisos)){
 			item=new ItemControl(ICA_NOTIFICACION_LISTAR, "Notificaciones", Notificaciones.class);
 			addItem(item, CONTROLES_NOTIFICACIONES, CONTROLES_NOTIFICACIONES_MAP);
 		}
-		if(ExistePermiso(ICA_NOTIFICACION_REPORTE_LISTAR, permisos)){//TODO:**PENDIENTE QUE JAIME DECIDA CUANTAS PANTALLAS SON
+		if(ExistePermiso(ICA_NOTIFICACION_REPORTE_LISTAR, permisos)){
 			item=new ItemControl(ICA_NOTIFICACION_REPORTE_LISTAR, "Reportes de desempeño", ControlFragment.class);
 			addItem(item, CONTROLES_NOTIFICACIONES, CONTROLES_NOTIFICACIONES_MAP);
 		}
@@ -200,7 +205,7 @@ public class ContenidoControles {
 	 * @param permisos Lista de objetos Permiso en los cuales buscar id_controlador_accion
 	 * @return
 	 */
-	private static boolean ExistePermiso(int id_controlador_accion, List<Permiso> permisos){
+	public static boolean ExistePermiso(int id_controlador_accion, List<Permiso> permisos){
 		for(Permiso permiso : permisos)
 			if(permiso.id_controlador_accion == id_controlador_accion)
 				return true;
@@ -215,7 +220,6 @@ public class ContenidoControles {
 		public String titulo;
 		public Class<?> clase;
 		public int resIdIcono; //Id de icono a usar
-		public List<Integer> acciones=new ArrayList<Integer>(); //TODO: pendiente a implementar O borrar
 
 		public ItemControl(int id, String titulo, Class<?> clase) {
 			Construir(id, titulo, clase, android.R.drawable.btn_star_big_on);

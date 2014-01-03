@@ -40,6 +40,27 @@ public class ManejadorNfc {
 	public static void LeerDatosNFC(Tag nfcTag, Context contexto) throws Exception{
 		TesAplicacion aplicacion = (TesAplicacion)contexto.getApplicationContext();
 		
+		Sesion.DatosPaciente datosPaciente = getDatosPaciente(nfcTag);
+		
+		//TODO checar si tiene pendientes, insertar en datosPaciente, actualizar tes_pendientes si le hice algo
+		//TODO 			si agregué pendientes, reescribir DatosPaciente en NFC
+		
+		aplicacion.getSesion().setDatosPacienteNuevo(datosPaciente);
+	}
+	
+	public static boolean nfcTagPerteneceApersona(String idUsuarioValidar, Tag nfcTag){
+		try{
+			return getDatosPaciente(nfcTag).persona.id.equals(idUsuarioValidar);
+		}catch(Exception e){return false;}
+	}
+	
+	/**
+	 * Genera información de paciente con el tag recibido según la versión del contenido.
+	 * @param nfcTag tag que contiene la información a leer
+	 * @return
+	 * @throws Exception
+	 */
+	private static Sesion.DatosPaciente getDatosPaciente(Tag nfcTag) throws Exception{
 		String contenido = LeerTextoPlano(nfcTag);
 		String[] piezas = contenido.split(SEPARADOR_TABLA);
 		
@@ -54,10 +75,7 @@ public class ManejadorNfc {
 			throw new Exception("Versión de datos no reconocida");
 		}
 		
-		//TODO checar si tiene pendientes, insertar en DatosPaciente, actualizar tes_pendientes si le hice algo
-		//TODO 			si agregué pendientes, reescribir DatosPaciente en NFC
-		
-		aplicacion.getSesion().setDatosPacienteNuevo(datosPaciente);
+		return datosPaciente;
 	}
 	
 	/**
@@ -75,7 +93,6 @@ public class ManejadorNfc {
 	 * función nueva desde LeerDatosNFC()
 	 */
 	private static Sesion.DatosPaciente LeerVersion1(String[] piezas, String version){
-		//TODO leer string
 		String[] datosPersona = piezas[1].split(SEPARADOR_CAMPO);
 		Persona persona = new Persona();
 		int n=0;
@@ -215,11 +232,144 @@ public class ManejadorNfc {
 	
 	public static void EscribirDatosNFC(Tag nfcTag, Sesion.DatosPaciente datos){
 		//TODO escribir según metadatos de jaime
+		StringBuilder salida = new StringBuilder();
+		salida.append(VERSION_1+SEPARADOR_TABLA);
+		
+		//Datos de persona
+		salida.append(datos.persona.id + SEPARADOR_CAMPO);
+		salida.append(datos.persona.curp + SEPARADOR_CAMPO);
+		salida.append(datos.persona.nombre + SEPARADOR_CAMPO);
+		salida.append(datos.persona.apellido_paterno + SEPARADOR_CAMPO);
+		salida.append(datos.persona.apellido_materno + SEPARADOR_CAMPO);
+		salida.append(datos.persona.sexo + SEPARADOR_CAMPO);
+		salida.append(datos.persona.id_tipo_sanguineo + SEPARADOR_CAMPO);
+		salida.append(datos.persona.fecha_nacimiento + SEPARADOR_CAMPO);
+		salida.append(datos.persona.id_asu_localidad_nacimiento + SEPARADOR_CAMPO);
+		salida.append(datos.persona.calle_domicilio + SEPARADOR_CAMPO);
+		salida.append(convertirString(datos.persona.numero_domicilio) + SEPARADOR_CAMPO);
+		salida.append(convertirString(datos.persona.colonia_domicilio) + SEPARADOR_CAMPO);
+		salida.append(convertirString(datos.persona.referencia_domicilio) + SEPARADOR_CAMPO);
+		salida.append(convertirInt(datos.persona.id_asu_localidad_domicilio) + SEPARADOR_CAMPO);
+		salida.append(datos.persona.cp_domicilio + SEPARADOR_CAMPO);
+		salida.append(convertirString(datos.persona.telefono_domicilio) + SEPARADOR_CAMPO);
+		salida.append(datos.persona.fecha_registro + SEPARADOR_CAMPO);
+		salida.append(datos.persona.id_asu_um_tratante + SEPARADOR_CAMPO);
+		salida.append(convertirString(datos.persona.celular) + SEPARADOR_CAMPO);
+		salida.append(datos.persona.ultima_actualizacion + SEPARADOR_CAMPO);
+		salida.append(datos.persona.id_nacionalidad + SEPARADOR_CAMPO);
+		salida.append(convertirInt(datos.persona.id_operadora_celular) + SEPARADOR_TABLA);
+		
+		//Datos de tutor
+		salida.append(datos.tutor.id + SEPARADOR_CAMPO);
+		salida.append(datos.tutor.curp + SEPARADOR_CAMPO);
+		salida.append(datos.tutor.nombre + SEPARADOR_CAMPO);
+		salida.append(datos.tutor.apellido_paterno + SEPARADOR_CAMPO);
+		salida.append(datos.tutor.apellido_materno + SEPARADOR_CAMPO);
+		salida.append(datos.tutor.sexo + SEPARADOR_CAMPO);
+		salida.append(convertirString(datos.tutor.telefono) + SEPARADOR_CAMPO);
+		salida.append(convertirString(datos.tutor.celular) + SEPARADOR_CAMPO);
+		salida.append(convertirInt(datos.tutor.id_operadora_celular) + SEPARADOR_TABLA);
+		
+		//Datos de registro civil
+		salida.append(datos.registroCivil.id_localidad_registro_civil + SEPARADOR_CAMPO);
+		salida.append(datos.registroCivil.fecha_registro + SEPARADOR_TABLA);
+		
+		//Datos de alergias
+		for(int i=0;i<datos.alergias.size();i++){
+			salida.append(datos.alergias.get(i).id_alergia);
+			if(i!=datos.alergias.size()-1)salida.append(SEPARADOR_REGISTRO);
+		}
+		salida.append(SEPARADOR_TABLA);
+		
+		//Datos afiliación
+		//TODO ¿AFILIACIÓN ES OBLIGATORIO O PUEDE ESTAR VACÍO?
+		
+		
+		String[] datosAfiliacion = piezas[5].equals("")? new String[]{} : piezas[5].split(SEPARADOR_CAMPO);
+		PersonaAfiliacion afiliacion = new PersonaAfiliacion();
+		n=0;
+		afiliacion.id_persona = persona.id;
+		afiliacion.id_afiliacion = Integer.parseInt(datosAfiliacion[0]);
+		
+		String[] listaVacunas = piezas[6].equals("")? new String[]{} : piezas[6].split(SEPARADOR_REGISTRO);
+		List<ControlVacuna> vacunas = new ArrayList<ControlVacuna>();
+		for(String regVacuna : listaVacunas){
+			String[] datosVacuna = regVacuna.split(SEPARADOR_CAMPO);
+			ControlVacuna vacuna = new ControlVacuna();
+			vacuna.id_persona = persona.id;
+			vacuna.id_vacuna = Integer.parseInt(datosVacuna[0]);
+			vacuna.fecha = datosVacuna[1];
+			vacunas.add(vacuna);
+		}
+		
+		String[] listaIras = piezas[7].equals("")? new String[]{} : piezas[7].split(SEPARADOR_REGISTRO);
+		List<ControlIra> iras = new ArrayList<ControlIra>();
+		for(String regIra : listaIras){
+			String[] datosIra = regIra.split(SEPARADOR_CAMPO);
+			ControlIra ira = new ControlIra();
+			ira.id_persona = persona.id;
+			ira.id_ira = Integer.parseInt(datosIra[0]);
+			ira.fecha = datosIra[1];
+			iras.add(ira);
+		}
+		
+		String[] listaEdas = piezas[8].equals("")? new String[]{} : piezas[8].split(SEPARADOR_REGISTRO);
+		List<ControlEda> edas = new ArrayList<ControlEda>();
+		for(String regEda : listaEdas){
+			String[] datosEda = regEda.split(SEPARADOR_CAMPO);
+			ControlEda eda = new ControlEda();
+			eda.id_persona = persona.id;
+			eda.id_eda = Integer.parseInt(datosEda[0]);
+			eda.fecha = datosEda[1];
+			edas.add(eda);
+		}
+		
+		String[] listaConsultas = piezas[9].equals("")? new String[]{} : piezas[9].split(SEPARADOR_REGISTRO);
+		List<ControlConsulta> consultas = new ArrayList<ControlConsulta>();
+		for(String regConsulta : listaConsultas){
+			String[] datosConsulta = regConsulta.split(SEPARADOR_CAMPO);
+			ControlConsulta consulta = new ControlConsulta();
+			consulta.id_persona = persona.id;
+			consulta.id_consulta = Integer.parseInt(datosConsulta[0]);
+			consulta.fecha = datosConsulta[1];
+			consultas.add(consulta);
+		}
+		
+		String[] listaAcciones = piezas[10].equals("")? new String[]{} : piezas[10].split(SEPARADOR_REGISTRO);
+		List<ControlAccionNutricional> acciones = new ArrayList<ControlAccionNutricional>();
+		for(String regAccion : listaAcciones){
+			String[] datosAccion = regAccion.split(SEPARADOR_CAMPO);
+			ControlAccionNutricional accion = new ControlAccionNutricional();
+			accion.id_persona = persona.id;
+			accion.id_accion_nutricional = Integer.parseInt(datosAccion[0]);
+			accion.fecha = datosAccion[1];
+			acciones.add(accion);
+		}
+		
+		//Si persona no tiene controles, no existirá última localidad, así que la validamos
+		String[] listaControles = piezas.length<12?new String[]{} : piezas[11].split(SEPARADOR_REGISTRO);
+		List<ControlNutricional> controles = new ArrayList<ControlNutricional>();
+		for(String regControl : listaControles){
+			String[] datosControl = regControl.split(SEPARADOR_CAMPO);
+			ControlNutricional control = new ControlNutricional();
+			control.id_persona = persona.id;
+			control.peso = Double.parseDouble(datosControl[0]);
+			control.altura = Integer.parseInt(datosControl[1]);
+			control.talla = Integer.parseInt(datosControl[2]);
+			control.fecha = datosControl[3];
+			controles.add(control);
+		}
+		
+		return new Sesion.DatosPaciente(persona, tutor, registro, afiliacion, alergias, 
+				vacunas, iras, edas, consultas, acciones, controles);
+		
 	}
 
 	//HELPERS PARA PARSEO
 	private static String existeString(String texto){return SIMBOLO_NULO.equals(texto)? null : texto;}
 	private static Integer existeInt(String texto){return SIMBOLO_NULO.equals(texto)? null : Integer.parseInt(texto);}
+	private static String convertirString(String texto){return texto == null? SIMBOLO_NULO : texto;}
+	private static String convertirInt(Integer numero){return numero == null? SIMBOLO_NULO : numero+"";}
 	
 	/**
 	 * Intenta extraer texto plano del tag NFC recibido

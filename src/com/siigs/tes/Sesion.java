@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.siigs.tes.controles.ContenidoControles;
 import com.siigs.tes.datos.tablas.ControlAccionNutricional;
 import com.siigs.tes.datos.tablas.ControlConsulta;
 import com.siigs.tes.datos.tablas.ControlEda;
@@ -44,6 +45,10 @@ public class Sesion {
 	public List<Permiso> getPermisos(){return permisos;}
 	public Calendar getFechaInicio(){return fechaInicio;}
 	public UsuarioInvitado getUsuarioInvitado(){return invitado;}
+	
+	public boolean tienePermiso(int id_controlador_accion){
+		return ContenidoControles.ExistePermiso(id_controlador_accion, permisos);
+	}
 
 	public DatosPaciente getDatosPacienteActual(){return datosPaciente;}
 	public void setDatosPacienteNuevo(DatosPaciente datos){this.datosPaciente = datos;}

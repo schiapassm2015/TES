@@ -2,17 +2,25 @@
 <resources>
 
     <string name="app_name">TES</string>
+    <!-- caracteres permitidos aplica en el atributo digits -->
     <string name="caracteres_permitidos">abcdefghijklmnñopqrstuvwxyz0123456789 ABCDEFGHIJKLMNÑOPQRSTUVWXYZáéíóúÁÉÍÓÚüÜ\'</string>
     <string name="title_seccion_detail">Seccion Detail</string>
+    <string name="desconocido">DESCONOCIDO</string>
     <string name="acerque_tes">Acerque la TES al lector</string>
     <string name="cancelar">Cancelar</string>
     <string name="ayuda">Ayuda</string>
     <string name="usuario">Usuario</string>
     <string name="invitado">Invitado</string>
     
+    <string name="datos_paciente">Datos del paciente</string>
+    <string name="actualizar_domicilio">Actualizar Domicilio</string>
+    <string name="actualizar_um">Actualizar Unidad Médica</string>
+    <string name="actualizar_alergias">Actualizar Alergias</string>
+    
     <string name="nombre">Nombre</string>
     <string name="curp">Curp</string>
     <string name="sexo">Sexo</string>
+    <string name="grupo_sanguineo">Grupo Sanguineo</string>
     <string name="fecha_nacimiento">Fecha Nacimiento</string>
     <string name="edad">Edad</string>
     <string name="domicilio">Domicilio</string>
@@ -24,6 +32,9 @@
     <string name="dpt">DPT</string>
     <string name="rotavirus">Rotavirus</string>
 
+    <!-- AVISOS A USUARIO -->
+    <string name="aviso_llenar_campos">Favor de llenar todos los campos</string>
+    
     <!-- Tipos de censo visualizables -->
     <string name="estatal">Estatal</string>
     <string name="jurisdiccion">Jurisdicción</string>

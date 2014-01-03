@@ -1,5 +1,11 @@
 package com.siigs.tes.datos.tablas;
 
+import com.siigs.tes.datos.ProveedorContenido;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.net.Uri;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -41,4 +47,14 @@ public class PendientesTarjeta {
 	public String id_persona;
 	public String tabla;
 	public String registro_json;
+	
+	
+	public static Uri AgregarPendienteLocal(Context context, String idPersona, String tabla, String datosEnJson){
+		ContentValues cv = new ContentValues();
+		cv.put(ID_PERSONA, idPersona);
+		cv.put(TABLA, tabla);
+		cv.put(REGISTRO_JSON, datosEnJson);
+		cv.put(ES_PENDIENTE_LOCAL, 1);
+		return context.getContentResolver().insert(ProveedorContenido.PENDIENTES_TARJETA_CONTENT_URI, cv);
+	}
 }

@@ -136,19 +136,11 @@ public class DialogoTes extends DialogFragment {
 		//return super.onCreateView(inflater, container, savedInstanceState);
 		View vista;
 		
+		//TODO si no cambian mucho los layout, fusionarlos en uno solo pues ahora son casi iguales
 		if(modoOperacion == ModoOperacion.LOGIN){
 			vista=inflater.inflate(R.layout.dialogo_tes_login, container,false);			
 		}else{
-			vista=inflater.inflate(R.layout.dialogo_tes_guardar, container,false);
-			
-			//Guardar
-			Button btnGuardar =(Button)vista.findViewById(R.id.btnEscribirTes);
-			btnGuardar.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					GuardarDatosNfc();
-				}
-			});
+			vista=inflater.inflate(R.layout.dialogo_tes_guardar, container,false);			
 		}
 		
 		//Cancelación manual
@@ -180,8 +172,21 @@ public class DialogoTes extends DialogFragment {
 	 */
 	public void onTagNfcDetectado(Tag tag){
 		try {
-			ManejadorNfc.LeerDatosNFC(tag, getActivity());
-			Cerrar(DialogoTes.RESULT_OK);
+			if(this.modoOperacion == ModoOperacion.LOGIN){
+				ManejadorNfc.LeerDatosNFC(tag, getActivity());
+				Cerrar(DialogoTes.RESULT_OK);
+			}else if(this.modoOperacion == ModoOperacion.GUARDAR){
+				Sesion.DatosPaciente datosPaciente = 
+						((TesAplicacion)getActivity().getApplication()).getSesion().getDatosPacienteActual();
+				if(!ManejadorNfc.nfcTagPerteneceApersona(datosPaciente.persona.id, tag)){
+					Toast.makeText(getActivity(), "La TES presentada no pertenece al paciente "
+							+ datosPaciente.persona.nombre + datosPaciente.persona.apellido_paterno
+							+ datosPaciente.persona.apellido_materno, Toast.LENGTH_LONG).show();
+					return;
+				}
+				ManejadorNfc.EscribirDatosNFC(tag, datosPaciente);
+				Cerrar(DialogoTes.RESULT_OK);
+			}
 		} catch (Exception e) {
 			Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
 		}
@@ -197,13 +202,6 @@ public class DialogoTes extends DialogFragment {
 		getTargetFragment().onActivityResult(getTargetRequestCode(), 
 				resultado, datos);
 		dismiss();
-	}
-
-	/**
-	 * Guarda los datos en tarjeta NFC
-	 */
-	private void GuardarDatosNfc(){
-		//TODO guardado
 	}
 	
 	@Override

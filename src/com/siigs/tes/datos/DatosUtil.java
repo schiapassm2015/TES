@@ -57,7 +57,7 @@ public class DatosUtil {
 	 * Construye una instancia de la Clase {@clase} y asigna sus campos públicos NO estáticos
 	 * con los valores contenidos en el Cursor {@cur}. Para esto tanto los campos a asignar
 	 * en clase como los campos en el registro de cur deben tener los mismos nombres.  
-	 * @param cur
+	 * @param cur Cursor que ya debe apuntar al registro que se desea convertir
 	 * @param clase
 	 * @return
 	 * @throws InstantiationException
