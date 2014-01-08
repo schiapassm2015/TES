@@ -26,7 +26,8 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="40"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:digits="@string/caracteres_permitidos" />
         
         <TextView 
             android:layout_width="0dp"
@@ -47,25 +48,11 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
     
     <LinearLayout android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="10"
-            android:text="@string/localidad" />
-        
-        <Spinner
-            android:id="@+id/spLocalidad"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="40"
-            tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+        android:layout_height="wrap_content" >     
         
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
             android:layout_weight="10"
             android:text="@string/edad" />
         
@@ -75,42 +62,35 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
             android:layout_height="wrap_content"
             android:layout_weight="40"
             tools:listitem="@android:layout/simple_spinner_dropdown_item" />
-        
-    </LinearLayout>
     
-    <LinearLayout android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
-        
-        <Button android:id="@+id/btnTodos"
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/btnVerTodos"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:text="Ver Todos"/>
+            android:layout_marginLeft="30dp"
+            android:layout_weight="25"
+            android:text="Ver Todos" />
         
         <Button android:id="@+id/btnFiltrar"
             android:layout_marginLeft="40dp"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+            android:layout_weight="25"
             android:text="Filtrar"/>
     </LinearLayout>
+    
 
     <!-- Contenido de resultados -->
     
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent" >
-
+    
         <HorizontalScrollView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" >
+            android:layout_height="wrap_content" >
 
             <!-- CONTENEDOR PRINCIPAL DE RESULTADOS -->
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
                 <!-- CABECERA DE RESULTADOS DEL LISTVIEW -->
@@ -119,13 +99,6 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/borde" >
-                    
-                    <TextView 
-                        android:layout_width="40dp" 
-                        android:layout_height="match_parent"
-                        android:text="Casa" 
-                        android:gravity="center" 
-                        android:background="@drawable/borde" />
                     
                     <RelativeLayout android:background="@drawable/borde"
                         android:layout_width="wrap_content"
@@ -195,24 +168,11 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
                         android:gravity="center" 
                         android:background="@drawable/borde" />
                     
-                    <TextView 
-                        android:layout_width="50dp" 
-                        android:layout_height="match_parent"
-                        android:text="Edad / Emb." 
-                        android:gravity="center" 
-                        android:background="@drawable/borde" />
-                    
-                    <TextView 
-                        android:layout_width="30dp" 
-                        android:layout_height="match_parent"
-                        android:text="Esquema" 
-                        android:gravity="center" 
-                        android:background="@drawable/borde" />
                     
                     <LinearLayout android:background="@drawable/borde"
                         android:orientation="vertical"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent">
+                        android:layout_height="wrap_content">
                     
                         <TextView android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -220,6 +180,7 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
                             android:background="@drawable/borde"
                             android:text="Esquema de Vacunación"/>
                         
+                        <!-- Títulos de grupos de vacunas -->
                         <LinearLayout android:background="@drawable/borde"
                             android:orientation="horizontal" 
                             android:layout_width="wrap_content"
@@ -235,20 +196,6 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
                             <TextView 
 		                        android:layout_width="54dp" 
 		                        android:layout_height="match_parent"
-		                        android:text="Sabin" 
-		                        android:gravity="center" 
-		                        android:background="@drawable/borde" />
-                            
-                            <TextView 
-		                        android:layout_width="54dp" 
-		                        android:layout_height="match_parent"
-		                        android:text="DPT+HB+Hib" 
-		                        android:gravity="center" 
-		                        android:background="@drawable/borde" />
-                            
-                            <TextView 
-		                        android:layout_width="54dp" 
-		                        android:layout_height="match_parent"
 		                        android:text="@string/hepatitis_b" 
 		                        android:gravity="center" 
 		                        android:background="@drawable/borde" />
@@ -256,7 +203,7 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
                             <TextView 
 		                        android:layout_width="72dp" 
 		                        android:layout_height="match_parent"
-		                        android:text="DPaT+VIP+Hib" 
+		                        android:text="Pentavalente" 
 		                        android:gravity="center" 
 		                        android:background="@drawable/borde" />
                             
@@ -296,11 +243,13 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
 		                        android:background="@drawable/borde" />    
                         </LinearLayout>
                         
+                        <!-- Celdas de vacunas individuales (U,1,2,3,R,etc) -->
                         <LinearLayout android:orientation="horizontal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/borde">
                             
+                            <!-- BCG -->
                             <TextView 
 		                        android:layout_width="30dp" 
 		                        android:layout_height="match_parent"
@@ -308,6 +257,7 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
 		                        android:gravity="center" 
 		                        android:background="@drawable/borde" />
                             
+                            <!-- Hepatitis B -->
                             <TextView 
 		                        android:layout_width="18dp" 
 		                        android:layout_height="match_parent"
@@ -327,44 +277,7 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
 		                        android:gravity="center" 
 		                        android:background="@drawable/borde" />
                             
-                            <TextView 
-		                        android:layout_width="18dp" 
-		                        android:layout_height="match_parent"
-		                        android:text="1" 
-		                        android:gravity="center" 
-		                        android:background="@drawable/borde" />
-                            <TextView 
-		                        android:layout_width="18dp" 
-		                        android:layout_height="match_parent"
-		                        android:text="2" 
-		                        android:gravity="center" 
-		                        android:background="@drawable/borde" />
-                            <TextView 
-		                        android:layout_width="18dp" 
-		                        android:layout_height="match_parent"
-		                        android:text="3" 
-		                        android:gravity="center" 
-		                        android:background="@drawable/borde" />
-                            
-                            <TextView 
-		                        android:layout_width="18dp" 
-		                        android:layout_height="match_parent"
-		                        android:text="1" 
-		                        android:gravity="center" 
-		                        android:background="@drawable/borde" />
-                            <TextView 
-		                        android:layout_width="18dp" 
-		                        android:layout_height="match_parent"
-		                        android:text="2" 
-		                        android:gravity="center" 
-		                        android:background="@drawable/borde" />
-                            <TextView 
-		                        android:layout_width="18dp" 
-		                        android:layout_height="match_parent"
-		                        android:text="3" 
-		                        android:gravity="center" 
-		                        android:background="@drawable/borde" />
-                            
+                            <!-- Pentavalente -->
                             <TextView 
 		                        android:layout_width="18dp" 
 		                        android:layout_height="match_parent"
@@ -390,6 +303,7 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
 		                        android:gravity="center" 
 		                        android:background="@drawable/borde" />
                             
+                            <!-- DPT -->
                             <TextView 
 		                        android:layout_width="18dp" 
 		                        android:layout_height="match_parent"
@@ -409,6 +323,7 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
 		                        android:gravity="center" 
 		                        android:background="@drawable/borde" />
                             
+                            <!-- SRP -->
                             <TextView 
 		                        android:layout_width="18dp" 
 		                        android:layout_height="match_parent"
@@ -422,25 +337,7 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
 		                        android:gravity="center" 
 		                        android:background="@drawable/borde" />
                             
-                            <TextView 
-		                        android:layout_width="18dp" 
-		                        android:layout_height="match_parent"
-		                        android:text="1" 
-		                        android:gravity="center" 
-		                        android:background="@drawable/borde" />
-                            <TextView 
-		                        android:layout_width="18dp" 
-		                        android:layout_height="match_parent"
-		                        android:text="2" 
-		                        android:gravity="center" 
-		                        android:background="@drawable/borde" />
-                            <TextView 
-		                        android:layout_width="18dp" 
-		                        android:layout_height="match_parent"
-		                        android:text="3" 
-		                        android:gravity="center" 
-		                        android:background="@drawable/borde" />
-                            
+                            <!-- Rotavirus -->
                             <TextView 
 		                        android:layout_width="18dp" 
 		                        android:layout_height="match_parent"
@@ -460,6 +357,27 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
 		                        android:gravity="center" 
 		                        android:background="@drawable/borde" />
                             
+                            <!-- Neumococo -->
+                            <TextView 
+		                        android:layout_width="18dp" 
+		                        android:layout_height="match_parent"
+		                        android:text="1" 
+		                        android:gravity="center" 
+		                        android:background="@drawable/borde" />
+                            <TextView 
+		                        android:layout_width="18dp" 
+		                        android:layout_height="match_parent"
+		                        android:text="2" 
+		                        android:gravity="center" 
+		                        android:background="@drawable/borde" />
+                            <TextView 
+		                        android:layout_width="18dp" 
+		                        android:layout_height="match_parent"
+		                        android:text="3" 
+		                        android:gravity="center" 
+		                        android:background="@drawable/borde" />
+                            
+                            <!-- Influenza -->
                             <TextView 
 		                        android:layout_width="18dp" 
 		                        android:layout_height="match_parent"
@@ -478,29 +396,11 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
 		                        android:text="R" 
 		                        android:gravity="center" 
 		                        android:background="@drawable/borde" />
+                            
                         </LinearLayout>
                     </LinearLayout>
                     
-                    <TextView 
-                        android:layout_width="18dp" 
-                        android:layout_height="match_parent"
-                        android:text="DH" 
-                        android:gravity="center" 
-                        android:background="@drawable/borde" />
                     
-                    <TextView 
-                        android:layout_width="18dp" 
-                        android:layout_height="match_parent"
-                        android:text="COD" 
-                        android:gravity="center" 
-                        android:background="@drawable/borde" />
-                    
-                    <TextView 
-                        android:layout_width="100dp" 
-                        android:layout_height="match_parent"
-                        android:text="Observaciones" 
-                        android:gravity="center" 
-                        android:background="@drawable/borde" />
                     
                 </LinearLayout>
 	
@@ -510,12 +410,13 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
                     android:id="@+id/lvResultados"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:scrollbars="none"
                     tools:listitem="@layout/fila_censo_nominal" >
                 </ListView>
 
             </LinearLayout>
             
         </HorizontalScrollView>
-    </ScrollView>
+
 
 </LinearLayout>

@@ -2,8 +2,6 @@ package com.siigs.tes.datos.tablas;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
 import com.google.gson.annotations.SerializedName;

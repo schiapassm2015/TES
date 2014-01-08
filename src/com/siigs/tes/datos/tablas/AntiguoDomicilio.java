@@ -1,5 +1,12 @@
 package com.siigs.tes.datos.tablas;
 
+import com.siigs.tes.datos.DatosUtil;
+import com.siigs.tes.datos.ProveedorContenido;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.net.Uri;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -49,4 +56,22 @@ public class AntiguoDomicilio {
 	public String colonia_domicilio;
 	public String referencia_domicilio;
 	public int cp_domicilio;
+	
+	public static Uri AgregarAntiguoDomicilio(Context context, AntiguoDomicilio dom) throws Exception {
+		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(dom);
+		return context.getContentResolver().insert(ProveedorContenido.ANTIGUO_DOMICILIO_CONTENT_URI, cv);
+	}
+	
+	public static AntiguoDomicilio DePersona(Persona p, String fechaCambio){
+		AntiguoDomicilio ad = new AntiguoDomicilio();
+		ad.fecha_cambio = fechaCambio;
+		ad.id_asu_localidad_domicilio = p.id_asu_localidad_domicilio;
+		ad.calle_domicilio = p.calle_domicilio;
+		ad.colonia_domicilio = p.colonia_domicilio;
+		ad.numero_domicilio = p.numero_domicilio;
+		ad.cp_domicilio = p.cp_domicilio;
+		ad.referencia_domicilio = p.referencia_domicilio;
+		ad.id_persona = p.id;
+		return ad;
+	}
 }

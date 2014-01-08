@@ -1,6 +1,7 @@
 package com.siigs.tes.controles;
 
 import com.siigs.tes.R;
+import com.siigs.tes.ui.WidgetUtil;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
@@ -28,15 +29,10 @@ public class Notificaciones extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(
 				R.layout.controles_notificaciones, container, false);
-		//Botón ayuda
-		ImageButton btnAyuda=(ImageButton)rootView.findViewById(R.id.btnAyuda);
-		btnAyuda.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				new AlertDialog.Builder(getActivity())
-				.setMessage("Ayuda solo texto").create().show();	
-			}
-		});
+		
+		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_ver, R.string.notificaciones, 
+				R.layout.ayuda_dialogo_tes_login, getFragmentManager());
+		
 		
 		return rootView;
 	}

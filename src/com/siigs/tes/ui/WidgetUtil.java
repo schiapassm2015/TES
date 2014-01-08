@@ -1,0 +1,83 @@
+package com.siigs.tes.ui;
+
+import com.siigs.tes.DialogoAyuda;
+import com.siigs.tes.R;
+
+import android.support.v4.app.FragmentManager;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+/**
+ * Pequeñas funciones helper para tareas repetitivas relacionadas con widgets en los layout xml
+ * @author Axel
+ *
+ */
+public class WidgetUtil {
+
+	public static String TAG = WidgetUtil.class.getSimpleName();
+	
+
+	/**
+	 * Configura una barra de título dentro de {@link contenedor} con el texto especificado pero sin ayuda visible
+	 * @param contenedor Widget arriba en la jerarquía de la barra de título a configurar
+	 * @param idBarraTitulo identificador de la barra ubicada dentro del layout de {@link contenedor} 
+	 * @param idResTexto El id del recurso para cargar el texto de {@link strings.xml}
+	 */
+	public static void setBarraTitulo(View contenedor, int idBarraTitulo, int idResTexto){
+		setBarraTitulo(contenedor, idBarraTitulo, idResTexto, 0, null);
+	}
+	/**
+	 * Configura una barra de título dentro de {@link contenedor} con el texto especificado pero sin ayuda visible
+	 * @param contenedor Widget arriba en la jerarquía de la barra de título a configurar
+	 * @param idBarraTitulo identificador de la barra ubicada dentro del layout de {@link contenedor} 
+	 * @param idResTexto El id del recurso para cargar el texto de {@link strings.xml}
+	 */
+	public static void setBarraTitulo(View contenedor, int idBarraTitulo, String texto){
+		setBarraTitulo(contenedor, idBarraTitulo, texto, 0, null);
+	}
+	
+	/**
+	 * Configura una barra de título dentro de {@link contenedor} con el texto y botón de ayuda especificados
+	 * @param contenedor Widget arriba en la jerarquía de la barra de título a configurar
+	 * @param idBarraTitulo identificador de la barra ubicada dentro del layout de {@link contenedor} 
+	 * @param idResTexto El id del recurso para cargar el texto de {@link strings.xml}
+	 * @param idLayoutAyuda id del layout XML que aparecerá como diálogo flotante al presionar botón ayuda. Valor 0 indica que no hay ayuda
+	 * @param fm El manager que controlará el salto a la ayuda. Valor null indica que no hay ayuda
+	 */
+	public static void setBarraTitulo(View contenedor, int idBarraTitulo, int idResTexto, int idLayoutAyuda, FragmentManager fm){
+		setBarraTitulo(contenedor, idBarraTitulo, 
+				contenedor.getResources().getString(idResTexto), idLayoutAyuda, fm);
+	}
+	/**
+	 * Configura una barra de título dentro de {@link contenedor} con el texto y botón de ayuda especificados
+	 * @param contenedor Widget arriba en la jerarquía de la barra de título a configurar
+	 * @param idBarraTitulo identificador de la barra ubicada dentro del layout de {@link contenedor} 
+	 * @param texto El texto a poner en el título
+	 * @param idLayoutAyuda id del layout XML que aparecerá como diálogo flotante al presionar botón ayuda. Valor 0 indica que no hay ayuda
+	 * @param fm El manager que controlará el salto a la ayuda. Valor null indica que no hay ayuda
+	 */
+	public static void setBarraTitulo(View contenedor, int idBarraTitulo, String texto, 
+			final int idLayoutAyuda, final FragmentManager fm){
+		//Asignación de título
+		TextView titulo =
+				(TextView)contenedor.findViewById(idBarraTitulo).findViewById(R.id.txtTituloBarra);
+		titulo.setText(texto);
+		
+		//Asignación de botón ayuda
+		ImageButton ayuda = 
+				(ImageButton)contenedor.findViewById(idBarraTitulo).findViewById(R.id.btnAyuda);
+		if(fm==null || idLayoutAyuda == 0){
+			ayuda.setVisibility(TextView.INVISIBLE);
+			return;
+		}
+		ayuda.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				DialogoAyuda.CrearNuevo(fm, idLayoutAyuda);
+			}
+		});
+	}
+
+}//fin clase

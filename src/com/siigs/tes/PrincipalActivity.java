@@ -2,6 +2,7 @@ package com.siigs.tes;
 
 import java.util.List;
 
+import com.siigs.tes.controles.CensoCensoNominal;
 import com.siigs.tes.controles.ContenidoControles;
 import com.siigs.tes.controles.ContenidoControles.ItemControl;
 
@@ -152,7 +153,7 @@ public class PrincipalActivity extends FragmentActivity implements
 	}
 	
 	/**
-	 * Callback de {@link DialogoTes.Callbacks} indicando
+	 * Callback de {@link ControlVacunasNuevo.Callbacks} indicando
 	 * que el dialogo está listo para recibir avisos de tags NFC
 	 * @param llamador
 	 */
@@ -162,7 +163,7 @@ public class PrincipalActivity extends FragmentActivity implements
 	}
 	
 	/**
-	 * Callback de {@link DialogoTes.Callbacks} indicando
+	 * Callback de {@link ControlVacunasNuevo.Callbacks} indicando
 	 * que el dialogo ya no requiere recibir avisos de tags NFC
 	 */
 	@Override
@@ -193,6 +194,11 @@ public class PrincipalActivity extends FragmentActivity implements
 				e.printStackTrace();
 			}
 			fragment.setArguments(arguments);
+			
+			if(fragment instanceof CensoCensoNominal){
+				fragment.setTargetFragment(this.miMenuSuperior, CensoCensoNominal.REQUEST_CODE);
+			}
+			
 			getSupportFragmentManager().beginTransaction()
 				//.setCustomAnimations(android.R.animator.fade_out, android.R.animator.fade_in)
 				.replace(R.id.seccion_detail_container, fragment).commit();

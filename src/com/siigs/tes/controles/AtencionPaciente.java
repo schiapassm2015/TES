@@ -5,22 +5,26 @@ package com.siigs.tes.controles;
 
 import java.util.List;
 
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
-import org.joda.time.Period;
-
 import com.siigs.tes.DialogoTes;
 import com.siigs.tes.R;
 import com.siigs.tes.Sesion;
 import com.siigs.tes.TesAplicacion;
+import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.tablas.Alergia;
+import com.siigs.tes.datos.tablas.AntiguoDomicilio;
 import com.siigs.tes.datos.tablas.ArbolSegmentacion;
+import com.siigs.tes.datos.tablas.Bitacora;
+import com.siigs.tes.datos.tablas.ErrorSis;
+import com.siigs.tes.datos.tablas.PendientesTarjeta;
 import com.siigs.tes.datos.tablas.Persona;
+import com.siigs.tes.datos.tablas.PersonaAlergia;
 import com.siigs.tes.datos.tablas.TipoSanguineo;
 import com.siigs.tes.datos.tablas.Tutor;
-import com.siigs.tes.ui.AdaptadorArrayMultiTextView;
+import com.siigs.tes.ui.AdaptadorArrayMultiView;
+import com.siigs.tes.ui.WidgetUtil;
 
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,15 +33,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView.FindListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.FilterQueryProvider;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,13 +54,12 @@ public class AtencionPaciente extends Fragment {
 	private Sesion sesion;
 	
 	private AutoCompleteTextView acLocalidad=null;
-	private AutoCompleteTextView acUM = null;
 	
 	//Guardan selecciones de AutoCompleteTextView ó -1 si nada hay aún
 	private int idLocalidadSeleccionada = -1;
-	private int idUmSeleccionada = -1;
 	private String textoLocalidadSeleccionada = "";
-	private String textoUmSeleccionada = "";
+	
+	private TextView lblSinAlergiasVer = null;
 	
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -86,8 +86,8 @@ public class AtencionPaciente extends Fragment {
 
 		//VISIBILIDAD DE ACCIONES EN PANTALLA SEGÚN PERMISOS
 		LinearLayout verDatos = (LinearLayout)rootView.findViewById(R.id.accion_ver_datos_paciente);
-		if(sesion.tienePermiso(ContenidoControles.ICA_PACIENTE_VER))
-			verDatos.setVisibility(View.VISIBLE); else verDatos.setVisibility(View.VISIBLE);
+		if(sesion.tienePermiso(ContenidoControles.ICA_PACIENTE_VER)) 
+			verDatos.setVisibility(View.VISIBLE); else verDatos.setVisibility(View.GONE);
 		
 		LinearLayout editarDomicilio = (LinearLayout)rootView.findViewById(R.id.accion_editar_domicilio);
 		if(sesion.tienePermiso(ContenidoControles.ICA_PACIENTE_EDITAR_DOMICILIO))
@@ -104,12 +104,11 @@ public class AtencionPaciente extends Fragment {
 		final Persona p = sesion.getDatosPacienteActual().persona;
 		
 		//LECTURA DE DATOS PARA SECCIÓN VER
-		TextView ayudaVer = 
-				(TextView)rootView.findViewById(R.id.barra_titulo_ver).findViewById(R.id.txtTituloBarra);
-		ayudaVer.setText(R.string.datos_paciente);
+		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_ver, R.string.datos_paciente);
+
 		((TextView)rootView.findViewById(R.id.txtNombre)).setText(p.nombre);
 		((TextView)rootView.findViewById(R.id.txtCurp)).setText(p.curp);
-		((TextView)rootView.findViewById(R.id.txtEdad)).setText(calcularEdad(p.fecha_nacimiento));
+		((TextView)rootView.findViewById(R.id.txtEdad)).setText(DatosUtil.calcularEdad(p.fecha_nacimiento));
 		((TextView)rootView.findViewById(R.id.txtSexo)).setText(p.sexo);
 		((TextView)rootView.findViewById(R.id.txtSangre)).setText(
 				TipoSanguineo.getTipoSanguineo(getActivity(), p.id_tipo_sanguineo));
@@ -135,17 +134,15 @@ public class AtencionPaciente extends Fragment {
 		((TextView)rootView.findViewById(R.id.txtTutor)).setText(nombreTutor);
 				
 		//Lista de alergias a ver
-		com.siigs.tes.ui.ListaSimple lsAlergiasActuales = (com.siigs.tes.ui.ListaSimple)
+		final com.siigs.tes.ui.ListaSimple lsAlergiasActuales = (com.siigs.tes.ui.ListaSimple)
 				rootView.findViewById(R.id.lsAlergiasActuales);
-		if(GenerarAlergias(lsAlergiasActuales)>0)
-			rootView.findViewById(R.id.lblSinAlergiasVer).setVisibility(View.GONE);
-		else rootView.findViewById(R.id.lblSinAlergiasVer).setVisibility(View.VISIBLE);
+		lblSinAlergiasVer = (TextView) rootView.findViewById(R.id.lblSinAlergiasVer);
+		GenerarAlergiasVer(lsAlergiasActuales);
 		
 		
 		//LECTURA DE DATOS PARA SECCIÓN DOMICILIO
-		TextView ayudaDomicilio = (TextView) rootView.findViewById(
-				R.id.barra_titulo_domicilio).findViewById(R.id.txtTituloBarra);
-		ayudaDomicilio.setText(R.string.actualizar_domicilio);
+		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_domicilio, R.string.actualizar_domicilio);
+
 		final TextView txtCalle = (TextView)rootView.findViewById(R.id.txtCalle);
 		txtCalle.setText(p.calle_domicilio);
 		final TextView txtNumero = (TextView)rootView.findViewById(R.id.txtNumero);
@@ -182,75 +179,158 @@ public class AtencionPaciente extends Fragment {
 					Toast.makeText(getActivity(), getString(R.string.aviso_llenar_campos), Toast.LENGTH_LONG).show();
 					return;
 				}
-				//Guardamos cambios
-				p.id_asu_localidad_domicilio = idLocalidadSeleccionada;
-				p.calle_domicilio = txtCalle.getText().toString();
-				p.colonia_domicilio = txtColonia.getText().toString();
-				p.numero_domicilio = txtNumero.getText().toString();
-				//TODO QUEDAMOS QUE SI ES DE LOCALIDAD FUERA Y EL CAMBIO ES A LA MÍA NO GUARDO EN BD, PUES
-				//AL SINCRONIZAR DEBO RECIBIR EL REGISTRO. Y SI ES ACTUALMENTE MÍO Y LO CAMBIO FUERA DE MI??
-				//QUÉ PASA EN CADA CASO SI NO PUEDO ESCRIBIR EN SU TES??? LO AGREGO A PENDIENTES???
-				//Por default pedimos una TES al usuario en un diálogo modal
-				DialogoTes.IniciarNuevo(AtencionPaciente.this, DialogoTes.ModoOperacion.GUARDAR);
-				//Este diálogo avisará su fin en onActivityResult()
+				
+				//Confirmación
+				AlertDialog dialogo=new AlertDialog.Builder(getActivity()).create();
+				dialogo.setMessage("¿En verdad desea actualizar el domicilio?");
+				dialogo.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+					@Override public void onClick(DialogInterface arg0, int arg1) {}
+				});
+				dialogo.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String fechaCambio = DatosUtil.getAhora();
+						//Guardamos cambios en memoria
+						AntiguoDomicilio antiguoDom = AntiguoDomicilio.DePersona(p, fechaCambio);
+						
+						p.ultima_actualizacion = fechaCambio;
+						p.id_asu_localidad_domicilio = idLocalidadSeleccionada;
+						p.calle_domicilio = txtCalle.getText().toString();
+						p.colonia_domicilio = txtColonia.getText().toString();
+						p.numero_domicilio = txtNumero.getText().toString();
+						
+						//En bd
+						try {
+							AntiguoDomicilio.AgregarAntiguoDomicilio(getActivity(), antiguoDom);
+							Persona.AgregarEditar(getActivity(), p);
+							Bitacora.AgregarRegistro(getActivity(), sesion.getUsuario()._id, 
+									ContenidoControles.ICA_PACIENTE_EDITAR_DOMICILIO, "paciente:"+p.id);
+						} catch (Exception e) {
+							ErrorSis.AgregarError(getActivity(), sesion.getUsuario()._id, 
+									ContenidoControles.ICA_PACIENTE_EDITAR_DOMICILIO, e.toString());
+							e.printStackTrace();
+						}
+						//Si no funcionara el guardado generamos un pendiente
+						PendientesTarjeta pendiente = new PendientesTarjeta();
+						pendiente.id_persona = p.id;
+						pendiente.tabla = Persona.NOMBRE_TABLA;
+						pendiente.registro_json = DatosUtil.CrearStringJson(p);
+						// Por default pedimos una TES al usuario en un diálogo modal
+						DialogoTes.IniciarNuevo(AtencionPaciente.this,
+								DialogoTes.ModoOperacion.GUARDAR, pendiente);
+					}
+				} );
+				dialogo.show();
 			}
 		});
 		
 		
 		// LECTURA DE DATOS PARA SECCIÓN UNIDAD MÉDICA
-		TextView ayudaUnidadMedica = (TextView) rootView.findViewById(
-				R.id.barra_titulo_um).findViewById(R.id.txtTituloBarra);
-		ayudaUnidadMedica.setText(R.string.actualizar_um);
-		//Autocomplete de localidad
-		idUmSeleccionada = p.id_asu_um_tratante;
-		acUM = (AutoCompleteTextView) rootView
-				.findViewById(R.id.acUM);
-		GenerarAutoCompleteASU(acUM, idUmSeleccionada);
-		textoUmSeleccionada = acUM.getText().toString();
-		acUM.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				idUmSeleccionada = (int) id;
-				textoUmSeleccionada = acUM.getText().toString();
-			}
-		});
-		acUM.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View view, boolean hasFocus) {
-				if (!hasFocus)acUM.setText(textoUmSeleccionada);
-			}
-		});
+		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_um, R.string.actualizar_um);
 
 		Button btnActualizarUM = (Button) rootView.findViewById(R.id.btnActualizarUM);
 		btnActualizarUM.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				// Validamos los datos
-				//TODO preguntar si quiere cambiar a lo seleccionadoo...
-				// Guardamos cambios
-				p.id_asu_um_tratante = idUmSeleccionada;
-				// TODO QUEDAMOS QUE SI ES DE LOCALIDAD FUERA Y EL CAMBIO ES A
-				// LA MÍA NO GUARDO EN BD, PUES
-				// AL SINCRONIZAR DEBO RECIBIR EL REGISTRO. Y SI ES ACTUALMENTE
-				// MÍO Y LO CAMBIO FUERA DE MI??
-				// QUÉ PASA EN CADA CASO SI NO PUEDO ESCRIBIR EN SU TES??? LO
-				// AGREGO A PENDIENTES???
-				// Por default pedimos una TES al usuario en un diálogo modal
-				DialogoTes.IniciarNuevo(AtencionPaciente.this,
-						DialogoTes.ModoOperacion.GUARDAR);
-				// Este diálogo avisará su fin en onActivityResult()
+				//Confirmación
+				AlertDialog dialogo=new AlertDialog.Builder(getActivity()).create();
+				dialogo.setMessage("¿En verdad desea asignar paciente a esta unidad médica?");
+				dialogo.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+					@Override public void onClick(DialogInterface arg0, int arg1) {}
+				});
+				dialogo.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// Guardamos cambios en memoria
+						p.ultima_actualizacion = DatosUtil.getAhora();
+						p.id_asu_um_tratante = aplicacion.getUnidadMedica();						
+						// En bd
+						int ICA = ContenidoControles.ICA_PACIENTE_ASIGNAR_UM;
+						try {
+							Persona.AgregarEditar(getActivity(), p);
+							Bitacora.AgregarRegistro(getActivity(), sesion.getUsuario()._id, 
+									ICA, "paciente:"+p.id);
+						} catch (Exception e) {
+							ErrorSis.AgregarError(getActivity(), sesion.getUsuario()._id, 
+									ICA, e.toString());
+							e.printStackTrace();
+						}
+						//Si no funcionara el guardado generamos un pendiente
+						PendientesTarjeta pendiente = new PendientesTarjeta();
+						pendiente.id_persona = p.id;
+						pendiente.tabla = Persona.NOMBRE_TABLA;
+						pendiente.registro_json = DatosUtil.CrearStringJson(p);
+						// Por default pedimos una TES al usuario en un diálogo modal
+						DialogoTes.IniciarNuevo(AtencionPaciente.this,
+								DialogoTes.ModoOperacion.GUARDAR, pendiente);
+					}
+				} );
+				dialogo.show();
 			}
 		});
 		
 		
 		//LECTURA DE DATOS PARA SECCIÓN AGREGAR ALERGIAS
+		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_alergias, 
+				R.string.agregar_alergia, R.layout.ayuda_dialogo_tes_login, getFragmentManager());
 		TextView ayudaAlergia = (TextView) rootView.findViewById(
 				R.id.barra_titulo_alergias).findViewById(R.id.txtTituloBarra);
-		ayudaAlergia.setText(R.string.actualizar_alergias);
+		ayudaAlergia.setText(R.string.agregar_alergia);
+		
+		final Spinner spAlergiaAgregar = (Spinner) rootView.findViewById(R.id.spAlergiaAgregar);
+		GenerarAlergiasAgregables(spAlergiaAgregar);
+		
+		Button btnAgregarAlergia = (Button)rootView.findViewById(R.id.btnAgregarAlergia);
+		btnAgregarAlergia.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				//Confirmación
+				AlertDialog dialogo=new AlertDialog.Builder(getActivity()).create();
+				dialogo.setMessage("¿En verdad desea registrar esta alergia para el paciente? \nEsta acción no se puede deshacer");
+				dialogo.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+					@Override public void onClick(DialogInterface arg0, int arg1) {}
+				});
+				dialogo.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if(spAlergiaAgregar.getAdapter().getCount()<=0)return;
+						
+						// Guardamos cambios en memoria
+						PersonaAlergia alergia = new PersonaAlergia();
+						alergia.id_alergia = ((Alergia)spAlergiaAgregar.getSelectedItem())._id;
+						alergia.id_persona = p.id;
+						alergia.ultima_actualizacion = DatosUtil.getAhora();
+						sesion.getDatosPacienteActual().alergias.add(alergia);
+						//En bd
+						PersonaAlergia.AgregarNuevaAlergia(getActivity(), alergia);
+						Bitacora.AgregarRegistro(getActivity(), sesion.getUsuario()._id, 
+								ContenidoControles.ICA_PACIENTE_AGREGAR_ALERGIAS, "paciente:"+p.id+", alergia:"+alergia.id_alergia);
+						//Si no funcionara el guardado generamos un pendiente
+						PendientesTarjeta pendiente = new PendientesTarjeta();
+						pendiente.id_persona = p.id;
+						pendiente.tabla = PersonaAlergia.NOMBRE_TABLA;
+						pendiente.registro_json = DatosUtil.CrearStringJson(alergia);
+						// Por default pedimos una TES al usuario en un diálogo modal
+						DialogoTes.IniciarNuevo(AtencionPaciente.this,
+								DialogoTes.ModoOperacion.GUARDAR, pendiente);
+						//Refrescamos controles
+						GenerarAlergiasAgregables(spAlergiaAgregar);
+						GenerarAlergiasVer(lsAlergiasActuales);
+					}
+				} );
+				dialogo.show();
+			}
+		});
+		
 		
 		return rootView;
 	}
 	
+	/**
+	 * Genera adaptador para el texto sugerido de arbol de segmentación
+	 * @param asu View de autocompletado a configurar
+	 * @param id_asu Hoja base del arbol de segmentación para generar sugerencias y opción default 
+	 */
 	private void GenerarAutoCompleteASU(AutoCompleteTextView asu, int id_asu){
 		final ArbolSegmentacion arbol = ArbolSegmentacion.getArbol(getActivity(), id_asu);
 		asu.setText(arbol.descripcion);
@@ -280,36 +360,42 @@ public class AtencionPaciente extends Fragment {
 	}
 	
 	
-	private int GenerarAlergias(com.siigs.tes.ui.ListaSimple lista){
-		List<Alergia> alergias = Alergia.getAlergiasEnLista(getActivity(),
-				sesion.getDatosPacienteActual().alergias);
-		AdaptadorArrayMultiTextView<Alergia> adaptador = new AdaptadorArrayMultiTextView<Alergia>(
-				getActivity(),android.R.layout.simple_list_item_checked, alergias, 
-				new String[]{Alergia.DESCRIPCION}, new int[]{android.R.id.text1});
-		/*ArrayAdapter<String> adaptador = new ArrayAdapter<String>(
-				getActivity(), android.R.layout.simple_list_item_checked, android.R.id.text1, alergias);*/
+	private void GenerarAlergiasAgregables(Spinner spAlergias){
+		spAlergias.setAdapter(crearAdaptadorAlergias(false));
+	}
+	
+	private void GenerarAlergiasVer(com.siigs.tes.ui.ListaSimple lista){
+		AdaptadorArrayMultiView<Alergia> adaptador = crearAdaptadorAlergias(true);
 		lista.setAdaptador(adaptador);
-		return alergias.size();
+		if(adaptador.getCount()>0)lblSinAlergiasVer.setVisibility(View.GONE);
+		else lblSinAlergiasVer.setVisibility(View.VISIBLE);
 	}
 	
 	/**
-	 * Calcula la edad basado en la fecha ingresada
-	 * @param fechaNacimiento Fecha en formato aaaa/mm/dd
+	 * Crea un adaptador con alergias que TIENE ó NO TIENE el paciente según {@link enAlergiasPaciente}
+	 * @param enAlergiasPaciente
 	 * @return
 	 */
-	private String calcularEdad(String fechaNacimiento){
-		DateTime nacimiento = new DateTime(fechaNacimiento);
-		DateTime hoy = new DateTime(System.currentTimeMillis());
-		Period periodo;
-		try{
-			periodo = new Interval(nacimiento,hoy).toPeriod();
-		}catch(Exception e){return fechaNacimiento;}
+	private AdaptadorArrayMultiView<Alergia> crearAdaptadorAlergias(boolean enAlergiasPaciente){
+		//Consultamos las alergias agregables (aún no existen en el paciente actual
+		List<Alergia> alergias = Alergia.getAlergiasConLista(getActivity(),
+				sesion.getDatosPacienteActual().alergias, enAlergiasPaciente);
+
+		//Aquí hacemos un "hack" en clase Alergia pues usaremos su campo activo (int) para guardar
+		//el id de la imagen que se visualizará con el adaptador en el layout. Estas instancias de
+		//Alergia NO deberían ser usadas para algo más, pues están "hackeadas"
+		for(Alergia alergia : alergias)
+			alergia.activo = Alergia.getResourceImagenTipoAlergia(alergia.tipo);
 		
-		if(periodo.getYears()<=0) {
-			if(periodo.getMonths()<=0) return periodo.getWeeks()+" semanas, "+periodo.getDays()+" días";
-			else return periodo.getMonths()+" meses, "+ periodo.toStandardDays().getDays();
-		}else return periodo.getYears()+" años, "+ periodo.getMonths()+" meses";	
-	}
+		// Construimos el adaptador que mapeará texto e imagen
+		AdaptadorArrayMultiView.Mapeo[] mapeo = new AdaptadorArrayMultiView.Mapeo[] {
+				new AdaptadorArrayMultiView.Mapeo(Alergia.DESCRIPCION,
+						android.R.id.text1, "setText", CharSequence.class),
+				new AdaptadorArrayMultiView.Mapeo(Alergia.ACTIVO, R.id.imgIcono,
+						"setBackgroundResource", int.class) };
+		return new AdaptadorArrayMultiView<Alergia>(getActivity(), 
+				R.layout.fila_principalfragment, alergias, mapeo);
+	}	
 
 	@Override
 	public void onPause() {
@@ -325,19 +411,5 @@ public class AtencionPaciente extends Fragment {
 		super.onPause();
 	}
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		switch(requestCode){
-		case DialogoTes.REQUEST_CODE:
-			if(resultCode==DialogoTes.RESULT_CANCELAR){
-				//TODO implementar guardado de TES_PENDIENTES
-			}else if(resultCode==DialogoTes.RESULT_OK){/*NADA*/}
-			break;
-		}
-	}
-
-	
-	
 	
 }//fin clase

@@ -14,6 +14,7 @@ public class EsquemaIncompleto {
 	//public final static String ID = "_id"; //para adaptadores android
 	public final static String ID_PERSONA = "id_persona";
 	public final static String ID_VACUNA = "id_vacuna";
+	public final static String PRIORIDAD = "prioridad";
 		
 	//Comandos de base de datos
 	public final static String DROP_TABLE = "DROP TABLE IF EXISTS " + NOMBRE_TABLA +"; ";
@@ -22,10 +23,12 @@ public class EsquemaIncompleto {
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
 		//ID + " INTEGER PRIMARY KEY NOT NULL, " + //para adaptadores android
 		ID_PERSONA + " TEXT NOT NULL, "+
-		ID_VACUNA + " INTEGER NOT NULL "+
+		ID_VACUNA + " INTEGER NOT NULL, " +
+		PRIORIDAD + " INTEGER NOT NULL" +
 		"); ";
 	
 	//POJO
 	public String id_persona;
 	public int id_vacuna;
+	public int prioridad;
 }

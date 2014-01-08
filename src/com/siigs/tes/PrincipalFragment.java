@@ -154,19 +154,13 @@ public class PrincipalFragment extends ListFragment {
 		int afectados=cr.update(ProveedorContenido.PERSONA_CONTENT_URI, valores, where, args);
 		afectados++;
 		
-		valores.clear();
-		valores.put(ControlVacuna.ID_PERSONA, "49a6cddb690074c1f8b5019ecaea25e7");
-		valores.put(ControlVacuna.FECHA, DatosUtil.getAhora());
-		valores.put(ControlVacuna.ID_VACUNA, 2);
-		valores.put(ControlVacuna.ID_ASU_UM, aplicacion.getUnidadMedica());
-		cr.insert(ProveedorContenido.CONTROL_VACUNA_CONTENT_URI, valores);
-		
 		try {
 			UsuarioInvitado invitado = new UsuarioInvitado();
-			invitado.nombre="nuevo2";invitado.id_usuario_creador=4;invitado.fecha_creacion=aplicacion.getFechaUltimaSincronizacion();
+			invitado._id=1;invitado.nombre="unico";invitado.id_usuario_creador=4;
+			invitado.fecha_creacion=aplicacion.getFechaUltimaSincronizacion();
 			invitado.activo=1;
 			ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(invitado);
-			cv.remove(UsuarioInvitado.ID_INVITADO);
+			//cv.remove(UsuarioInvitado.ID_INVITADO);
 			cr.insert(ProveedorContenido.USUARIO_INVITADO_CONTENT_URI, cv  );
 			/*//TODO Borrar estas creaciones
 			aplicacion.setEsInstalacionNueva(false);

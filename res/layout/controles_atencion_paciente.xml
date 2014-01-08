@@ -7,7 +7,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:paddingBottom="30dp" >
 
         <LinearLayout
             android:id="@+id/accion_ver_datos_paciente"
@@ -276,7 +277,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:digits="@string/caracteres_permitidos" />
             </LinearLayout>
 
             <LinearLayout
@@ -292,7 +294,8 @@
                     android:id="@+id/txtNumero"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:digits="@string/caracteres_permitidos" />
             </LinearLayout>
 
             <LinearLayout
@@ -308,7 +311,8 @@
                     android:id="@+id/txtColonia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:digits="@string/caracteres_permitidos" />
             </LinearLayout>
 
             <LinearLayout
@@ -364,17 +368,6 @@
                 android:layout_height="wrap_content"
                 android:text="UM Tratante" />
             
-            <AutoCompleteTextView
-                    android:id="@+id/acUM"
-                    android:completionThreshold="1"
-                    android:hint="Debe seleccionar una Unidad Médica"
-                    android:lines="3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:digits="@string/caracteres_permitidos">
-            </AutoCompleteTextView>
-            
             <Button android:id="@+id/btnActualizarUM"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -403,22 +396,22 @@
                 style="@android:style/TextAppearance.DeviceDefault.DialogWindowTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reacciones alérgicas" />
+                android:text="Seleccione la alergia a agregar en paciente" />
             
             <!-- Al implementar esto checar: 
             http://www.androidhive.info/2013/07/android-expandable-list-view-tutorial/ -->
-            <ExpandableListView
-                android:id="@+id/lsAlergias"
-                android:layout_width="wrap_content"
+
+            <Spinner
+                android:id="@+id/spAlergiaAgregar"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:listitem="@android:layout/simple_list_item_multiple_choice">
-            </ExpandableListView>
+                tools:listitem="@layout/fila_principalfragment" />
             
-            <Button android:id="@+id/btnActualizarAlergias"
+            <Button android:id="@+id/btnAgregarAlergia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:text="@string/actualizar_alergias"/>
+                android:text="@string/agregar_alergia"/>
             
         </LinearLayout>
     </LinearLayout>

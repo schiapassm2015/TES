@@ -58,11 +58,14 @@ public class ContenidoControles {
 	//
 	public final static int ICA_PACIENTE_LISTAR = 96;
 		//Acciones internas
-		public final static int ICA_PACIENTE_VER = 00;
+		public final static int ICA_PACIENTE_VER = 95;
 		public final static int ICA_PACIENTE_EDITAR_DOMICILIO = 98;
 		public final static int ICA_PACIENTE_ASIGNAR_UM = 97;
 		public final static int ICA_PACIENTE_AGREGAR_ALERGIAS = 99;
 	public final static int ICA_CONTROLVACUNA_LISTAR = 106;
+		//Acciones internas
+		public final static int ICA_CONTROLVACUNA_VER = 105;
+		public final static int ICA_CONTROLVACUNA_INSERTAR = 104;
 	public final static int ICA_CONTROLNUTRICIONAL_LISTAR = 89;
 	public final static int ICA_CONTROLACCIONNUTRICIONAL_LISTAR = 76;
 	public final static int ICA_EDA_LISTAR = 83;
@@ -106,7 +109,7 @@ public class ContenidoControles {
 			addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
 		}
 		if(ExistePermiso(ICA_CONTROLVACUNA_LISTAR, permisos)){
-			item=new ItemControl(ICA_CONTROLVACUNA_LISTAR, "Control de Vacunación", ControlFragment.class);
+			item=new ItemControl(ICA_CONTROLVACUNA_LISTAR, "Control de Vacunación", ControlVacunas.class);
 			addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
 		}
 		if(ExistePermiso(ICA_CONTROLNUTRICIONAL_LISTAR, permisos)){
@@ -122,7 +125,7 @@ public class ContenidoControles {
 			addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
 		}
 		if(ExistePermiso(ICA_EDA_LISTAR, permisos)){
-			item=new ItemControl(ICA_EDA_LISTAR, "Control ERAs", ControlFragment.class);
+			item=new ItemControl(ICA_EDA_LISTAR, "Control EDAs", ControlFragment.class);
 			addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
 		}
 		if(ExistePermiso(ICA_CONTROLCONSULTA_LISTAR, permisos)){

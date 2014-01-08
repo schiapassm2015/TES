@@ -10,9 +10,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+import org.joda.time.Period;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -99,7 +104,7 @@ public class DatosUtil {
 	 * @param clase
 	 * @return
 	 */
-	public static <T> List<T> ObjetosDesdeCursor(Cursor cur, Class clase){
+	public static <T> List<T> ObjetosDesdeCursor(Cursor cur, Class<?> clase){
 		List<T> salida = new ArrayList<T>();
 		try {
 			while(cur.moveToNext())
@@ -144,6 +149,16 @@ public class DatosUtil {
 		return salida;
 	}
 	
+	/**
+	 * Convierte obj en su representación JSON.
+	 * @param obj
+	 * @return
+	 */
+	public static String CrearStringJson(Object obj){
+		Gson gson = new Gson();
+		return gson.toJson(obj);
+	}
+	
 	
 	/**
 	 * Regresa la fecha y hora actual en formato 24 horas.
@@ -151,9 +166,24 @@ public class DatosUtil {
 	 */
 	public static String getAhora(){
 		Calendar cal = Calendar.getInstance();
-		String salida= cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+
-				"-"+cal.get(Calendar.DAY_OF_MONTH)+" "+cal.get(Calendar.HOUR_OF_DAY)+
-				":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND);
+		
+		String mes = (cal.get(Calendar.MONTH)+1)+"";
+		if(mes.length()==1)mes="0"+mes;
+		
+		String dia = cal.get(Calendar.DAY_OF_MONTH)+"";
+		if(dia.length()==1)dia="0"+dia;
+		
+		String hora = cal.get(Calendar.HOUR_OF_DAY)+"";
+		if(hora.length()==1)hora="0"+hora;
+		
+		String minuto= cal.get(Calendar.MINUTE)+"";
+		if(minuto.length()==1)minuto="0"+minuto;
+		
+		String segundo= cal.get(Calendar.SECOND)+"";
+		if(segundo.length()==1)segundo="0"+segundo;
+		
+		String salida= cal.get(Calendar.YEAR)+"-" + mes +
+				"-" + dia + " " + hora + ":" + minuto + ":" + segundo;
 		return salida;
 	}
 	
@@ -163,9 +193,45 @@ public class DatosUtil {
 	 */
 	public static String getHoy(){
 		Calendar cal = Calendar.getInstance();
-		String salida= cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+
-				"-"+cal.get(Calendar.DAY_OF_MONTH)+" 00:00:00";
+		
+		String mes = (cal.get(Calendar.MONTH)+1)+"";
+		if(mes.length()==1)mes="0"+mes;
+		
+		String dia = cal.get(Calendar.DAY_OF_MONTH)+"";
+		if(dia.length()==1)dia="0"+dia;
+		
+		String salida= cal.get(Calendar.YEAR) + "-" + mes +
+				"-" + dia + " 00:00:00";
 		return salida;
+	}
+	
+	/**
+	 * Calcula la edad basado en la fecha ingresada
+	 * @param fechaNacimiento Fecha en formato aaaa-mm-dd
+	 * @return
+	 */
+	public static String calcularEdad(String fechaNacimiento){
+		DateTime nacimiento = new DateTime(fechaNacimiento);
+		DateTime hoy = new DateTime(System.currentTimeMillis());
+		Period periodo;
+		try{
+			periodo = new Interval(nacimiento,hoy).toPeriod();
+		}catch(Exception e){return fechaNacimiento;}
+		
+		if(periodo.getYears()<=0) {
+			if(periodo.getMonths()<=0) return periodo.getWeeks()+" semanas, "+periodo.getDays()+" días";
+			else return periodo.getMonths()+" meses, "+ periodo.toStandardDays().getDays();
+		}else return periodo.getYears()+" años, "+ periodo.getMonths()+" meses";	
+	}
+	
+	/**
+	 * Confierte la fecha recibida al estílo día(numérico)-Mes(3 letras)-Año(numérico)
+	 * @param fecha Fecha en formato numérico aaaa-mm-dd
+	 * @return Fecha legible en formato dd-MMM-aaaa
+	 */
+	public static String fechaCorta(String fecha){
+		//TODO implementar
+		return "";
 	}
 	
 }//fin clase

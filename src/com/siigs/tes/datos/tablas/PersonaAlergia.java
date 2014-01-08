@@ -1,5 +1,12 @@
 package com.siigs.tes.datos.tablas;
 
+import com.siigs.tes.datos.ProveedorContenido;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -23,7 +30,7 @@ public class PersonaAlergia {
 	
 	public final static String CREATE_TABLE =
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
-		_ID + " INTEGER PRIMARY KEY NOT NULL, " +
+		_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
 		ID_PERSONA + " TEXT NOT NULL, " +
 		ID_ALERGIA + " INTEGER NOT NULL, " +
 		ULTIMA_ACTUALIZACION + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), "+
@@ -34,4 +41,16 @@ public class PersonaAlergia {
 	public String id_persona;
 	public int id_alergia;
 	public String ultima_actualizacion;
+	
+	public static Uri AgregarNuevaAlergia(Context context, PersonaAlergia alergia){
+		ContentValues cv = new ContentValues();
+		cv.put(ID_PERSONA, alergia.id_persona);
+		cv.put(ID_ALERGIA, alergia.id_alergia);
+		cv.put(ULTIMA_ACTUALIZACION, alergia.ultima_actualizacion);
+		Uri salida = context.getContentResolver().insert(ProveedorContenido.PERSONA_ALERGIA_CONTENT_URI, cv);
+		if(salida != null)
+			Log.d(NOMBRE_TABLA, "Se ha insertado nuevo registro id: "+salida.getLastPathSegment());
+		return salida;
+	}
+	
 }

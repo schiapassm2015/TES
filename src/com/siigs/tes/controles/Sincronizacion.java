@@ -4,6 +4,7 @@ import com.siigs.tes.DialogoAyuda;
 import com.siigs.tes.R;
 import com.siigs.tes.TesAplicacion;
 import com.siigs.tes.datos.SincronizacionTask;
+import com.siigs.tes.ui.WidgetUtil;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -34,15 +35,9 @@ public class Sincronizacion extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(
 				R.layout.controles_sincronizacion, container, false);
-		//Botón ayuda
-		ImageButton btnAyuda=(ImageButton)rootView.findViewById(R.id.btnAyuda);
-		btnAyuda.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				DialogoAyuda.CrearNuevo(getFragmentManager(), 
-						R.layout.ayuda_controles_sincronizacion);	
-			}
-		});
+
+		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_ver, R.string.sincronizacion, 
+				R.layout.ayuda_dialogo_tes_login, getFragmentManager());
 		
 		//Botón sincronizar
 		Button btnSincronizar=(Button)rootView.findViewById(R.id.btnSincronizar);

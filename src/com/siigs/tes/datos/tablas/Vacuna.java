@@ -1,6 +1,13 @@
 package com.siigs.tes.datos.tablas;
 
+import java.util.List;
+
+import android.content.Context;
+import android.database.Cursor;
+
 import com.google.gson.annotations.SerializedName;
+import com.siigs.tes.datos.DatosUtil;
+import com.siigs.tes.datos.ProveedorContenido;
 
 /**
  * Esquema de tabla de base de datos
@@ -34,4 +41,12 @@ public class Vacuna {
 	public int _id;
 	public String descripcion;
 	public int activo;
+	
+	public static List<Vacuna> getVacunasActivas(Context context){
+		Cursor cur = context.getContentResolver().query(
+				ProveedorContenido.VACUNA_CONTENT_URI, null, ACTIVO + "=1", null, DESCRIPCION);
+		List<Vacuna> salida = DatosUtil.ObjetosDesdeCursor(cur, Vacuna.class);
+		cur.close();
+		return salida;
+	}
 }

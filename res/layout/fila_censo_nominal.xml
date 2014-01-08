@@ -6,64 +6,215 @@ similar a una tabla -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:background="@drawable/selector_menusuperior" >
     
-    <TextView android:id="@+id/txtNombre"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:text="Nombre apellido1 apellido2"
+    <TextView android:id="@+id/txtPaterno"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/selector_link_lista"
+        android:text="Paterno"
+        android:gravity="center"
         android:clickable="true"
         android:textColor="#0000ff"/>
     
-    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
+    <TextView android:id="@+id/txtMaterno"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/selector_link_lista"
+        android:text="Materno"
+        android:gravity="center"
+        android:clickable="true"
+        android:textColor="#0000ff"/>
     
-    <TextView android:id="@+id/txtCurp"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="saca830223456chs0723"/>
-   
-    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
-    
-    <TextView android:id="@+id/txtFechaNacimiento"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:text="dd-mmm-aaaa"/>
-
-    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
-    
-    <TextView android:id="@+id/txtEdad"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:text="00"/>
-    
-    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
+    <TextView android:id="@+id/txtNombre"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/selector_link_lista"
+        android:text="Nombre compuesto"
+        android:gravity="center"
+        android:clickable="true"
+        android:textColor="#0000ff"/>
     
     <TextView android:id="@+id/txtDomicilio"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="Av. 123 calle 45"/>
+        android:layout_width="140dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="[Calle], [Numero], + [Colonia]. + [Referencia]"
+        android:gravity="center"/>
     
-    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
+    <TextView android:id="@+id/txtCurp"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="saca830223456chs0723"
+        android:gravity="center"/>
     
-    <TextView android:id="@+id/txtCP"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:text="12345"/>
+    <TextView android:id="@+id/txtFechaNacimiento"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="dd-Feb-aaaa"
+        android:gravity="center"/>
     
-    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
-    
-    <TextView android:id="@+id/txtLocalidad"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="Tuxtla Gutiérrez"/>
-    
-    <View android:background="@android:color/darker_gray" android:layout_width="1dp" android:layout_height="match_parent"/>
+    <TextView android:id="@+id/txtSexo"
+        android:layout_width="13dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="X"
+        android:gravity="center"/>
         
-    <CheckBox android:id="@+id/chkBCG_U"
-        android:layout_width="10dp"
-        android:layout_height="wrap_content"
-        android:enabled="false"
-        android:checked="true"/>
+    <TextView android:id="@+id/txtBCG_U"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center" />
     
-
+    <TextView android:id="@+id/txtHepatitis_1"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtHepatitis_2"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtHepatitis_3"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtPentavalente_1"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtPentavalente_2"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtPentavalente_3"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtPentavalente_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
+    
+    <TextView android:id="@+id/txtDPAT_4"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="¿"
+        android:gravity="center"/>
 </LinearLayout>

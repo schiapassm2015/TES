@@ -5,6 +5,7 @@ import com.siigs.tes.datos.ProveedorContenido;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 /**
  * Esquema de tabla de base de datos
@@ -48,13 +49,21 @@ public class PendientesTarjeta {
 	public String tabla;
 	public String registro_json;
 	
-	
-	public static Uri AgregarPendienteLocal(Context context, String idPersona, String tabla, String datosEnJson){
+	/**
+	 * Inserta {@link pendiente} en base de datos como nuevo registro
+	 * @param context
+	 * @param pendiente
+	 * @return
+	 */
+	public static Uri AgregarNuevoPendienteLocal(Context context, PendientesTarjeta pendiente){
 		ContentValues cv = new ContentValues();
-		cv.put(ID_PERSONA, idPersona);
-		cv.put(TABLA, tabla);
-		cv.put(REGISTRO_JSON, datosEnJson);
+		cv.put(ID_PERSONA, pendiente.id_persona);
+		cv.put(TABLA, pendiente.tabla);
+		cv.put(REGISTRO_JSON, pendiente.registro_json);
 		cv.put(ES_PENDIENTE_LOCAL, 1);
-		return context.getContentResolver().insert(ProveedorContenido.PENDIENTES_TARJETA_CONTENT_URI, cv);
+		Uri salida = context.getContentResolver().insert(ProveedorContenido.PENDIENTES_TARJETA_CONTENT_URI, cv);
+		if(salida != null)
+			Log.d(NOMBRE_TABLA, "Se ha insertado un nuevo pendiente local: "+salida.getLastPathSegment());
+		return salida;
 	}
 }

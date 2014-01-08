@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="30dp" >
+
+        <TextView 
+            android:id="@+id/txtNombre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="[NOMBRE]"/>
+        
+        <TextView 
+            android:id="@+id/txtSexoEdad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="[Sexo y Edad]"/>
+        
+        <LinearLayout
+            android:id="@+id/accion_ver_esquema"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <!-- Título -->
+            <include 
+                android:id="@+id/barra_titulo_ver_esquema"
+                layout="@layout/barra_titulo"/>    
+
+
+            <!-- TABLA DE VACUNAS -->
+            <LinearLayout
+                android:id="@+id/tablaEsquema"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp">
+                
+                <!-- Header -->
+                <LinearLayout 
+                    android:orientation="horizontal" 
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        style="@style/celda_header_control_vacuna"
+                        android:layout_width="190dp"
+                        android:layout_height="match_parent"
+                        android:text="Vacuna" />
+                    
+                    <LinearLayout 
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        
+                        <TextView 
+                            style="@style/celda_header_control_vacuna"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Dosis"
+                            android:gravity="center"/>
+                        
+                        <LinearLayout 
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView 
+                            	style="@style/celda_header_control_vacuna"
+                            	android:text="U"/>
+                            <TextView 
+                            	style="@style/celda_header_control_vacuna"
+                            	android:text="R"/>
+                            <TextView 
+                            	style="@style/celda_header_control_vacuna"
+                            	android:text="1a"/>
+                            <TextView 
+                            	style="@style/celda_header_control_vacuna"
+                            	android:text="2a"/>
+                            <TextView 
+                            	style="@style/celda_header_control_vacuna"
+                            	android:text="3a"/>
+                            <TextView 
+                            	style="@style/celda_header_control_vacuna"
+                            	android:text="4a"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+                
+                <!-- FILAS VACUNAS BCG-->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                    
+                    <TextView
+                        style="@style/celda_titulo_control_vacuna"
+                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:text="@string/bcg" />
+                    
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_1" />
+
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>        
+                </LinearLayout>
+                
+                
+                <!-- FILAS VACUNAS HEPATITIS B-->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                    
+                    <TextView
+                        style="@style/celda_titulo_control_vacuna"
+                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:text="@string/hepatitis_b" />
+                    
+                    <TextView
+                        style="@style/celda_noaplicable_control_vacuna" />
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_2" />
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_3" />
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_4" />
+
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>        
+                </LinearLayout>
+                
+                <!-- FILAS VACUNAS PENTAVALENTE-->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                    
+                    <TextView
+                        style="@style/celda_titulo_control_vacuna"
+                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:text="@string/pentavalente" />
+                    
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_5" />
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_6" />
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_7" />
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_8" />
+        
+                </LinearLayout>
+                
+                <!-- FILAS VACUNAS DPT-->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                    
+                    <TextView
+                        style="@style/celda_titulo_control_vacuna"
+                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:text="@string/dpt" />
+                    
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_9" />
+
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>        
+                </LinearLayout>
+                
+                <!-- FILAS VACUNAS ROTAVIRUS-->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                    
+                    <TextView
+                        style="@style/celda_titulo_control_vacuna"
+                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:text="@string/rotavirus" />
+                    
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_10" />
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_11" />
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_12" />
+
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>        
+                </LinearLayout>
+                
+                <!-- FILAS VACUNAS NEUMOCOSIDA-->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                    
+                    <TextView
+                        style="@style/celda_titulo_control_vacuna"
+                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:text="Neumocósica Conjugada" />
+                    
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_15" />
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_13" />
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_14" />
+
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>        
+                </LinearLayout>
+                
+                <!-- FILAS VACUNAS INFLUENZA-->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                    
+                    <TextView
+                        style="@style/celda_titulo_control_vacuna"
+                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:text="Influenza" />
+                    
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_18" />
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_16" />
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_17" />
+
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>        
+                </LinearLayout>
+                
+                <!-- FILAS VACUNAS SRP-->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                    
+                    <TextView
+                        style="@style/celda_titulo_control_vacuna"
+                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:text="SRP" />
+                    
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_20" />
+
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_19" />
+
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>        
+                </LinearLayout>
+                
+                <!-- FILAS VACUNAS SABIN-->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                    
+                    <TextView
+                        style="@style/celda_titulo_control_vacuna"
+                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:text="SABIN" />
+                    
+                    <TextView
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_21" />
+
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>        
+                </LinearLayout>
+                
+                <!-- FILAS VACUNAS SR-->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                    
+                    <TextView
+                        style="@style/celda_titulo_control_vacuna"
+                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:text="SR" />
+                    
+                    <TextView
+                        android:id="@+id/vacXX"
+                        style="@style/celda_aplicable_control_vacuna"
+                        android:tag="id_vacuna_22" />
+
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>
+                    <TextView 
+                        style="@style/celda_noaplicable_control_vacuna"/>        
+                </LinearLayout>
+            </LinearLayout>
+            <!-- FIN TABLA VACUNAS -->
+            
+        </LinearLayout>
+        <!-- FIN SECCIÓN -->
+            
+        
+        
+        <LinearLayout
+            android:id="@+id/accion_agregar_vacuna"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical" >
+
+            <!-- Título -->
+            <include 
+                android:id="@+id/barra_titulo_agregar_vacuna"
+                layout="@layout/barra_titulo"/>
+                            
+            <Button android:id="@+id/btnAgregarVacuna"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/agregar_vacuna"/>
+            
+        </LinearLayout>
+        
+        
+    </LinearLayout>
+
+</ScrollView>

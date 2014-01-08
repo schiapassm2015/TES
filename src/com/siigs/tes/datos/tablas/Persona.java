@@ -1,5 +1,11 @@
 package com.siigs.tes.datos.tablas;
 
+import com.siigs.tes.datos.DatosUtil;
+import com.siigs.tes.datos.ProveedorContenido;
+
+import android.content.ContentValues;
+import android.content.Context;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -97,4 +103,12 @@ public class Persona {
 	public String ultima_actualizacion;
 	public int id_nacionalidad;
 	public Integer id_operadora_celular;
+	
+	public String getNombreCompleto(){return nombre + " "+ apellido_paterno + " " + apellido_materno;}
+	
+	public static void AgregarEditar(Context context, Persona p) throws Exception{
+		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(p);
+		if(context.getContentResolver().insert(ProveedorContenido.PERSONA_CONTENT_URI, cv)==null)
+			context.getContentResolver().update(ProveedorContenido.PERSONA_CONTENT_URI, cv, ID+"=?", new String[]{p.id});
+	}
 }

@@ -1,5 +1,13 @@
 package com.siigs.tes.datos.tablas;
 
+import com.siigs.tes.datos.DatosUtil;
+import com.siigs.tes.datos.ProveedorContenido;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -42,4 +50,12 @@ public class ControlVacuna {
 	public int id_asu_um;
 	public String codigo_barras;
 	public transient Integer id_invitado; //transient pues no se envía en JSON
+	
+	public static Uri AgregarNuevoControlVacuna(Context context, ControlVacuna vacuna) throws Exception{
+		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(vacuna);
+		Uri salida = context.getContentResolver().insert(ProveedorContenido.CONTROL_VACUNA_CONTENT_URI, cv);
+		if(salida != null)
+			Log.d(NOMBRE_TABLA, "Se ha insertado nuevo registro id: "+salida.getLastPathSegment());
+		return salida;
+	}
 }

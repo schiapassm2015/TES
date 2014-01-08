@@ -63,9 +63,7 @@ public class ManejadorNfc {
 	private static Sesion.DatosPaciente getDatosPaciente(Tag nfcTag) throws Exception{
 		String contenido = LeerTextoPlano(nfcTag);
 		String[] piezas = contenido.split(SEPARADOR_TABLA);
-		
-		//TODO validar si leí una tarjeta real y no otro dispositivo NFC
-		
+				
 		Sesion.DatosPaciente datosPaciente=null;
 		String version = piezas[0];
 		if(version.equals(VERSION_1)){
@@ -149,12 +147,16 @@ public class ManejadorNfc {
 			alergia.id_alergia = Integer.parseInt(datosAlergia[0]);
 			alergias.add(alergia);
 		}
-		//TODO ¿AFILIACIÓN ES OBLIGATORIO O PUEDE ESTAR VACÍO?
-		String[] datosAfiliacion = piezas[5].equals("")? new String[]{} : piezas[5].split(SEPARADOR_CAMPO);
-		PersonaAfiliacion afiliacion = new PersonaAfiliacion();
-		n=0;
-		afiliacion.id_persona = persona.id;
-		afiliacion.id_afiliacion = Integer.parseInt(datosAfiliacion[0]);
+		
+		String[] listaAfiliaciones = piezas[5].equals("")? new String[]{} : piezas[5].split(SEPARADOR_REGISTRO);
+		List<PersonaAfiliacion> afiliaciones = new ArrayList<PersonaAfiliacion>();
+		for(String regAfiliacion : listaAfiliaciones){
+			String[] datosAfiliacion = regAfiliacion.split(SEPARADOR_CAMPO);
+			PersonaAfiliacion afiliacion = new PersonaAfiliacion();
+			afiliacion.id_persona = persona.id;
+			afiliacion.id_afiliacion = Integer.parseInt(datosAfiliacion[0]);
+			afiliaciones.add(afiliacion);
+		}
 		
 		String[] listaVacunas = piezas[6].equals("")? new String[]{} : piezas[6].split(SEPARADOR_REGISTRO);
 		List<ControlVacuna> vacunas = new ArrayList<ControlVacuna>();
@@ -225,13 +227,21 @@ public class ManejadorNfc {
 			controles.add(control);
 		}
 		
-		return new Sesion.DatosPaciente(persona, tutor, registro, afiliacion, alergias, 
+		return new Sesion.DatosPaciente(persona, tutor, registro, alergias, afiliaciones,
 				vacunas, iras, edas, consultas, acciones, controles);
 	}//fin LeerVersion1
 	
-	
-	public static void EscribirDatosNFC(Tag nfcTag, Sesion.DatosPaciente datos){
-		//TODO escribir según metadatos de jaime
+	/**
+	 * Convierte los datos del paciente en String con formato adecuado para guardarse
+	 * en nfcTag.
+	 * En caso de que la versión de base de datos cambie, se deberá cambiar esta función
+	 * al menos en la primera línea que imprime VERSION_1 y lo que sea necesario después.
+	 * Así mismo un cambio de versión requerirá cambios en la función de lectura.
+	 * @param nfcTag
+	 * @param datos
+	 * @throws Exception 
+	 */
+	public static void EscribirDatosNFC(Tag nfcTag, Sesion.DatosPaciente datos) throws Exception{
 		StringBuilder salida = new StringBuilder();
 		salida.append(VERSION_1+SEPARADOR_TABLA);
 		
@@ -282,87 +292,67 @@ public class ManejadorNfc {
 		salida.append(SEPARADOR_TABLA);
 		
 		//Datos afiliación
-		//TODO ¿AFILIACIÓN ES OBLIGATORIO O PUEDE ESTAR VACÍO?
-		
-		
-		String[] datosAfiliacion = piezas[5].equals("")? new String[]{} : piezas[5].split(SEPARADOR_CAMPO);
-		PersonaAfiliacion afiliacion = new PersonaAfiliacion();
-		n=0;
-		afiliacion.id_persona = persona.id;
-		afiliacion.id_afiliacion = Integer.parseInt(datosAfiliacion[0]);
-		
-		String[] listaVacunas = piezas[6].equals("")? new String[]{} : piezas[6].split(SEPARADOR_REGISTRO);
-		List<ControlVacuna> vacunas = new ArrayList<ControlVacuna>();
-		for(String regVacuna : listaVacunas){
-			String[] datosVacuna = regVacuna.split(SEPARADOR_CAMPO);
-			ControlVacuna vacuna = new ControlVacuna();
-			vacuna.id_persona = persona.id;
-			vacuna.id_vacuna = Integer.parseInt(datosVacuna[0]);
-			vacuna.fecha = datosVacuna[1];
-			vacunas.add(vacuna);
+		for(int i=0;i<datos.afiliaciones.size();i++){
+			salida.append(datos.afiliaciones.get(i).id_afiliacion);
+			if(i!=datos.afiliaciones.size()-1)salida.append(SEPARADOR_REGISTRO);
 		}
+		salida.append(SEPARADOR_TABLA);
 		
-		String[] listaIras = piezas[7].equals("")? new String[]{} : piezas[7].split(SEPARADOR_REGISTRO);
-		List<ControlIra> iras = new ArrayList<ControlIra>();
-		for(String regIra : listaIras){
-			String[] datosIra = regIra.split(SEPARADOR_CAMPO);
-			ControlIra ira = new ControlIra();
-			ira.id_persona = persona.id;
-			ira.id_ira = Integer.parseInt(datosIra[0]);
-			ira.fecha = datosIra[1];
-			iras.add(ira);
+		//Datos vacunas
+		for(int i=0;i<datos.vacunas.size();i++){
+			salida.append(datos.vacunas.get(i).id_vacuna + SEPARADOR_CAMPO);
+			salida.append(datos.vacunas.get(i).fecha);
+			if(i!=datos.vacunas.size()-1)salida.append(SEPARADOR_REGISTRO);
 		}
+		salida.append(SEPARADOR_TABLA);
 		
-		String[] listaEdas = piezas[8].equals("")? new String[]{} : piezas[8].split(SEPARADOR_REGISTRO);
-		List<ControlEda> edas = new ArrayList<ControlEda>();
-		for(String regEda : listaEdas){
-			String[] datosEda = regEda.split(SEPARADOR_CAMPO);
-			ControlEda eda = new ControlEda();
-			eda.id_persona = persona.id;
-			eda.id_eda = Integer.parseInt(datosEda[0]);
-			eda.fecha = datosEda[1];
-			edas.add(eda);
+		//Datos iras
+		for(int i=0;i<datos.iras.size();i++){
+			salida.append(datos.iras.get(i).id_ira + SEPARADOR_CAMPO);
+			salida.append(datos.iras.get(i).fecha);
+			if(i!=datos.iras.size()-1)salida.append(SEPARADOR_REGISTRO);
 		}
+		salida.append(SEPARADOR_TABLA);
 		
-		String[] listaConsultas = piezas[9].equals("")? new String[]{} : piezas[9].split(SEPARADOR_REGISTRO);
-		List<ControlConsulta> consultas = new ArrayList<ControlConsulta>();
-		for(String regConsulta : listaConsultas){
-			String[] datosConsulta = regConsulta.split(SEPARADOR_CAMPO);
-			ControlConsulta consulta = new ControlConsulta();
-			consulta.id_persona = persona.id;
-			consulta.id_consulta = Integer.parseInt(datosConsulta[0]);
-			consulta.fecha = datosConsulta[1];
-			consultas.add(consulta);
+		//Datos edas
+		for (int i = 0; i < datos.edas.size(); i++) {
+			salida.append(datos.edas.get(i).id_eda + SEPARADOR_CAMPO);
+			salida.append(datos.edas.get(i).fecha);
+			if (i != datos.edas.size() - 1)
+				salida.append(SEPARADOR_REGISTRO);
 		}
+		salida.append(SEPARADOR_TABLA);
 		
-		String[] listaAcciones = piezas[10].equals("")? new String[]{} : piezas[10].split(SEPARADOR_REGISTRO);
-		List<ControlAccionNutricional> acciones = new ArrayList<ControlAccionNutricional>();
-		for(String regAccion : listaAcciones){
-			String[] datosAccion = regAccion.split(SEPARADOR_CAMPO);
-			ControlAccionNutricional accion = new ControlAccionNutricional();
-			accion.id_persona = persona.id;
-			accion.id_accion_nutricional = Integer.parseInt(datosAccion[0]);
-			accion.fecha = datosAccion[1];
-			acciones.add(accion);
+		//Datos consultas
+		for (int i = 0; i < datos.consultas.size(); i++) {
+			salida.append(datos.consultas.get(i).id_consulta + SEPARADOR_CAMPO);
+			salida.append(datos.consultas.get(i).fecha);
+			if (i != datos.consultas.size() - 1)
+				salida.append(SEPARADOR_REGISTRO);
 		}
+		salida.append(SEPARADOR_TABLA);
 		
-		//Si persona no tiene controles, no existirá última localidad, así que la validamos
-		String[] listaControles = piezas.length<12?new String[]{} : piezas[11].split(SEPARADOR_REGISTRO);
-		List<ControlNutricional> controles = new ArrayList<ControlNutricional>();
-		for(String regControl : listaControles){
-			String[] datosControl = regControl.split(SEPARADOR_CAMPO);
-			ControlNutricional control = new ControlNutricional();
-			control.id_persona = persona.id;
-			control.peso = Double.parseDouble(datosControl[0]);
-			control.altura = Integer.parseInt(datosControl[1]);
-			control.talla = Integer.parseInt(datosControl[2]);
-			control.fecha = datosControl[3];
-			controles.add(control);
+		//Datos acciones nutricionales
+		for (int i = 0; i < datos.accionesNutricionales.size(); i++) {
+			salida.append(datos.accionesNutricionales.get(i).id_accion_nutricional + SEPARADOR_CAMPO);
+			salida.append(datos.accionesNutricionales.get(i).fecha);
+			if (i != datos.accionesNutricionales.size() - 1)
+				salida.append(SEPARADOR_REGISTRO);
 		}
+		salida.append(SEPARADOR_TABLA);
 		
-		return new Sesion.DatosPaciente(persona, tutor, registro, afiliacion, alergias, 
-				vacunas, iras, edas, consultas, acciones, controles);
+		//Datos controles nutricionales
+		for (int i = 0; i < datos.controlesNutricionales.size(); i++) {
+			salida.append(datos.controlesNutricionales.get(i).peso + SEPARADOR_CAMPO);
+			salida.append(datos.controlesNutricionales.get(i).altura + SEPARADOR_CAMPO);
+			salida.append(datos.controlesNutricionales.get(i).talla + SEPARADOR_CAMPO);
+			salida.append(datos.controlesNutricionales.get(i).fecha);
+			if (i != datos.controlesNutricionales.size() - 1)
+				salida.append(SEPARADOR_REGISTRO);
+		}
+		salida.append(SEPARADOR_TABLA);
 		
+		EscribirTextoPlano(nfcTag, salida.toString());
 	}
 
 	//HELPERS PARA PARSEO
@@ -383,9 +373,9 @@ public class ManejadorNfc {
 		try {
 			ndef.connect();
 			NdefMessage mensaje = ndef.getNdefMessage();
+			ndef.close();
 			NdefRecord record = mensaje.getRecords()[0];
 			byte[] payload = record.getPayload();
-			ndef.close();
 			
 			int bytesHeader = 1 + "en".getBytes("US-ASCII").length;
 			int bytesDatos = payload.length - bytesHeader;
@@ -394,9 +384,14 @@ public class ManejadorNfc {
 			
 			return new String(datos);
 		} catch (IOException e) {
+			if(ndef!=null && ndef.isConnected())ndef.close();
 			throw new Exception("No se pudo leer la tarjeta:"+e);
 		} catch (FormatException e) {
+			if(ndef!=null && ndef.isConnected())ndef.close();
 			throw new Exception("Mal formato al leer texto plano"+e);
+		} catch (Exception e){
+			if(ndef!=null && ndef.isConnected())ndef.close();
+			throw new Exception("Tarjeta no reconocida al leer:"+e);
 		}
 
 	}

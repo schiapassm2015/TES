@@ -31,7 +31,7 @@
 	        android:layout_below="@+id/linea"
 	        android:layout_width="wrap_content" 
 	        android:layout_height="wrap_content"
-	        android:text="Acerque la TES para guardar los cambios"/>
+	        android:text="@string/acerque_tes_guardar"/>
 	    
 	    <ImageView
 	        android:layout_width="wrap_content"

@@ -6,16 +6,22 @@
     <string name="caracteres_permitidos">abcdefghijklmnñopqrstuvwxyz0123456789 ABCDEFGHIJKLMNÑOPQRSTUVWXYZáéíóúÁÉÍÓÚüÜ\'</string>
     <string name="title_seccion_detail">Seccion Detail</string>
     <string name="desconocido">DESCONOCIDO</string>
-    <string name="acerque_tes">Acerque la TES al lector</string>
+    <string name="MARCA_VACUNA">X</string>
+    <string name="acerque_tes">Toque la tableta con la TES</string>
+    <string name="acerque_tes_guardar">Toque la tableta con la TES para guardar</string>
+    <string name="informacion_guardada_en_tes">Información del paciente guardada en TES</string>
     <string name="cancelar">Cancelar</string>
     <string name="ayuda">Ayuda</string>
+    <string name="agregar">Agregar</string>
     <string name="usuario">Usuario</string>
     <string name="invitado">Invitado</string>
     
     <string name="datos_paciente">Datos del paciente</string>
     <string name="actualizar_domicilio">Actualizar Domicilio</string>
-    <string name="actualizar_um">Actualizar Unidad Médica</string>
-    <string name="actualizar_alergias">Actualizar Alergias</string>
+    <string name="actualizar_um">Asignar Paciente a esta Unidad Médica</string>
+    <string name="agregar_alergia">Agregar Alergia</string>
+    
+    <string name="agregar_vacuna">Agregar Vacuna</string>
     
     <string name="nombre">Nombre</string>
     <string name="curp">Curp</string>

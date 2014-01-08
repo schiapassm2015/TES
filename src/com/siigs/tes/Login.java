@@ -220,17 +220,17 @@ public class Login extends DialogFragment {
 		List<Usuario> usuarios = DatosUtil.ObjetosDesdeCursor(cur, Usuario.class);
 		cur.close();
 		adaptadorNormal = new AdaptadorArrayMultiTextView<Usuario>(
-				getActivity(), android.R.layout.simple_spinner_item, usuarios, 
+				getActivity(), android.R.layout.simple_dropdown_item_1line, usuarios, 
 				new String[]{Usuario.NOMBRE_USUARIO}, new int[]{android.R.id.text1});
-		adaptadorNormal.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		//adaptadorNormal.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		
 		cur = UsuarioInvitado.getUsuariosInvitadosActivos(getActivity());
 		List<UsuarioInvitado> invitados = DatosUtil.ObjetosDesdeCursor(cur, UsuarioInvitado.class);
 		cur.close();
 		adaptadorInvitados = new AdaptadorArrayMultiTextView<UsuarioInvitado>(
-				getActivity(), android.R.layout.simple_spinner_item, invitados,
+				getActivity(), android.R.layout.simple_dropdown_item_1line, invitados,
 				new String[]{UsuarioInvitado.NOMBRE}, new int[]{android.R.id.text1});
-		adaptadorInvitados.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		//adaptadorInvitados.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	}
 	
 	/**

@@ -57,8 +57,17 @@ public class Alergia {
 		return salida;
 	}
 	
-	public static List<Alergia> getAlergiasEnLista(Context context, List<PersonaAlergia> alergiasDePersona){
-		String whereIn = ACTIVO +"=1 and " + ID + " in (";
+	/**
+	 * Devuelve todas las alergias que Están ó NO Están en alergiasDePersona, según el valor
+	 * de enAlergiasDePersona
+	 * @param context
+	 * @param alergiasDePersona
+	 * @param enAlergiasDePersona true, devuelve alergias que están en {@link alergiasDePersona} false, lo contrario.
+	 * @return
+	 */
+	public static List<Alergia> getAlergiasConLista(Context context, List<PersonaAlergia> alergiasDePersona, boolean enAlergiasDePersona){
+		String whereIn = ACTIVO +"=1 and " + ID + 
+				(!enAlergiasDePersona ? " not " : "") + " in (";
 		for(PersonaAlergia pa : alergiasDePersona)
 			whereIn += pa.id_alergia + ",";
 		if(alergiasDePersona.size()>0)
@@ -66,10 +75,27 @@ public class Alergia {
 		whereIn += ")";
 		
 		Uri uri = ProveedorContenido.ALERGIA_CONTENT_URI;
-		Cursor cur = context.getContentResolver().query(uri, null, whereIn, null, null);
+		Cursor cur = context.getContentResolver().query(uri, null, whereIn, null, TIPO + "," +DESCRIPCION);
 		List<Alergia> salida = new ArrayList<Alergia>();
 		salida = DatosUtil.ObjetosDesdeCursor(cur, Alergia.class);
 		cur.close();
 		return salida;
 	}
+	
+	/**
+	 * Pequeño helper para determinar el id del icono del tipo de alergia definido poro {@link tipoAlergia}
+	 * @param tipoAlergia El tipo de alergia en tabla Alergia
+	 * @return resId de la imagen que representa a {@link tipoAlergia}
+	 */
+	public static int getResourceImagenTipoAlergia(String tipoAlergia){
+		if(tipoAlergia.toLowerCase().equals("antibioticos"))return android.R.drawable.btn_star;
+		else if(tipoAlergia.toLowerCase().equals("antihipertensivos"))return android.R.drawable.btn_star;
+		else if(tipoAlergia.toLowerCase().equals("antiinflamatorios"))return android.R.drawable.btn_star;
+		else if(tipoAlergia.toLowerCase().equals("quirurgicos"))return android.R.drawable.btn_star;
+		else if(tipoAlergia.toLowerCase().equals("vitaminas"))return android.R.drawable.btn_star;
+		else if(tipoAlergia.toLowerCase().equals("alimentos"))return android.R.drawable.btn_star;
+		else if(tipoAlergia.toLowerCase().equals("otros medicamentos"))return android.R.drawable.btn_radio;
+		else return android.R.drawable.btn_radio;
+	}
+	
 }

@@ -245,6 +245,12 @@ public class ProveedorContenido extends ContentProvider {
 	public static final Uri ESQUEMA_INCOMPLETO_CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	        + "/" + ESQUEMA_INCOMPLETO_PATH);
 	
+	//VISTAS
+	private static final String CENSO_PATH = "censo";
+	public static final int CENSO_TODOS = 1800;
+	public static final Uri CENSO_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + CENSO_PATH);
+	
 	/*
 	public static final String CONTENT_ITEM_TYPE = 
 			ContentResolver.CURSOR_ITEM_BASE_TYPE + "/persona";
@@ -352,6 +358,9 @@ public class ProveedorContenido extends ContentProvider {
 	    
 	    sURIMatcher.addURI(AUTHORITY, ESQUEMA_INCOMPLETO_PATH, ESQUEMA_INCOMPLETO_TODOS);
 	    sURIMatcher.addURI(AUTHORITY, ESQUEMA_INCOMPLETO_PATH + "/#", ESQUEMA_INCOMPLETO_ID);
+	    
+	    //VISTAS
+	    sURIMatcher.addURI(AUTHORITY, CENSO_PATH, CENSO_TODOS);
 	}
 	
 	
@@ -695,6 +704,17 @@ public class ProveedorContenido extends ContentProvider {
 		case ProveedorContenido.ESQUEMA_INCOMPLETO_TODOS:
 			builder.setTables(EsquemaIncompleto.NOMBRE_TABLA);// No existe filtro
 			break;
+		case ProveedorContenido.CENSO_TODOS:
+			projection = new String[]{"p." + Persona._ID, "p."+Persona.NOMBRE, "t."+Tutor.NOMBRE +" as 'tutor'", "cv1."+ControlVacuna.ID_VACUNA, "cv2."+ControlVacuna.ID_VACUNA, "cv3."+ControlVacuna.ID_VACUNA, "cv4."+ControlVacuna.ID_VACUNA };
+			builder.setTables(Persona.NOMBRE_TABLA + " p " + 
+				" INNER JOIN " + PersonaTutor.NOMBRE_TABLA + " pt ON p." + Persona.ID + "= pt." + PersonaTutor.ID_PERSONA +
+				" INNER JOIN " + Tutor.NOMBRE_TABLA + " t ON pt." + PersonaTutor.ID_TUTOR + "= t." + Tutor.ID +
+				" LEFT JOIN " + ControlVacuna.NOMBRE_TABLA + " cv1 ON p." +Persona.ID + "= cv1." + ControlVacuna.ID_PERSONA + " AND cv1." + ControlVacuna.ID_VACUNA + "= 1" + 
+				" LEFT JOIN " + ControlVacuna.NOMBRE_TABLA + " cv2 ON p." +Persona.ID + "= cv2." + ControlVacuna.ID_PERSONA + " AND cv2." + ControlVacuna.ID_VACUNA + "= 2" +	
+				" LEFT JOIN " + ControlVacuna.NOMBRE_TABLA + " cv3 ON p." +Persona.ID + "= cv3." + ControlVacuna.ID_PERSONA + " AND cv3." + ControlVacuna.ID_VACUNA + "= 3" +
+				" LEFT JOIN " + ControlVacuna.NOMBRE_TABLA + " cv4 ON p." +Persona.ID + "= cv4." + ControlVacuna.ID_PERSONA + " AND cv4." + ControlVacuna.ID_VACUNA + "= 4"
+				);
+			break;
 		default:
 			throw new IllegalArgumentException("Uri desconocido "+tipoUri);
 		}
@@ -962,6 +982,12 @@ public class ProveedorContenido extends ContentProvider {
 		case ProveedorContenido.ESQUEMA_INCOMPLETO_TODOS:
 			tabla=EsquemaIncompleto.NOMBRE_TABLA;
 			break;
+		case ProveedorContenido.BITACORA_TODOS:
+			tabla=Bitacora.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ERROR_SIS_TODOS:
+			tabla=ErrorSis.NOMBRE_TABLA;
+			break;
 			
 		default:
 			throw new IllegalArgumentException("Uri desconocido "+uri);
@@ -1108,6 +1134,12 @@ public class ProveedorContenido extends ContentProvider {
 			break;
 		case ProveedorContenido.ESQUEMA_INCOMPLETO_TODOS:
 			tabla=EsquemaIncompleto.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.BITACORA_TODOS:
+			tabla=Bitacora.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.ERROR_SIS_TODOS:
+			tabla=ErrorSis.NOMBRE_TABLA;
 			break;
 			
 		default:

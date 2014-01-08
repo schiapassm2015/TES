@@ -63,8 +63,8 @@ public class Sesion {
 		public Persona persona=null;
 		public Tutor tutor=null;
 		public RegistroCivil registroCivil=null;
-		public PersonaAfiliacion afiliacion=null;
 		public List<PersonaAlergia> alergias=new ArrayList<PersonaAlergia>();
+		public List<PersonaAfiliacion> afiliaciones = new ArrayList<PersonaAfiliacion>();
 		public List<ControlVacuna> vacunas = new ArrayList<ControlVacuna>();
 		public List<ControlIra> iras = new ArrayList<ControlIra>();
 		public List<ControlEda> edas = new ArrayList<ControlEda>();
@@ -72,16 +72,16 @@ public class Sesion {
 		public List<ControlAccionNutricional> accionesNutricionales = new ArrayList<ControlAccionNutricional>();
 		public List<ControlNutricional> controlesNutricionales = new ArrayList<ControlNutricional>();
 		
-		public DatosPaciente(Persona p, Tutor t, RegistroCivil rc, PersonaAfiliacion pa, 
-				List<PersonaAlergia> alergias, List<ControlVacuna> vacunas, List<ControlIra> iras,
+		public DatosPaciente(Persona p, Tutor t, RegistroCivil rc, List<PersonaAlergia> alergias, 
+				List<PersonaAfiliacion> afiliaciones, List<ControlVacuna> vacunas, List<ControlIra> iras,
 				List<ControlEda> edas, List<ControlConsulta> consultas,
 				List<ControlAccionNutricional> accionesNutricionales, 
 				List<ControlNutricional> controlesNutricionales){
 			persona = p;
 			tutor = t;
 			registroCivil = rc;
-			afiliacion = pa;
 			this.alergias = alergias;
+			this.afiliaciones = afiliaciones;
 			this.vacunas = vacunas;
 			this.iras = iras;
 			this.edas = edas;
@@ -89,6 +89,7 @@ public class Sesion {
 			this.accionesNutricionales = accionesNutricionales;
 			this.controlesNutricionales = controlesNutricionales;
 		}
+		
 	}//fin clase DatosPaciente
 	
 }//fin Sesion

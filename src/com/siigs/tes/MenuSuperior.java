@@ -16,7 +16,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.siigs.tes.controles.CensoCensoNominal;
 import com.siigs.tes.controles.ContenidoControles;
 import com.siigs.tes.controles.ContenidoControles.ItemControl;
 
@@ -215,6 +217,17 @@ public class MenuSuperior extends Fragment{
 				//procedimiento tes CORRECTA
 				miListener.onSeleccionarMenu(ContenidoControles.CONTROLES_ATENCION);
 			}else if(resultCode==DialogoTes.RESULT_CANCELAR){/*NADA*/}
+			break;
+			
+			//Este case es especial, pues es PrincipalActivity desde onItemSelected() quien crea
+			//la pantalla de Censo y le indica que al terminar debe avisar su resultado aquí
+		case CensoCensoNominal.REQUEST_CODE:
+			if(resultCode==CensoCensoNominal.RESULT_ATENDER_PACIENTE_SIN_TES){
+				//TODO cargar DatosPaciente en sesión de alguna forma
+				String idPersona = data.getStringExtra(CensoCensoNominal.PARAM_ID_PERSONA);
+				Toast.makeText(getActivity(), "Censo quiere atender a "+ idPersona, Toast.LENGTH_SHORT).show();
+				//TODO quitar comentario al solucionar carga paciente miListener.onSeleccionarMenu(ContenidoControles.CONTROLES_ATENCION);
+			}
 			break;
 		}//fin switch
 	}

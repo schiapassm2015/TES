@@ -622,7 +622,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 						PendientesTarjeta pendiente = gson.fromJson(reader, PendientesTarjeta.class);
 						fila = DatosUtil.ContentValuesDesdeObjeto(pendiente);
 						uri = ProveedorContenido.PENDIENTES_TARJETA_CONTENT_URI;
-						//PENDIENTE BORRAR REGISTROS FORÁNEOS NO RESUELTOS ANTES DE RECIBIR NUEVOS
+						//TODO PENDIENTE BORRAR REGISTROS FORÁNEOS NO RESUELTOS ANTES DE RECIBIR NUEVOS
 						cr.insert(uri, fila);
 							//cr.update(uri, fila, PendientesTarjeta.ID_PERSONA+"=? and "+PendientesTarjeta.REGISTRO_JSON +"=? ",new String[]{pendiente.id_persona,});
 					}
@@ -1300,7 +1300,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 			try{
 				//Agregamos parámetros al cuerpo del request (solo en POST tipo application/x-www-form-urlencoded)
 				if(parametros!=null)
-					request.setEntity(new UrlEncodedFormEntity(parametros));
+					request.setEntity(new UrlEncodedFormEntity(parametros, "UTF-8"));
 				
 				HttpResponse respuesta = cliente.execute(request);
 				StatusLine estado = respuesta.getStatusLine();
