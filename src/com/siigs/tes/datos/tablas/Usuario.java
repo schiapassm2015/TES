@@ -76,4 +76,11 @@ public class Usuario {
 		cur.close();
 		return salida;
 	}
+	
+	public static int getTotalUsuariosActivos(Context context){
+		Cursor cur = getUsuariosActivos(context);
+		int salida = cur.getCount();
+		cur.close();
+		return salida;
+	}
 }

@@ -9,9 +9,12 @@ package com.siigs.tes;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +24,7 @@ import android.widget.Toast;
 import com.siigs.tes.controles.CensoCensoNominal;
 import com.siigs.tes.controles.ContenidoControles;
 import com.siigs.tes.controles.ContenidoControles.ItemControl;
+import com.siigs.tes.datos.tablas.Persona;
 
 
 /**
@@ -42,11 +46,13 @@ public class MenuSuperior extends Fragment{
 	 */
 	public interface OnAccionMenuListener{
 		public void onSeleccionarMenu(List<ItemControl> lista);
+		public void onAtenderPacienteSinTes(int _id);
 		public void onClickCerrarSesionUsuario();
 		public void onIniciarSesionUsuario(int idUsuario, boolean esInvitado);
 	}//fin OnAccionMenuListener
 	private OnAccionMenuListener miListenerVacio=new OnAccionMenuListener() {		
 		@Override public void onSeleccionarMenu(List<ItemControl> lista) {}
+		@Override public void onAtenderPacienteSinTes(int _id){}
 		@Override public void onClickCerrarSesionUsuario(){}
 		@Override public void onIniciarSesionUsuario(int idUsuario, boolean esInvitado){}
 	};
@@ -55,6 +61,8 @@ public class MenuSuperior extends Fragment{
 	public void setOnAccionMenuListener(OnAccionMenuListener lis){
 		this.miListener=lis;
 	}
+	
+	private static final String BOTON_ACTIVADO = "boton_menu_activado";
 	
 	private View mnAtencion=null;
 	private View mnCenso=null;
@@ -65,6 +73,7 @@ public class MenuSuperior extends Fragment{
 	private View mnInvitados=null;
 	
 	private TextView lblTitulo=null;
+	private View ultimoActivado = null;
 	
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -77,6 +86,7 @@ public class MenuSuperior extends Fragment{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		this.setRetainInstance(true);
 	}
 
 	@Override
@@ -114,12 +124,17 @@ public class MenuSuperior extends Fragment{
 		mnInvitados= rootView.findViewById(R.id.mnInvitados);
 		mnInvitados.setOnClickListener(listener);
 		
-		lblTitulo = (TextView)rootView.findViewById(R.id.lblTitulo);
-		if(savedInstanceState!=null && savedInstanceState.containsKey(lblTitulo.getId()+""))
-			lblTitulo.setText(savedInstanceState.getCharSequence(lblTitulo.getId()+""));
-		
 		rootView.findViewById(R.id.mnCerrar).setOnClickListener(listener);
-	
+
+		lblTitulo = (TextView)rootView.findViewById(R.id.lblTitulo);
+		if(savedInstanceState!=null){
+			if(savedInstanceState.containsKey(R.id.lblTitulo+""))
+				lblTitulo.setText(savedInstanceState.getCharSequence(lblTitulo.getId()+""));
+			
+			if(savedInstanceState.containsKey(BOTON_ACTIVADO))
+				rootView.findViewById(savedInstanceState.getInt(BOTON_ACTIVADO)).setActivated(true);
+		}
+		
 		//ESCONDER BOTONES SEGÚN PERMISOS DE ACCESO
 		ActualizarBotonesMenu();
 		return rootView;
@@ -174,11 +189,30 @@ public class MenuSuperior extends Fragment{
 			miListener.onSeleccionarMenu(ContenidoControles.CONTROLES_INVITADOS);
 			break;
 		case R.id.mnCerrar:
-			miListener.onClickCerrarSesionUsuario();
+			//Confirmación
+			AlertDialog dialogo=new AlertDialog.Builder(getActivity()).create();
+			dialogo.setMessage("¿Desea cerrar sesión?");
+			dialogo.setButton(AlertDialog.BUTTON_NEGATIVE, getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+				@Override public void onClick(DialogInterface arg0, int arg1) {}
+			});
+			dialogo.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					miListener.onClickCerrarSesionUsuario();
+				}
+			} );
+			dialogo.show();
 			break;
 		default:
 			//
 		}
+		
+		if(view.getId()!=R.id.mnCerrar && view.getId()!=R.id.mnAtencion){
+			if(ultimoActivado!=null)ultimoActivado.setActivated(false);
+			view.setActivated(true);
+			ultimoActivado=view;
+		}
+		
 		//Toast.makeText(getActivity(), "Click boton "+view.getId(),Toast.LENGTH_SHORT).show();
 	}
 
@@ -216,6 +250,9 @@ public class MenuSuperior extends Fragment{
 			if(resultCode==DialogoTes.RESULT_OK){
 				//procedimiento tes CORRECTA
 				miListener.onSeleccionarMenu(ContenidoControles.CONTROLES_ATENCION);
+				if(ultimoActivado!=null)ultimoActivado.setActivated(false);
+				mnAtencion.setActivated(true);
+				ultimoActivado = mnAtencion;
 			}else if(resultCode==DialogoTes.RESULT_CANCELAR){/*NADA*/}
 			break;
 			
@@ -223,10 +260,16 @@ public class MenuSuperior extends Fragment{
 			//la pantalla de Censo y le indica que al terminar debe avisar su resultado aquí
 		case CensoCensoNominal.REQUEST_CODE:
 			if(resultCode==CensoCensoNominal.RESULT_ATENDER_PACIENTE_SIN_TES){
-				//TODO cargar DatosPaciente en sesión de alguna forma
-				String idPersona = data.getStringExtra(CensoCensoNominal.PARAM_ID_PERSONA);
-				Toast.makeText(getActivity(), "Censo quiere atender a "+ idPersona, Toast.LENGTH_SHORT).show();
-				//TODO quitar comentario al solucionar carga paciente miListener.onSeleccionarMenu(ContenidoControles.CONTROLES_ATENCION);
+				int idPersona = data.getIntExtra(CensoCensoNominal.PARAM_ID_PERSONA, -1);
+				if(idPersona == -1){
+					//NUNCA DEBERÍA SUCEDER
+					Toast.makeText(getActivity(), "Se recibió un _id -1 de persona que no es válido desde ventana Censo", Toast.LENGTH_LONG).show();
+					return;
+				}
+				if(ultimoActivado!=null)ultimoActivado.setActivated(false);
+				mnAtencion.setActivated(true);
+				ultimoActivado = mnAtencion;
+				miListener.onAtenderPacienteSinTes(idPersona);
 			}
 			break;
 		}//fin switch
@@ -260,9 +303,12 @@ public class MenuSuperior extends Fragment{
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+		Log.d("salvado","salvando estado");
 		if(lblTitulo!=null)
-			outState.putCharSequence(lblTitulo.getId()+"", lblTitulo.getText());
+			outState.putCharSequence(R.id.lblTitulo+"", lblTitulo.getText());
 		
+		if(ultimoActivado!=null)
+			outState.putInt(BOTON_ACTIVADO, ultimoActivado.getId());
 		/** Esta técnica usada por {@link PrincipalFragment} no se usa
 		if (mActivatedPosition != ListView.INVALID_POSITION) {
 			// Serialize and persist the activated item position.

@@ -2,6 +2,8 @@ package com.siigs.tes.ui;
 
 import com.siigs.tes.DialogoAyuda;
 import com.siigs.tes.R;
+import com.siigs.tes.datos.DatosUtil;
+import com.siigs.tes.datos.tablas.Persona;
 
 import android.support.v4.app.FragmentManager;
 import android.view.View;
@@ -80,4 +82,14 @@ public class WidgetUtil {
 		});
 	}
 
+	/**
+	 * Define contenido del TextView que debe existir en contenedor y que debe tener id R.id.txtDatosBasicos
+	 * @param contenedor
+	 * @param p
+	 */
+	public static void setDatosBasicosPaciente(View contenedor, Persona p){
+		((TextView)contenedor.findViewById(R.id.txtDatosBasicos))
+				.setText(p.getNombreCompleto()+"\nSexo: "+p.sexo
+						+"   Edad: "+DatosUtil.calcularEdad(p.fecha_nacimiento));
+	}
 }//fin clase

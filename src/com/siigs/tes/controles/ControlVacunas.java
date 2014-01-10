@@ -3,6 +3,8 @@
  */
 package com.siigs.tes.controles;
 
+import java.util.List;
+
 import com.siigs.tes.R;
 import com.siigs.tes.Sesion;
 import com.siigs.tes.TesAplicacion;
@@ -10,6 +12,7 @@ import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.tablas.ControlVacuna;
 import com.siigs.tes.datos.tablas.ErrorSis;
 import com.siigs.tes.datos.tablas.Persona;
+import com.siigs.tes.datos.tablas.Vacuna;
 import com.siigs.tes.ui.WidgetUtil;
 
 import android.content.Intent;
@@ -30,6 +33,8 @@ import android.widget.Toast;
 public class ControlVacunas extends Fragment {
 
 	private static final String TAG = ControlVacunas.class.getSimpleName();
+	
+	private static final String PREFIJO_VACUNA = "id_vacuna_"; //Para localizar celdas en tabla
 	
 	private TesAplicacion aplicacion;
 	private Sesion sesion;
@@ -62,10 +67,7 @@ public class ControlVacunas extends Fragment {
 		final Persona p = sesion.getDatosPacienteActual().persona;
 
 		//Cosas visibles siempre
-		((TextView)rootView.findViewById(R.id.txtNombre)).setText(p.getNombreCompleto());
-		((TextView)rootView.findViewById(R.id.txtSexoEdad)).setText(
-				"Sexo: "+p.sexo+"   Edad: "+DatosUtil.calcularEdad(p.fecha_nacimiento));
-		
+		WidgetUtil.setDatosBasicosPaciente(rootView, p);
 		
 		//VISIBILIDAD DE ACCIONES EN PANTALLA SEGÚN PERMISOS
 		LinearLayout verEsquema = (LinearLayout)rootView.findViewById(R.id.accion_ver_esquema);
@@ -77,7 +79,7 @@ public class ControlVacunas extends Fragment {
 			agregarVacuna.setVisibility(View.VISIBLE); else agregarVacuna.setVisibility(View.GONE);
 		
 		
-		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_ver_esquema, "Ver esquema de vacunación", 
+		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_ver_esquema, "Ver Esquema de Vacunación", 
 				R.layout.ayuda_dialogo_tes_login, getFragmentManager());
 
 		//Marcado de vacunas en tablaEsquema
@@ -92,29 +94,50 @@ public class ControlVacunas extends Fragment {
 		btnAgregarVacuna.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				//Diálogo de nueva vacuna
-				ControlVacunasNuevo dialogo=new ControlVacunasNuevo();
-				Bundle args = new Bundle();
-				//args.putSerializable(ControlVacunasNuevo.PARAM_MODO_OPERACION, modoOperacion);
-				dialogo.setArguments(args);
-				dialogo.setTargetFragment(ControlVacunas.this, ControlVacunasNuevo.REQUEST_CODE);
-				dialogo.show(ControlVacunas.this.getFragmentManager(),
-						//.beginTransaction().setCustomAnimations(android.R.animator.fade_out, android.R.animator.fade_in), 
-						ControlVacunasNuevo.TAG);
-				//Este diálogo avisará su fin en onActivityResult() de llamador
+				AplicarVacuna(null);
 			}
 		});
-			
+
+		
+		if(sesion.tienePermiso(ContenidoControles.ICA_CONTROLVACUNA_INSERTAR)){
+			//Asignación de click a cada celda de vacuna
+			List<Vacuna> vacunas = Vacuna.getVacunasActivas(getActivity());
+			for(final Vacuna vacuna : vacunas){
+				View celda = tablaEsquema.findViewWithTag(PREFIJO_VACUNA+vacuna._id);
+				if(celda != null)
+					celda.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View arg0) {
+							AplicarVacuna(vacuna._id);
+						}
+					});
+			}
+		}
 		
 		return rootView;
 	}
 	
+	
+	private void AplicarVacuna(Integer idVacuna){
+		//Diálogo de nueva vacuna
+		ControlVacunasNuevo dialogo=new ControlVacunasNuevo();
+		Bundle args = new Bundle();
+		if(idVacuna != null)args.putInt(ControlVacunasNuevo.PARAM_ID_VACUNA, idVacuna);
+		dialogo.setArguments(args);
+		dialogo.setTargetFragment(ControlVacunas.this, ControlVacunasNuevo.REQUEST_CODE);
+		dialogo.show(ControlVacunas.this.getFragmentManager(),
+				//.beginTransaction().setCustomAnimations(android.R.animator.fade_out, android.R.animator.fade_in), 
+				ControlVacunasNuevo.TAG);
+		//Este diálogo avisará su fin en onActivityResult() de llamador
+	}
+	
+	
 	/**
 	 * Marca en el esquema las vacunas aplicadas a la persona
 	 */
-	public void MarcarVacunas(){
+	private void MarcarVacunas(){
 		for(ControlVacuna vacuna : sesion.getDatosPacienteActual().vacunas){
-			TextView celda = (TextView)tablaEsquema.findViewWithTag("id_vacuna_"+vacuna.id_vacuna);
+			TextView celda = (TextView)tablaEsquema.findViewWithTag(PREFIJO_VACUNA+vacuna.id_vacuna);
 			if(celda == null){
 				//Vacuna inexistente en vista
 				ErrorSis.AgregarError(getActivity(), sesion.getUsuario()._id, 

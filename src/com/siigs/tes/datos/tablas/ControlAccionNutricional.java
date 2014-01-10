@@ -1,5 +1,13 @@
 package com.siigs.tes.datos.tablas;
 
+import java.util.List;
+
+import android.content.Context;
+import android.database.Cursor;
+
+import com.siigs.tes.datos.DatosUtil;
+import com.siigs.tes.datos.ProveedorContenido;
+
 /**
  * Esquema de tabla de base de datos
  * @author Axel
@@ -39,4 +47,14 @@ public class ControlAccionNutricional {
 	public String fecha;
 	public int id_asu_um;
 	public transient Integer id_invitado; //transient pues no se envía en JSON
+
+	public static List<ControlAccionNutricional> getAccionesNutricionalesPersona(Context context, String idPersona) {
+		Cursor cur = context.getContentResolver().query(
+				ProveedorContenido.CONTROL_ACCION_NUTRICIONAL_CONTENT_URI, null, 
+				ID_PERSONA+"=?", new String[]{idPersona}, null);
+		List<ControlAccionNutricional> salida = DatosUtil.ObjetosDesdeCursor(cur, ControlAccionNutricional.class);
+		cur.close();
+		return salida;
+	}
+
 }

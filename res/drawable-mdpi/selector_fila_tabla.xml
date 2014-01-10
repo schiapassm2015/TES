@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Selector para definir los estados de color/forma/fondo que tiene un item de lista
+Este selector está enfocado en particular para los items de {@link PrincipalFragment}
+a travéz del layout {@link fila_principalfragment} -->
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:state_pressed="true" android:drawable="@drawable/gradiente_azul_medio"/>
+    <item android:drawable="@drawable/gradiente_celeste"/>
+ </selector>

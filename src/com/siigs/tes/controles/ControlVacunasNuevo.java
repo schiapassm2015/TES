@@ -45,6 +45,7 @@ public class ControlVacunasNuevo extends DialogFragment {
 	public static final int REQUEST_CODE=123;
 	public static final int RESULT_OK=0;
 	public static final int RESULT_CANCELAR=-5;	
+	public static final String PARAM_ID_VACUNA = "id_vacuna_preseleccionada";
 
 	private TesAplicacion aplicacion;
 	private Sesion sesion;
@@ -97,6 +98,15 @@ public class ControlVacunasNuevo extends DialogFragment {
 				getActivity(), android.R.layout.simple_dropdown_item_1line, vacunas, 
 				new String[]{Vacuna.DESCRIPCION}, new int[]{android.R.id.text1});
 		spVacunas.setAdapter(adaptador);
+		
+		if(getArguments()!=null && getArguments().containsKey(PARAM_ID_VACUNA)){
+			int idBuscar = getArguments().getInt(PARAM_ID_VACUNA);
+			for(int i=0;i<vacunas.size();i++)
+				if(vacunas.get(i)._id==idBuscar){
+					spVacunas.setSelection(i);
+					break;
+				}
+		}
 		
 		//Cancelación manual
 		Button btnCancelar=(Button)vista.findViewById(R.id.btnCancelar);

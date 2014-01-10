@@ -202,7 +202,9 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 		if(esNueva){
 			AccionPrimerosCatalogos(idSesion);
 			AccionPrimerosDatos(idSesion);
-			this.aplicacion.setEsInstalacionNueva(false);
+			//Si por accidente externo a tableta no hubieran usuarios, evitamos bloquear sincronización futura
+			if(Usuario.getTotalUsuariosActivos(contexto)>0)
+				this.aplicacion.setEsInstalacionNueva(false);
 		}else{
 			String ultimaSinc = this.aplicacion.getFechaUltimaSincronizacion();
 			AccionEnviarCambiosServidor(idSesion, ultimaSinc);

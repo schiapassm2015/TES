@@ -59,6 +59,18 @@ public class DialogoTes extends DialogFragment {
 	 * no se logra guardar con éxito la información en la TES.
 	 */
 	public static void IniciarNuevo(Fragment llamador, ModoOperacion modoOperacion, PendientesTarjeta pendiente){
+		//Si el usuario no es para guardado en NFC...
+		if(modoOperacion==ModoOperacion.GUARDAR)
+			if( !((TesAplicacion)llamador.getActivity().getApplication())
+					.getSesion().getDatosPacienteActual().fueCargadoDesdeNfc()){
+				//... solo guardamos como un pendiente si lo hay
+				if(pendiente!=null)
+					PendientesTarjeta.AgregarNuevoPendienteLocal(llamador.getActivity(), pendiente);
+				//... y no iniciamos ventana pero hacemos aviso como si hubiera guardado normal.
+				llamador.onActivityResult(DialogoTes.REQUEST_CODE, DialogoTes.RESULT_OK, null);
+				return;
+				}
+		
 		DialogoTes dialogo=new DialogoTes();
 		Bundle args = new Bundle();
 		args.putSerializable(DialogoTes.PARAM_MODO_OPERACION, modoOperacion);

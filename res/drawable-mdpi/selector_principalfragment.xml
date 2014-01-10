@@ -8,13 +8,13 @@ a travéz del layout {@link fila_principalfragment} -->
     
     <item 
         android:state_pressed="true"
-        android:drawable="@drawable/gradiente_azul" />
+        android:drawable="@color/boton_menu_presionado" />
 
     <item 
         android:state_activated="true"
-        android:drawable="@drawable/gradiente_azul_medio" />
+        android:drawable="@color/boton_menu_activado" />
     
     <item 
-        android:drawable="@drawable/gradiente_celeste"/>
+        android:drawable="@color/boton_menu_normal"/>
     
 </selector>

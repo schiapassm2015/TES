@@ -18,14 +18,14 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="10"
+            android:layout_weight="15"
             android:text="@string/nombre" />
         
         <EditText
             android:id="@+id/txtNombre"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="40"
+            android:layout_weight="35"
             android:singleLine="true"
             android:digits="@string/caracteres_permitidos" />
         
@@ -53,16 +53,17 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="10"
-            android:text="@string/edad" />
+            android:layout_weight="15"
+            android:text="@string/ano_nacimiento" />
         
-        <Spinner
-            android:id="@+id/spEdad"
+        <EditText 
+            android:id="@+id/txtAnoNacimiento"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="40"
-            tools:listitem="@android:layout/simple_spinner_dropdown_item" />
-    
+            android:layout_weight="35"
+            android:maxLength="4"
+            android:inputType="number"/>
+            
         <Button
             android:id="@+id/btnVerTodos"
             android:layout_width="0dp"
@@ -208,7 +209,7 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
 		                        android:background="@drawable/borde" />
                             
                             <TextView 
-		                        android:layout_width="54dp" 
+		                        android:layout_width="30dp" 
 		                        android:layout_height="match_parent"
 		                        android:text="@string/dpt" 
 		                        android:gravity="center" 
@@ -305,19 +306,7 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
                             
                             <!-- DPT -->
                             <TextView 
-		                        android:layout_width="18dp" 
-		                        android:layout_height="match_parent"
-		                        android:text="1" 
-		                        android:gravity="center" 
-		                        android:background="@drawable/borde" />
-                            <TextView 
-		                        android:layout_width="18dp" 
-		                        android:layout_height="match_parent"
-		                        android:text="2" 
-		                        android:gravity="center" 
-		                        android:background="@drawable/borde" />
-                            <TextView 
-		                        android:layout_width="18dp" 
+		                        android:layout_width="30dp" 
 		                        android:layout_height="match_parent"
 		                        android:text="R" 
 		                        android:gravity="center" 
@@ -333,7 +322,7 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal
                             <TextView 
 		                        android:layout_width="18dp" 
 		                        android:layout_height="match_parent"
-		                        android:text="2" 
+		                        android:text="R" 
 		                        android:gravity="center" 
 		                        android:background="@drawable/borde" />
                             

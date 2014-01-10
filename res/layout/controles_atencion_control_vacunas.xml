@@ -11,16 +11,9 @@
         android:paddingBottom="30dp" >
 
         <TextView 
-            android:id="@+id/txtNombre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="[NOMBRE]"/>
-        
-        <TextView 
-            android:id="@+id/txtSexoEdad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="[Sexo y Edad]"/>
+            android:id="@+id/txtDatosBasicos"
+            style="@style/datos_basicos_paciente"
+            android:text="[NOMBRE]"/>    
         
         <LinearLayout
             android:id="@+id/accion_ver_esquema"

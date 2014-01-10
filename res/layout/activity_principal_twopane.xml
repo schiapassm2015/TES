@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#fff"
     >
 
     <!-- Menú superior horizontal -->
@@ -10,22 +11,21 @@
         android:id="@+id/menu_superior"
 	    android:name="com.siigs.tes.MenuSuperior"
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
+	    android:layout_height="@dimen/alto_menu_superior"
 	    tools:layout="@layout/menu_superior" />
     
-    <!-- Resto de contenido de la pantalla dividido en 2 paneles -->
+    <!-- Resto de contenido de la pantalla dividido en 2 paneles . showDividers="middle" para ver línea vertial-->
 	<LinearLayout
 	    android:id="@+id/contenedor_paneles"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
-	    android:layout_marginLeft="16dp"
-	    android:layout_marginRight="16dp"
 	    android:baselineAligned="false"
-	    android:divider="?android:attr/dividerHorizontal"
+	    android:divider="?android:attr/dividerHorizontal" 
 	    android:orientation="horizontal"
-	    android:showDividers="middle"
+	    android:showDividers="none"
 	    tools:context=".PrincipalActivity" 
 	    >
+	    <!-- "?android:attr/dividerHorizontal"  -->
 	
 	    <!--
 	    This layout is a two-pane layout for the Secciones
@@ -41,16 +41,17 @@
 	    <fragment
 	        android:id="@+id/seccion_list"
 	        android:name="com.siigs.tes.PrincipalFragment"
-	        android:layout_width="0dp"
+	        android:layout_width="@dimen/ancho_menu_izquierdo"
 	        android:layout_height="match_parent"
-	        android:layout_weight="20"
+	        android:layout_marginTop="@dimen/margin_top_seccion_izquierda"
 	        tools:layout="@android:layout/list_content" />
 	
 	    <FrameLayout
 	        android:id="@+id/seccion_detail_container"
-	        android:layout_width="0dp"
+	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
-	        android:layout_weight="80" />
+	        android:paddingLeft="@dimen/separacion_nombre_usuario_de_botones_menu"
+	        android:paddingRight="10dp" />
 	
 	</LinearLayout>
 

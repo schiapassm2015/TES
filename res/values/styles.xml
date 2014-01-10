@@ -16,16 +16,65 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="android:windowNoTitle" >true</item>
+        <item name="android:editTextStyle">@style/APP_EditTextStyle</item>
+        <!-- <item name="android:buttonStyle">@style/APP_ButtonStyle</item>-->
     </style>
+    
+    <!-- INICIO Colores básicos -->
+    <color name="boton_menu_normal">#e8eced</color>
+    <color name="boton_menu_presionado">#61ac1e</color>
+    <color name="boton_menu_activado">#099</color>
+    
+    <color name="nombre_usuario">#61ac1e</color>
+    <!-- FIN Colores básicos -->
+    
+    <!-- INICIO Dimensiones básicas -->
+    <dimen name="ancho_menu_izquierdo">200dp</dimen>
+    <dimen name="separacion_botones_menu">7dp</dimen>
+    <dimen name="separacion_nombre_usuario_de_botones_menu">5dp</dimen>
+    <dimen name="alto_menu_superior">40dp</dimen>
+    <dimen name="margin_top_seccion_izquierda">5dp</dimen>
+    <!-- FIN Dimensiones básicas -->
+    
+    <!-- Estílo de los cuadros de texto -->
+    <style name="APP_EditTextStyle" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/linea_punteada</item>
+        <item name="android:layerType">software</item> <!-- Para que en algunos dispositivos si se vea punteado -->
+        <!-- <item name="android:fontFamily">sans-serif-light</item>-->
+    </style>
+    
+    <!-- Estílo de los botones -->
+    <style name="APP_ButtonStyle" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/selector_button</item>
+        <!-- <item name="android:fontFamily">sans-serif-light</item>-->
+    </style>
+    
     
     <style name="boton_menu_superior">
-        <item name="android:padding">5dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
         <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/selector_menusuperior</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/selector_principalfragment</item>
     </style>
     
+    <style name="nombre_usuario">
+        <item name="android:background">@color/nombre_usuario</item>
+        <item name="android:layout_width">@dimen/ancho_menu_izquierdo</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    
+    <style name="datos_basicos_paciente">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
     
     <!-- Celdas de tabla para mostrar el esquema de vacunas aplicaddas/no aplicadas/no aplicables -->
     <style name="celda_header_control_vacuna">
@@ -46,8 +95,10 @@
     <style name="celda_aplicable_control_vacuna">
         <item name="android:layout_width">34dp</item>
         <item name="android:layout_height">32dp</item>
-        <item name="android:background">@drawable/borde</item>
         <item name="android:gravity">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">@drawable/selector_celda_vacuna</item>
     </style>
 
 	<style name="celda_titulo_control_vacuna">

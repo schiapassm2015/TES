@@ -67,6 +67,8 @@ public class ContenidoControles {
 		public final static int ICA_CONTROLVACUNA_VER = 105;
 		public final static int ICA_CONTROLVACUNA_INSERTAR = 104;
 	public final static int ICA_CONTROLNUTRICIONAL_LISTAR = 89;
+		public final static int ICA_CONTROLNUTRICIONAL_VER = 88;
+		public final static int ICA_CONTROLNUTRICIONAL_INSERTAR = 87;
 	public final static int ICA_CONTROLACCIONNUTRICIONAL_LISTAR = 76;
 	public final static int ICA_EDA_LISTAR = 83;
 	public final static int ICA_IRA_LISTAR = 86;

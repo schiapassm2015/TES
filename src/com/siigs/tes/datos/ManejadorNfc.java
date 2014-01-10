@@ -228,7 +228,7 @@ public class ManejadorNfc {
 		}
 		
 		return new Sesion.DatosPaciente(persona, tutor, registro, alergias, afiliaciones,
-				vacunas, iras, edas, consultas, acciones, controles);
+				vacunas, iras, edas, consultas, acciones, controles, true);
 	}//fin LeerVersion1
 	
 	/**

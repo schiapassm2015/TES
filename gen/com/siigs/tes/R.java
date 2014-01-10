@@ -10,10 +10,27 @@ package com.siigs.tes;
 public final class R {
     public static final class array {
         public static final int id_tipo_censo=0x7f070000;
-        public static final int opciones_edad=0x7f070002;
         public static final int opciones_sexo=0x7f070001;
     }
     public static final class attr {
+    }
+    public static final class color {
+        public static final int boton_menu_activado=0x7f080002;
+        /**  INICIO Colores básicos 
+         */
+        public static final int boton_menu_normal=0x7f080000;
+        public static final int boton_menu_presionado=0x7f080001;
+        public static final int nombre_usuario=0x7f080003;
+    }
+    public static final class dimen {
+        public static final int alto_menu_superior=0x7f090003;
+        /**  FIN Colores básicos 
+ INICIO Dimensiones básicas 
+         */
+        public static final int ancho_menu_izquierdo=0x7f090000;
+        public static final int margin_top_seccion_izquierda=0x7f090004;
+        public static final int separacion_botones_menu=0x7f090001;
+        public static final int separacion_nombre_usuario_de_botones_menu=0x7f090002;
     }
     public static final class drawable {
         public static final int ayuda=0x7f020000;
@@ -29,116 +46,133 @@ public final class R {
         public static final int gradiente_verde=0x7f02000a;
         public static final int gradiente_verde_borde=0x7f02000b;
         public static final int ic_launcher=0x7f02000c;
-        public static final int popup_ninepatch=0x7f02000d;
-        public static final int selector_link_lista=0x7f02000e;
-        public static final int selector_menusuperior=0x7f02000f;
-        public static final int selector_principalfragment=0x7f020010;
-        public static final int tarjeta=0x7f020011;
+        public static final int linea_punteada=0x7f02000d;
+        public static final int popup_ninepatch=0x7f02000e;
+        public static final int selector_button=0x7f02000f;
+        public static final int selector_celda_vacuna=0x7f020010;
+        public static final int selector_fila_tabla=0x7f020011;
+        public static final int selector_link_lista=0x7f020012;
+        public static final int selector_principalfragment=0x7f020013;
+        public static final int tarjeta=0x7f020014;
     }
     public static final class id {
-        public static final int acLocalidad=0x7f08002f;
-        public static final int accion_agregar_control_nutricional=0x7f08000a;
-        public static final int accion_agregar_vacuna=0x7f080013;
-        public static final int accion_editar_alergias=0x7f080034;
-        public static final int accion_editar_domicilio=0x7f08002a;
-        public static final int accion_editar_um=0x7f080031;
-        public static final int accion_ver_controles_nutricionales=0x7f080007;
-        public static final int accion_ver_datos_paciente=0x7f08001b;
-        public static final int accion_ver_esquema=0x7f08000f;
-        public static final int barra_titulo_agregar_vacuna=0x7f080014;
-        public static final int barra_titulo_alergias=0x7f080035;
-        public static final int barra_titulo_domicilio=0x7f08002b;
-        public static final int barra_titulo_um=0x7f080032;
-        public static final int barra_titulo_vacuna=0x7f080016;
-        public static final int barra_titulo_ver=0x7f08001c;
-        public static final int barra_titulo_ver_esquema=0x7f080010;
-        public static final int btnAcceder=0x7f08005c;
-        public static final int btnActualizarDireccion=0x7f080030;
-        public static final int btnActualizarUM=0x7f080033;
-        public static final int btnAgregar=0x7f08001a;
-        public static final int btnAgregarAlergia=0x7f080037;
-        public static final int btnAgregarControl=0x7f08000c;
-        public static final int btnAgregarVacuna=0x7f080015;
-        public static final int btnAyuda=0x7f080006;
-        public static final int btnAyuda_editar=0x7f08000b;
-        public static final int btnAyuda_ver=0x7f080008;
-        public static final int btnCancelar=0x7f080019;
-        public static final int btnCerrar=0x7f080004;
-        public static final int btnFiltrar=0x7f08003b;
-        public static final int btnInvitado=0x7f08005d;
-        public static final int btnSincronizar=0x7f080047;
-        public static final int btnVerTodos=0x7f08003a;
-        public static final int contenedor_paneles=0x7f080003;
-        public static final int grafica_linear=0x7f080009;
-        public static final int imgIcono=0x7f080056;
-        public static final int lblSinAlergiasVer=0x7f080029;
-        public static final int lblTitulo=0x7f08005e;
-        public static final int lblUsuario=0x7f080058;
-        public static final int linea=0x7f080048;
-        public static final int lsAlergiasActuales=0x7f080028;
-        public static final int lsContenido=0x7f080041;
-        public static final int lvResultados=0x7f080040;
-        public static final int materno=0x7f08003e;
-        public static final int menu_superior=0x7f080002;
-        public static final int mnAtencion=0x7f08005f;
-        public static final int mnCenso=0x7f080060;
-        public static final int mnCerrar=0x7f080066;
-        public static final int mnConfiguracion=0x7f080064;
-        public static final int mnEsquemas=0x7f080062;
-        public static final int mnInvitados=0x7f080065;
-        public static final int mnNotificaciones=0x7f080061;
-        public static final int mnSincronizacion=0x7f080063;
-        public static final int nombre=0x7f08003f;
-        public static final int nombre_apellidos=0x7f08003c;
-        public static final int paterno=0x7f08003d;
-        public static final int pnPassword=0x7f08005a;
-        public static final int seccion_detail=0x7f080057;
-        public static final int seccion_detail_container=0x7f080000;
-        public static final int seccion_list=0x7f080001;
-        public static final int spAlergiaAgregar=0x7f080036;
-        public static final int spEdad=0x7f080039;
-        public static final int spSexo=0x7f080038;
-        public static final int spUsuario=0x7f080059;
-        public static final int spVacunas=0x7f080017;
-        public static final int tablaEsquema=0x7f080011;
-        public static final int txtActualizacionesPacientes=0x7f080045;
-        public static final int txtBCG_U=0x7f08004d;
-        public static final int txtCP=0x7f080022;
-        public static final int txtCalle=0x7f08002c;
-        public static final int txtColonia=0x7f08002e;
-        public static final int txtControlesSincronizar=0x7f080044;
-        public static final int txtCurp=0x7f08001d;
-        public static final int txtDPAT_4=0x7f080055;
-        public static final int txtDireccion=0x7f080021;
-        public static final int txtDomicilio=0x7f08004b;
-        public static final int txtEdad=0x7f08001e;
-        public static final int txtFechaNacimiento=0x7f08004c;
-        public static final int txtFechaRegistroCivil=0x7f080024;
-        public static final int txtHepatitis_1=0x7f08004e;
-        public static final int txtHepatitis_2=0x7f08004f;
-        public static final int txtHepatitis_3=0x7f080050;
-        public static final int txtLocalidad=0x7f080023;
-        public static final int txtLocalidadRegistroCivil=0x7f080025;
-        public static final int txtLote=0x7f080018;
-        public static final int txtMaterno=0x7f08004a;
-        public static final int txtNombre=0x7f08000d;
-        public static final int txtNumero=0x7f08002d;
-        public static final int txtPassword=0x7f08005b;
-        public static final int txtPaterno=0x7f080049;
-        public static final int txtPentavalente_1=0x7f080051;
-        public static final int txtPentavalente_2=0x7f080052;
-        public static final int txtPentavalente_3=0x7f080053;
-        public static final int txtPentavalente_4=0x7f080054;
-        public static final int txtSangre=0x7f080020;
-        public static final int txtSexo=0x7f08001f;
-        public static final int txtSexoEdad=0x7f08000e;
-        public static final int txtTESactualizar=0x7f080046;
-        public static final int txtTituloBarra=0x7f080005;
-        public static final int txtTutor=0x7f080027;
-        public static final int txtUltimaSincronizacion=0x7f080043;
-        public static final int txtUnidadMedicaTratante=0x7f080026;
-        public static final int txtVersionDatos=0x7f080042;
-        public static final int vacXX=0x7f080012;
+        public static final int acLocalidad=0x7f0a002f;
+        public static final int accion_agregar_nutricion=0x7f0a000b;
+        public static final int accion_agregar_vacuna=0x7f0a0018;
+        public static final int accion_editar_alergias=0x7f0a0034;
+        public static final int accion_editar_domicilio=0x7f0a002a;
+        public static final int accion_editar_um=0x7f0a0031;
+        public static final int accion_ver_datos_paciente=0x7f0a001b;
+        public static final int accion_ver_esquema=0x7f0a0014;
+        public static final int accion_ver_nutricion=0x7f0a0008;
+        public static final int barra_titulo_agregar_nutricion=0x7f0a000c;
+        public static final int barra_titulo_agregar_vacuna=0x7f0a0019;
+        public static final int barra_titulo_alergias=0x7f0a0035;
+        public static final int barra_titulo_domicilio=0x7f0a002b;
+        public static final int barra_titulo_um=0x7f0a0032;
+        public static final int barra_titulo_vacuna=0x7f0a000e;
+        public static final int barra_titulo_ver=0x7f0a001c;
+        public static final int barra_titulo_ver_esquema=0x7f0a0015;
+        public static final int barra_titulo_ver_nutricion=0x7f0a0009;
+        public static final int btnAcceder=0x7f0a006a;
+        public static final int btnActualizarDireccion=0x7f0a0030;
+        public static final int btnActualizarUM=0x7f0a0033;
+        public static final int btnAgregar=0x7f0a0013;
+        public static final int btnAgregarAlergia=0x7f0a0037;
+        public static final int btnAgregarControl=0x7f0a000d;
+        public static final int btnAgregarVacuna=0x7f0a001a;
+        public static final int btnAyuda=0x7f0a0006;
+        public static final int btnCancelar=0x7f0a0012;
+        public static final int btnCerrar=0x7f0a0004;
+        public static final int btnFiltrar=0x7f0a003b;
+        public static final int btnInvitado=0x7f0a006b;
+        public static final int btnSincronizar=0x7f0a0047;
+        public static final int btnVerTodos=0x7f0a003a;
+        public static final int contenedor_paneles=0x7f0a0003;
+        public static final int grafica_linear=0x7f0a000a;
+        public static final int imgIcono=0x7f0a0064;
+        public static final int lblSinAlergiasVer=0x7f0a0029;
+        public static final int lblTitulo=0x7f0a006c;
+        public static final int lblUsuario=0x7f0a0066;
+        public static final int linea=0x7f0a0048;
+        public static final int lsAlergiasActuales=0x7f0a0028;
+        public static final int lsContenido=0x7f0a0041;
+        public static final int lvResultados=0x7f0a0040;
+        public static final int materno=0x7f0a003e;
+        public static final int menu_superior=0x7f0a0002;
+        public static final int mnAtencion=0x7f0a006d;
+        public static final int mnCenso=0x7f0a006e;
+        public static final int mnCerrar=0x7f0a0074;
+        public static final int mnConfiguracion=0x7f0a0072;
+        public static final int mnEsquemas=0x7f0a0070;
+        public static final int mnInvitados=0x7f0a0073;
+        public static final int mnNotificaciones=0x7f0a006f;
+        public static final int mnSincronizacion=0x7f0a0071;
+        public static final int nombre=0x7f0a003f;
+        public static final int nombre_apellidos=0x7f0a003c;
+        public static final int paterno=0x7f0a003d;
+        public static final int pnPassword=0x7f0a0068;
+        public static final int seccion_detail=0x7f0a0065;
+        public static final int seccion_detail_container=0x7f0a0000;
+        public static final int seccion_list=0x7f0a0001;
+        public static final int spAlergiaAgregar=0x7f0a0036;
+        public static final int spSexo=0x7f0a0038;
+        public static final int spUsuario=0x7f0a0067;
+        public static final int spVacunas=0x7f0a0010;
+        public static final int tablaEsquema=0x7f0a0016;
+        public static final int txtActualizacionesPacientes=0x7f0a0045;
+        public static final int txtAnoNacimiento=0x7f0a0039;
+        public static final int txtBCG_U=0x7f0a0050;
+        public static final int txtCP=0x7f0a0022;
+        public static final int txtCalle=0x7f0a002c;
+        public static final int txtColonia=0x7f0a002e;
+        public static final int txtControlesSincronizar=0x7f0a0044;
+        public static final int txtCurp=0x7f0a001d;
+        public static final int txtDPT_R=0x7f0a0058;
+        public static final int txtDatosBasicos=0x7f0a0007;
+        public static final int txtDireccion=0x7f0a0021;
+        public static final int txtDomicilio=0x7f0a004e;
+        public static final int txtEdad=0x7f0a001e;
+        public static final int txtFechaNacimiento=0x7f0a004f;
+        public static final int txtFechaRegistroCivil=0x7f0a0024;
+        public static final int txtHepatitis_1=0x7f0a0051;
+        public static final int txtHepatitis_2=0x7f0a0052;
+        public static final int txtHepatitis_3=0x7f0a0053;
+        public static final int txtINFLUENZA_1=0x7f0a0061;
+        public static final int txtINFLUENZA_2=0x7f0a0062;
+        public static final int txtINFLUENZA_R=0x7f0a0063;
+        public static final int txtLocalidad=0x7f0a0023;
+        public static final int txtLocalidadRegistroCivil=0x7f0a0025;
+        public static final int txtLote=0x7f0a0011;
+        public static final int txtMaterno=0x7f0a004b;
+        public static final int txtMaternoTutor=0x7f0a004c;
+        public static final int txtNEUMOCOCO_1=0x7f0a005e;
+        public static final int txtNEUMOCOCO_2=0x7f0a005f;
+        public static final int txtNEUMOCOCO_3=0x7f0a0060;
+        public static final int txtNombre=0x7f0a000f;
+        public static final int txtNombreTutor=0x7f0a004d;
+        public static final int txtNumero=0x7f0a002d;
+        public static final int txtPassword=0x7f0a0069;
+        public static final int txtPaterno=0x7f0a0049;
+        public static final int txtPaternoTutor=0x7f0a004a;
+        public static final int txtPentavalente_1=0x7f0a0054;
+        public static final int txtPentavalente_2=0x7f0a0055;
+        public static final int txtPentavalente_3=0x7f0a0056;
+        public static final int txtPentavalente_4=0x7f0a0057;
+        public static final int txtROTAVIRUS_1=0x7f0a005b;
+        public static final int txtROTAVIRUS_2=0x7f0a005c;
+        public static final int txtROTAVIRUS_3=0x7f0a005d;
+        public static final int txtSRP_1=0x7f0a0059;
+        public static final int txtSRP_2=0x7f0a005a;
+        public static final int txtSangre=0x7f0a0020;
+        public static final int txtSexo=0x7f0a001f;
+        public static final int txtTESactualizar=0x7f0a0046;
+        public static final int txtTituloBarra=0x7f0a0005;
+        public static final int txtTutor=0x7f0a0027;
+        public static final int txtUltimaSincronizacion=0x7f0a0043;
+        public static final int txtUnidadMedicaTratante=0x7f0a0026;
+        public static final int txtVersionDatos=0x7f0a0042;
+        public static final int vacXX=0x7f0a0017;
     }
     public static final class layout {
         public static final int activity_control=0x7f030000;
@@ -163,20 +197,21 @@ public final class R {
         public static final int ayuda_dialogo_tes_login=0x7f030004;
         public static final int barra_titulo=0x7f030005;
         public static final int controles_atencion_control_nutricional=0x7f030006;
-        public static final int controles_atencion_control_vacunas=0x7f030007;
-        public static final int controles_atencion_control_vacunas_nuevo=0x7f030008;
-        public static final int controles_atencion_paciente=0x7f030009;
-        public static final int controles_censo_censo_nominal=0x7f03000a;
-        public static final int controles_notificaciones=0x7f03000b;
-        public static final int controles_sincronizacion=0x7f03000c;
-        public static final int dialogo_tes_guardar=0x7f03000d;
-        public static final int dialogo_tes_login=0x7f03000e;
-        public static final int fila_censo_nominal=0x7f03000f;
-        public static final int fila_principalfragment=0x7f030010;
-        public static final int fragment_control=0x7f030011;
-        public static final int login=0x7f030012;
-        public static final int menu_superior=0x7f030013;
-        public static final int temporal=0x7f030014;
+        public static final int controles_atencion_control_nutricional_nuevo=0x7f030007;
+        public static final int controles_atencion_control_vacunas=0x7f030008;
+        public static final int controles_atencion_control_vacunas_nuevo=0x7f030009;
+        public static final int controles_atencion_paciente=0x7f03000a;
+        public static final int controles_censo_censo_nominal=0x7f03000b;
+        public static final int controles_notificaciones=0x7f03000c;
+        public static final int controles_sincronizacion=0x7f03000d;
+        public static final int dialogo_tes_guardar=0x7f03000e;
+        public static final int dialogo_tes_login=0x7f03000f;
+        public static final int fila_censo_nominal=0x7f030010;
+        public static final int fila_principalfragment=0x7f030011;
+        public static final int fragment_control=0x7f030012;
+        public static final int login=0x7f030013;
+        public static final int menu_superior=0x7f030014;
+        public static final int temporal=0x7f030015;
     }
     public static final class string {
         public static final int MARCA_VACUNA=0x7f050004;
@@ -184,77 +219,84 @@ public final class R {
         public static final int acerque_tes_guardar=0x7f050006;
         /**  Opciones de cuadros de diálogo 
          */
-        public static final int actualizar=0x7f05002d;
+        public static final int actualizar=0x7f05002f;
         public static final int actualizar_domicilio=0x7f05000e;
         public static final int actualizar_um=0x7f05000f;
         public static final int agregar=0x7f05000a;
         public static final int agregar_alergia=0x7f050010;
+        public static final int agregar_nutricion=0x7f050012;
         public static final int agregar_vacuna=0x7f050011;
+        public static final int ano_nacimiento=0x7f050019;
         public static final int app_name=0x7f050000;
         /**  Menú superior 
          */
-        public static final int atencion=0x7f050025;
+        public static final int atencion=0x7f050027;
         /**  AVISOS A USUARIO 
          */
-        public static final int aviso_llenar_campos=0x7f050020;
+        public static final int aviso_llenar_campos=0x7f050022;
         public static final int ayuda=0x7f050009;
-        public static final int bcg=0x7f05001b;
+        public static final int bcg=0x7f05001d;
         public static final int cancelar=0x7f050008;
         /**  caracteres permitidos aplica en el atributo digits 
          */
         public static final int caracteres_permitidos=0x7f050001;
-        public static final int censo_nominal=0x7f050026;
-        public static final int cero_anos=0x7f050031;
-        public static final int cerrar_sesion=0x7f05002c;
-        public static final int configuracion=0x7f05002b;
-        public static final int cp=0x7f050019;
-        public static final int cuatro_anos=0x7f050035;
-        public static final int curp=0x7f050013;
+        public static final int censo_nominal=0x7f050028;
+        public static final int cerrar_sesion=0x7f05002e;
+        public static final int configuracion=0x7f05002d;
+        public static final int cp=0x7f05001b;
+        public static final int curp=0x7f050014;
         public static final int datos_paciente=0x7f05000d;
         public static final int desconocido=0x7f050003;
-        public static final int domicilio=0x7f050018;
-        public static final int dos_anos=0x7f050033;
-        public static final int dpt=0x7f05001e;
-        public static final int edad=0x7f050017;
-        public static final int esquemas=0x7f050029;
+        public static final int domicilio=0x7f05001a;
+        public static final int dpt=0x7f050020;
+        public static final int edad=0x7f050018;
+        public static final int esquemas=0x7f05002b;
         /**  Tipos de censo visualizables 
          */
-        public static final int estatal=0x7f050021;
-        public static final int fecha_nacimiento=0x7f050016;
-        public static final int femenino=0x7f050030;
-        public static final int grupo_sanguineo=0x7f050015;
-        public static final int hepatitis_b=0x7f05001c;
+        public static final int estatal=0x7f050023;
+        public static final int fecha_nacimiento=0x7f050017;
+        public static final int femenino=0x7f050032;
+        public static final int grupo_sanguineo=0x7f050016;
+        public static final int hepatitis_b=0x7f05001e;
         /**  OPCIONES DE SPINNER 
          */
-        public static final int indistinto=0x7f05002e;
+        public static final int indistinto=0x7f050030;
         public static final int informacion_guardada_en_tes=0x7f050007;
         public static final int invitado=0x7f05000c;
-        public static final int invitados=0x7f050028;
-        public static final int jurisdiccion=0x7f050022;
-        public static final int localidad=0x7f05001a;
-        public static final int masculino=0x7f05002f;
-        public static final int municipio=0x7f050023;
-        public static final int nombre=0x7f050012;
-        public static final int notificaciones=0x7f050027;
-        public static final int pentavalente=0x7f05001d;
-        public static final int reintentos_conexion=0x7f050038;
-        public static final int reintentos_conexion_summary=0x7f050039;
-        public static final int rotavirus=0x7f05001f;
-        public static final int sexo=0x7f050014;
-        public static final int sincronizacion=0x7f05002a;
-        public static final int tiempo_espera_reintento=0x7f05003a;
-        public static final int tiempo_espera_reintento_summary=0x7f05003b;
+        public static final int invitados=0x7f05002a;
+        public static final int jurisdiccion=0x7f050024;
+        public static final int localidad=0x7f05001c;
+        public static final int masculino=0x7f050031;
+        public static final int municipio=0x7f050025;
+        public static final int nombre=0x7f050013;
+        public static final int notificaciones=0x7f050029;
+        public static final int pentavalente=0x7f05001f;
+        public static final int reintentos_conexion=0x7f050035;
+        public static final int reintentos_conexion_summary=0x7f050036;
+        public static final int rotavirus=0x7f050021;
+        public static final int sexo=0x7f050015;
+        public static final int sincronizacion=0x7f05002c;
+        public static final int tiempo_espera_reintento=0x7f050037;
+        public static final int tiempo_espera_reintento_summary=0x7f050038;
         public static final int title_seccion_detail=0x7f050002;
-        public static final int tres_anos=0x7f050034;
-        public static final int un_ano=0x7f050032;
-        public static final int unidad_medica=0x7f050024;
+        public static final int unidad_medica=0x7f050026;
         /**  SHARED PREFERENCES 
          */
-        public static final int url_sincronizacion=0x7f050036;
-        public static final int url_sincronizacion_summary=0x7f050037;
+        public static final int url_sincronizacion=0x7f050033;
+        public static final int url_sincronizacion_summary=0x7f050034;
         public static final int usuario=0x7f05000b;
     }
     public static final class style {
+        /**  Estílo de los botones 
+ <item name="android:fontFamily">sans-serif-light</item>
+         */
+        public static final int APP_ButtonStyle=0x7f060003;
+        /**  FIN Dimensiones básicas 
+ Estílo de los cuadros de texto 
+ Para que en algunos dispositivos si se vea punteado 
+ <item name="android:fontFamily">sans-serif-light</item>
+         */
+        public static final int APP_EditTextStyle=0x7f060002;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -300,15 +342,18 @@ public final class R {
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
  Application theme. 
+ <item name="android:buttonStyle">@style/APP_ButtonStyle</item>
          */
         public static final int AppTheme=0x7f060001;
-        public static final int boton_menu_superior=0x7f060002;
-        public static final int celda_aplicable_control_vacuna=0x7f060005;
+        public static final int boton_menu_superior=0x7f060004;
+        public static final int celda_aplicable_control_vacuna=0x7f060009;
         /**  Celdas de tabla para mostrar el esquema de vacunas aplicaddas/no aplicadas/no aplicables 
          */
-        public static final int celda_header_control_vacuna=0x7f060003;
-        public static final int celda_noaplicable_control_vacuna=0x7f060004;
-        public static final int celda_titulo_control_vacuna=0x7f060006;
+        public static final int celda_header_control_vacuna=0x7f060007;
+        public static final int celda_noaplicable_control_vacuna=0x7f060008;
+        public static final int celda_titulo_control_vacuna=0x7f06000a;
+        public static final int datos_basicos_paciente=0x7f060006;
+        public static final int nombre_usuario=0x7f060005;
     }
     public static final class xml {
         public static final int preferencias=0x7f040000;

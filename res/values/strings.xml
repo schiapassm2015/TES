@@ -22,6 +22,7 @@
     <string name="agregar_alergia">Agregar Alergia</string>
     
     <string name="agregar_vacuna">Agregar Vacuna</string>
+    <string name="agregar_nutricion">Agregar Control Nutricional</string>
     
     <string name="nombre">Nombre</string>
     <string name="curp">Curp</string>
@@ -29,6 +30,7 @@
     <string name="grupo_sanguineo">Grupo Sanguineo</string>
     <string name="fecha_nacimiento">Fecha Nacimiento</string>
     <string name="edad">Edad</string>
+    <string name="ano_nacimiento">Año nacido</string>
     <string name="domicilio">Domicilio</string>
     <string name="cp">CP</string>
     <string name="localidad">Localidad</string>
@@ -73,26 +75,12 @@
     <!-- OPCIONES DE SPINNER -->
     <string name="indistinto">Indistinto</string>
     <string name="masculino">Masculino</string>
-    <string name="femenino">Femenino</string>
-    
-    <string name="cero_anos">0 años</string>
-    <string name="un_ano">1 año</string>
-    <string name="dos_anos">2 años</string>
-    <string name="tres_anos">3 años</string>
-    <string name="cuatro_anos">4 años</string>
-    
+    <string name="femenino">Femenino</string>    
+
     <string-array name="opciones_sexo">
         <item>@string/indistinto</item>
         <item>@string/masculino</item>
         <item>@string/femenino</item>
-    </string-array>
-    
-    <string-array name="opciones_edad">
-        <item>@string/cero_anos</item>
-        <item>@string/un_ano</item>
-        <item>@string/dos_anos</item>
-        <item>@string/tres_anos</item>
-        <item>@string/cuatro_anos</item>
     </string-array>
     
     <!-- SHARED PREFERENCES -->

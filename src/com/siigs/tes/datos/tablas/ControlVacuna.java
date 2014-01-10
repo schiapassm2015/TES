@@ -1,10 +1,13 @@
 package com.siigs.tes.datos.tablas;
 
+import java.util.List;
+
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
@@ -56,6 +59,15 @@ public class ControlVacuna {
 		Uri salida = context.getContentResolver().insert(ProveedorContenido.CONTROL_VACUNA_CONTENT_URI, cv);
 		if(salida != null)
 			Log.d(NOMBRE_TABLA, "Se ha insertado nuevo registro id: "+salida.getLastPathSegment());
+		return salida;
+	}
+
+	public static List<ControlVacuna> getVacunasPersona(Context context, String idPersona) {
+		Cursor cur = context.getContentResolver().query(
+				ProveedorContenido.CONTROL_VACUNA_CONTENT_URI, null, 
+				ID_PERSONA+"=?", new String[]{idPersona}, null);
+		List<ControlVacuna> salida = DatosUtil.ObjetosDesdeCursor(cur, ControlVacuna.class);
+		cur.close();
 		return salida;
 	}
 }

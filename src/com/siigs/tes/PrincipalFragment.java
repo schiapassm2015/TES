@@ -96,13 +96,13 @@ public class PrincipalFragment extends ListFragment {
 		//Retendrá el estado del fragmento de forma que onCreate no será llamado
 		//nuevamente si {@link PrincipalActivity} es creado de nuevo
 		this.setRetainInstance(true);
-		
+				
 		this.aplicacion = (TesAplicacion)this.getActivity().getApplication();
 		
 		//Lista vacía
 		LlenarLista(new java.util.ArrayList<ContenidoControles.ItemControl>());
 		
-		GenerarDatosFalsos(); //TODO eliminar esto
+		//GenerarDatosFalsos(); //TODO eliminar esto
 	}
 	
 	public static byte[] hexStringToByteArray(String cadena) {
@@ -133,7 +133,7 @@ public class PrincipalFragment extends ListFragment {
 	    return new String(salida);
 	}
 	
-	private void GenerarDatosFalsos(){
+	private void GenerarDatosFalsos(){//TODO Borrar esto
 		String uuid= UUID.randomUUID().toString().replace("-", "");
 		byte[] hex = hexStringToByteArray(uuid);
 		String dec = ByteArrayTohexString(hex);
@@ -229,6 +229,10 @@ public class PrincipalFragment extends ListFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
+		//Separación de botones
+		this.getListView().setDivider(getResources().getDrawable(android.R.color.transparent));
+		this.getListView().setDividerHeight((int) getResources().getDimension(R.dimen.separacion_botones_menu));
+		
 		// Restore the previously serialized activated item position.
 		if (savedInstanceState != null){
 			if(savedInstanceState.containsKey(ESTADO_ACTIVATED_POSITION))

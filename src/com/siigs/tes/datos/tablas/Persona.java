@@ -5,6 +5,7 @@ import com.siigs.tes.datos.ProveedorContenido;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 
 /**
  * Esquema de tabla de base de datos
@@ -105,6 +106,16 @@ public class Persona {
 	public Integer id_operadora_celular;
 	
 	public String getNombreCompleto(){return nombre + " "+ apellido_paterno + " " + apellido_materno;}
+	
+	public static Persona getPersona(Context context, int _id) throws Exception{
+		Cursor cur = context.getContentResolver().query(
+				ProveedorContenido.PERSONA_CONTENT_URI, null, _ID+"="+_id, null, null);
+		if(!cur.moveToNext())return null;
+		
+		Persona salida = DatosUtil.ObjetoDesdeCursor(cur, Persona.class);
+		cur.close();
+		return salida;
+	}
 	
 	public static void AgregarEditar(Context context, Persona p) throws Exception{
 		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(p);

@@ -66,9 +66,9 @@ public class Tutor {
 	public static Tutor getTutorDePersona(Context context, String idPersona){
 		String idTutor = PersonaTutor.getIdTutorDePersona(context, idPersona);
 		
-		Uri uri = Uri.withAppendedPath(ProveedorContenido.TUTOR_CONTENT_URI, String.valueOf(idTutor));
-		Cursor cur = context.getContentResolver().query(uri, null, null, null, null);
-		cur.moveToNext(); //debería haber resultados
+		Cursor cur = context.getContentResolver().query(ProveedorContenido.TUTOR_CONTENT_URI, null, 
+				ID+"=?", new String[]{idTutor}, null);
+		if(!cur.moveToNext())return null;
 		Tutor salida = null;
 		try {
 			salida = DatosUtil.ObjetoDesdeCursor(cur, Tutor.class);

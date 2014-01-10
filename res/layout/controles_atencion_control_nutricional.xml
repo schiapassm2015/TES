@@ -9,50 +9,23 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+        <TextView 
+            android:id="@+id/txtDatosBasicos"
+            style="@style/datos_basicos_paciente"
+            android:text="[NOMBRE]"/>
+        
         <LinearLayout
-            android:id="@+id/accion_ver_controles_nutricionales"
+            android:id="@+id/accion_ver_nutricion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <!-- Título -->
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:text="Ver Controles Nutricionales"
-                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
-
-                <ImageButton
-                    android:id="@+id/btnAyuda_ver"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentRight="true"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/ayuda"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ayuda" />
-
-                <!-- Línea horizontal -->
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@+id/btnAyuda_ver"
-                    android:background="@android:color/darker_gray" />
-            </RelativeLayout>
-
+            <include 
+                android:id="@+id/barra_titulo_ver_nutricion"
+                layout="@layout/barra_titulo"/>
+            
             <!-- Contenido -->
-
-			<LinearLayout android:orientation="vertical"
-			    android:layout_width="match_parent"
-			    android:layout_height="wrap_content">
                 
                 <!-- PONER gráfica aquí -->
                 <com.example.chartlibrary.LineGraph
@@ -120,12 +93,11 @@
 	                    android:layout_weight="1"
 	                    android:background="@drawable/gradiente_rojo"/>
 	            </LinearLayout>
-            </LinearLayout>
             
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/accion_agregar_control_nutricional"
+            android:id="@+id/accion_agregar_nutricion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
@@ -133,37 +105,9 @@
             android:orientation="vertical" >
 
             <!-- Título -->
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:text="Agregar Control Nutricional"
-                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
-
-                <ImageButton
-                    android:id="@+id/btnAyuda_editar"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentRight="true"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/ayuda"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ayuda" />
-
-                <!-- Línea horizontal -->
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@+id/btnAyuda_editar"
-                    android:background="@android:color/darker_gray" />
-            </RelativeLayout>
+            <include 
+                android:id="@+id/barra_titulo_agregar_nutricion"
+                layout="@layout/barra_titulo"/>
 
             
             <!-- Contenido -->

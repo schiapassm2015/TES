@@ -4,6 +4,7 @@ package com.siigs.tes.datos;
 import java.util.ArrayList;
 
 import com.siigs.tes.datos.tablas.*;
+import com.siigs.tes.datos.vistas.Censo;
 
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
@@ -648,7 +649,7 @@ public class ProveedorContenido extends ContentProvider {
 			parametros=new String[]{uri.getLastPathSegment()};
 			break;			
 		case ProveedorContenido.TUTOR_TODOS:
-			builder.setTables(PersonaTutor.NOMBRE_TABLA);// No existe filtro
+			builder.setTables(Tutor.NOMBRE_TABLA);// No existe filtro
 			break;
 			
 		case ProveedorContenido.PENDIENTES_TARJETA_ID:
@@ -705,15 +706,8 @@ public class ProveedorContenido extends ContentProvider {
 			builder.setTables(EsquemaIncompleto.NOMBRE_TABLA);// No existe filtro
 			break;
 		case ProveedorContenido.CENSO_TODOS:
-			projection = new String[]{"p." + Persona._ID, "p."+Persona.NOMBRE, "t."+Tutor.NOMBRE +" as 'tutor'", "cv1."+ControlVacuna.ID_VACUNA, "cv2."+ControlVacuna.ID_VACUNA, "cv3."+ControlVacuna.ID_VACUNA, "cv4."+ControlVacuna.ID_VACUNA };
-			builder.setTables(Persona.NOMBRE_TABLA + " p " + 
-				" INNER JOIN " + PersonaTutor.NOMBRE_TABLA + " pt ON p." + Persona.ID + "= pt." + PersonaTutor.ID_PERSONA +
-				" INNER JOIN " + Tutor.NOMBRE_TABLA + " t ON pt." + PersonaTutor.ID_TUTOR + "= t." + Tutor.ID +
-				" LEFT JOIN " + ControlVacuna.NOMBRE_TABLA + " cv1 ON p." +Persona.ID + "= cv1." + ControlVacuna.ID_PERSONA + " AND cv1." + ControlVacuna.ID_VACUNA + "= 1" + 
-				" LEFT JOIN " + ControlVacuna.NOMBRE_TABLA + " cv2 ON p." +Persona.ID + "= cv2." + ControlVacuna.ID_PERSONA + " AND cv2." + ControlVacuna.ID_VACUNA + "= 2" +	
-				" LEFT JOIN " + ControlVacuna.NOMBRE_TABLA + " cv3 ON p." +Persona.ID + "= cv3." + ControlVacuna.ID_PERSONA + " AND cv3." + ControlVacuna.ID_VACUNA + "= 3" +
-				" LEFT JOIN " + ControlVacuna.NOMBRE_TABLA + " cv4 ON p." +Persona.ID + "= cv4." + ControlVacuna.ID_PERSONA + " AND cv4." + ControlVacuna.ID_VACUNA + "= 4"
-				);
+			projection = Censo.COLUMNAS;
+			builder.setTables(Censo.TABLAS);
 			break;
 		default:
 			throw new IllegalArgumentException("Uri desconocido "+tipoUri);

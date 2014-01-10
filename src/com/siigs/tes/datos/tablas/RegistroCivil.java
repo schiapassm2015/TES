@@ -1,5 +1,11 @@
 package com.siigs.tes.datos.tablas;
 
+import com.siigs.tes.datos.DatosUtil;
+import com.siigs.tes.datos.ProveedorContenido;
+
+import android.content.Context;
+import android.database.Cursor;
+
 
 /**
  * Esquema de tabla de base de datos
@@ -33,4 +39,14 @@ public class RegistroCivil {
 	public String id_persona;
 	public int id_localidad_registro_civil;
 	public String fecha_registro;
+	
+	public static RegistroCivil getRegistro(Context context, String idPersona) throws Exception{
+		Cursor cur = context.getContentResolver().query(
+				ProveedorContenido.REGISTRO_CIVIL_CONTENT_URI, null, 
+				ID_PERSONA+"=?", new String[]{idPersona}, null);
+		if(!cur.moveToNext())return null;
+		RegistroCivil salida = DatosUtil.ObjetoDesdeCursor(cur, RegistroCivil.class);
+		cur.close();
+		return salida;
+	}
 }

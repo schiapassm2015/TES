@@ -2,6 +2,7 @@ package com.siigs.tes;
 
 import java.util.List;
 
+import com.siigs.tes.Sesion.DatosPaciente;
 import com.siigs.tes.controles.CensoCensoNominal;
 import com.siigs.tes.controles.ContenidoControles;
 import com.siigs.tes.controles.ContenidoControles.ItemControl;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * An activity representing a list of Secciones. This activity has different
@@ -88,7 +90,17 @@ public class PrincipalActivity extends FragmentActivity implements
 						.show(lfMenuIzquierdo).commit();
 					}
 				}//fin onSeleccionarMenu
-				
+				@Override
+				public void onAtenderPacienteSinTes(int _id){
+					DatosPaciente historial = DatosPaciente.cargarDesdeBaseDatos(aplicacion, _id);
+					if(historial == null){
+						//Esto nunca debería pasar
+						Toast.makeText(aplicacion, "No fue posible cargar datos del paciente con _id:"+_id,Toast.LENGTH_LONG).show();
+						return;
+					}
+					aplicacion.getSesion().setDatosPacienteNuevo(historial);
+					this.onSeleccionarMenu(ContenidoControles.CONTROLES_ATENCION);
+				}
 				@Override 
 				public void onIniciarSesionUsuario(int idUsuario, boolean esInvitado){
 					if(esInvitado){
@@ -223,6 +235,6 @@ public class PrincipalActivity extends FragmentActivity implements
 	public void onBackPressed() {
 		this.moveTaskToBack(true);
 	}
-
+	
 	
 }//fin clase

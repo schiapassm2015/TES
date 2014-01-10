@@ -230,8 +230,8 @@ public class DatosUtil {
 	 * @return Fecha legible en formato dd-MMM-aaaa
 	 */
 	public static String fechaCorta(String fecha){
-		//TODO implementar
-		return "";
+		DateTime dtFecha = new DateTime(fecha);
+		return dtFecha.toString("d MMM yyyy");
 	}
 	
 }//fin clase
