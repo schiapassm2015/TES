@@ -2,8 +2,11 @@ package com.siigs.tes.datos.tablas;
 
 import java.util.List;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
+import android.util.Log;
 
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
@@ -54,6 +57,14 @@ public class ControlNutricional {
 	public int talla;
 	public transient Integer id_invitado; //transient pues no se envía en JSON
 
+	public static Uri AgregarNuevoControlNutricional(Context context, ControlNutricional control) throws Exception{
+		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(control);
+		Uri salida = context.getContentResolver().insert(ProveedorContenido.CONTROL_NUTRICIONAL_CONTENT_URI, cv);
+		if(salida != null)
+			Log.d(NOMBRE_TABLA, "Se ha insertado nuevo registro id: "+salida.getLastPathSegment());
+		return salida;
+	}
+	
 	public static List<ControlNutricional> getControlesNutricionalesPersona(Context context, String idPersona) {
 		Cursor cur = context.getContentResolver().query(
 				ProveedorContenido.CONTROL_NUTRICIONAL_CONTENT_URI, null, 
@@ -63,4 +74,15 @@ public class ControlNutricional {
 		return salida;
 	}
 
+	public static int getTotalCreadosDespues(Context context, String fecha){
+		Cursor cur = context.getContentResolver().query(ProveedorContenido.CONTROL_NUTRICIONAL_CONTENT_URI, 
+				new String[]{"count(*)"}, FECHA + ">=?", new String[]{fecha}, null);
+		if(!cur.moveToNext()){
+			cur.close();
+			return 0;
+		}
+		int salida = cur.getInt(0);
+		cur.close();
+		return salida;
+	}
 }

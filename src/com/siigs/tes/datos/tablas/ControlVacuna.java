@@ -70,4 +70,16 @@ public class ControlVacuna {
 		cur.close();
 		return salida;
 	}
+	
+	public static int getTotalCreadosDespues(Context context, String fecha){
+		Cursor cur = context.getContentResolver().query(ProveedorContenido.CONTROL_VACUNA_CONTENT_URI, 
+				new String[]{"count(*)"}, FECHA + ">=?", new String[]{fecha}, null);
+		if(!cur.moveToNext()){
+			cur.close();
+			return 0;
+		}
+		int salida = cur.getInt(0);
+		cur.close();
+		return salida;
+	}
 }

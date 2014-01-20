@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.google.gson.annotations.SerializedName;
+import com.siigs.tes.R;
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
 
@@ -52,9 +53,12 @@ public class ArbolSegmentacion {
 	
 	public static String getDescripcion(Context context, int id){
 		Uri uri = Uri.withAppendedPath(ProveedorContenido.ARBOL_SEGMENTACION_CONTENT_URI, String.valueOf(id));
-		Cursor cur = context.getContentResolver().query(uri, null, null, null, null);
-		cur.moveToNext(); //debería haber resultados
-		String salida = cur.getString(cur.getColumnIndex(DESCRIPCION));
+		Cursor cur = context.getContentResolver().query(uri, new String[]{DESCRIPCION}, null, null, null);
+		//debería haber resultados
+		String salida;
+		if(!cur.moveToNext())
+			salida = context.getString(R.string.desconocido);
+		else salida = cur.getString(cur.getColumnIndex(DESCRIPCION));
 		cur.close();
 		return salida;
 	}

@@ -32,14 +32,12 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
 
 import com.siigs.tes.TesAplicacion;
 import com.siigs.tes.datos.tablas.*;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -96,7 +94,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	private final static String ARCHIVO_JSON = "descarga.json";
 	
 	
-	private ProgressDialog pdProgreso;
+	//private ProgressDialog pdProgreso;
 	private AlertDialog dlgResultado; //guarda dialogo que visualizará salida
 	private Context contexto;
 	private Activity invocador;
@@ -121,12 +119,8 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();
-		String mensaje= "El dispositivo se está sincronizando. Por favor espere.";
-		if(aplicacion.getEsInstalacionNueva())
-			mensaje="Esta acción puede tardar 30 minutos. Por favor espere.";
-		boolean indeterminado=true, cancelable=false;
-		pdProgreso= ProgressDialog.show(invocador, "Sincronizando", 
-				mensaje, indeterminado, cancelable);
+		//aplicacion.setUrlSincronizacion("http://192.168.3.14/tes/servicios/prueba");///////TODO BORRRRRRARRRR
+		aplicacion.crearDialogoProgreso(invocador);
 	}
 
 
@@ -135,6 +129,19 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	 */
 	@Override
 	protected String doInBackground(String... parametros) {
+		/*try {
+			Thread.sleep(5000);
+			this.publishProgress("ACTUALIZACIÓN");
+		} catch (InterruptedException e) {
+			Log.e(TAG, "interrumpido trabajo "+ e);
+		}
+		try {
+			Thread.sleep(5000);
+			this.publishProgress("otra cosa");
+		} catch (InterruptedException e) {
+			Log.e(TAG, "interrumpido trabajo "+ e);
+		}
+		return "terminado";*/
 		try{
 			Log.d(TAG, "Sincronización en fondo "+ Thread.currentThread().getName());
 			SincronizacionTotal();
@@ -157,7 +164,10 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 		super.onPostExecute(resultado);
 		
 		Log.d(TAG, "Terminado proceso en fondo "+ Thread.currentThread().getName());
-		pdProgreso.dismiss();
+		if(aplicacion.getDialogoProgreso()!=null){
+			aplicacion.getDialogoProgreso().dismiss();
+			aplicacion.destruirDialogoProgreso();
+		}
 		
 		
 		//NOTA: ESTE CÓDIGO ES TEMPORAL Y DEBE SER REEMPLAZADO POR UNA FUNCIÓN ÚNICA QUE NOTIFICA
@@ -181,7 +191,9 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	protected void onProgressUpdate(String... values) {
 		super.onProgressUpdate(values);
 		
-		this.pdProgreso.setMessage(values[0]);
+		if(aplicacion.getDialogoProgreso()!=null){
+			aplicacion.getDialogoProgreso().setMessage(values[0]);
+		}
 		Log.d(TAG, values[0]);
 	}
 	
@@ -191,8 +203,6 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	 * @throws Exception 
 	 */
 	protected synchronized void SincronizacionTotal() throws Exception{
-		aplicacion.setUrlSincronizacion("http://192.168.3.14/tes/servicios/prueba");///////TODO BORRRRRRARRRR
-		
 		boolean esNueva= this.aplicacion.getEsInstalacionNueva();
 
 		String idSesion = AccionIniciarSesion();
@@ -236,7 +246,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
         parametros.add(new BasicNameValuePair(PARAMETRO_ACCION, ACCION_RESULTADO));
         parametros.add(new BasicNameValuePair(PARAMETRO_RESULTADO_MSG, msgSalida.toString() ));
 		
-        Log.d(TAG,"Enviando resultado de acción con mensaje:"+ idResultado+ " y descripción:"+descripcion);
+        Log.d(TAG,"Enviando resultado de acción con id_resultado:"+ idResultado+ " y descripción:"+descripcion);
 		try {
 			return webHelper.RequestPost(aplicacion.getUrlSincronizacion(), parametros);
 		} catch (Exception e) {
@@ -258,13 +268,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 		if(macaddress.equals(""))macaddress= "123456789"; //PARA DEBUGEO, EN DISPOSITIVO REAL NO DEBERÍA PASAR
 		Log.d(TAG, "mac es:"+macaddress);
 		
-		String version="";
-		try {
-			version += contexto.getPackageManager().getPackageInfo(
-					contexto.getPackageName(), 0).versionCode;
-		} catch (NameNotFoundException e1) {
-			version="imposible determinar version";
-		}
+		String version= aplicacion.getVersionApk();
 		
 		List<NameValuePair> parametros = new ArrayList<NameValuePair>();
         parametros.add(new BasicNameValuePair(PARAMETRO_ACCION, ACCION_INICIAR_SESION));
@@ -645,6 +649,18 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 					}
 					reader.endArray();
 					
+				}else if(atributo.equalsIgnoreCase(ViaVacuna.NOMBRE_TABLA)){
+					publishProgress("Interpretando Vías Vacuna");
+					reader.beginArray();
+					while(reader.hasNext()){
+						ViaVacuna via = gson.fromJson(reader, ViaVacuna.class);
+						fila = DatosUtil.ContentValuesDesdeObjeto(via);
+						uri = ProveedorContenido.VIA_VACUNA_CONTENT_URI;
+						if(cr.insert(uri, fila)==null)
+							cr.update(uri, fila, ViaVacuna.ID+"="+via._id,null);
+					}
+					reader.endArray();
+					
 				//////////////////TABLAS TRANSACCIONALES/////////////////
 				}else if(atributo.equalsIgnoreCase(Tutor.NOMBRE_TABLA)){
 					publishProgress("Interpretando Tutores");
@@ -843,13 +859,16 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 					//Se intentará leer lo no reconocido
 					if(reader.hasNext())
 						reader.skipValue(); //Se salta valor, objeto o arreglo hasta terminarlo
+					publishProgress("Se terminó de leer datos no esperados");
 				}
 			}//fin while reader.hasNext
 			
 			//reader.endObject();
 			reader.close();
-			contexto.deleteFile(ARCHIVO_JSON);
+			if(!contexto.deleteFile(ARCHIVO_JSON))
+				publishProgress("No se borró archivo temporal de descarga");
 		}catch(UnsupportedEncodingException e) {
+			e.printStackTrace();
 			//Sucede al intentar leer UTF-8. Nunca debería suceder
 		}catch (IllegalAccessException e){
 			Exception ex = new Exception("Error al generar ContentValues en tabla '"+atributo+"' "+e);
@@ -1253,7 +1272,8 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 		public HttpHelper(){
 			//Para limitar el tiempo de espera...
 			final HttpParams parametros = new BasicHttpParams();
-			HttpConnectionParams.setSoTimeout(parametros, 15000);
+			//HttpConnectionParams.setSoTimeout(parametros, 10000);
+			HttpConnectionParams.setConnectionTimeout(parametros, 10000);
 
 			cliente = new DefaultHttpClient(parametros);
 			//contextoHttp = new BasicHttpContext();
@@ -1281,7 +1301,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 				//Gson gson=new Gson();gson.
 				salida= contenido.toString(); //new String( contenido.toByteArray());
 
-				Log.d(TAG, "POST descargó datos: "+ (salida.length()>1000000? salida.length()+" caracteres" : salida));
+				Log.d(TAG, "POST descargó datos: "+ (salida.length()>1000000? salida.length()+" caracteres" : "'"+salida+"'"));
 			}catch(Exception ex){
 				Log.d(TAG, "Error en request tipo POST a url:"+url+"\n"+ex.toString() );
 				throw ex;

@@ -107,8 +107,11 @@ public class ControlVacunas extends Fragment {
 				if(celda != null)
 					celda.setOnClickListener(new View.OnClickListener() {
 						@Override
-						public void onClick(View arg0) {
-							AplicarVacuna(vacuna._id);
+						public void onClick(View view) {
+							TextView opcion =(TextView)view;
+							//Si no está marcada ya
+							if(!opcion.getText().toString().equals(getString(R.string.MARCA_VACUNA)))
+								AplicarVacuna(vacuna._id);
 						}
 					});
 			}
@@ -146,7 +149,7 @@ public class ControlVacunas extends Fragment {
 				continue;
 			}
 			//La vacuna debe ser marcada
-			celda.setText("X");
+			celda.setText(getText(R.string.MARCA_VACUNA));
 		}
 	}
 
@@ -156,9 +159,9 @@ public class ControlVacunas extends Fragment {
 		super.onActivityResult(requestCode, resultCode, data);
 		switch(requestCode){
 		case ControlVacunasNuevo.REQUEST_CODE:
-			if(resultCode==ControlVacunasNuevo.RESULT_OK){
+			//if(resultCode==ControlVacunasNuevo.RESULT_OK){
 				MarcarVacunas();
-			}
+			//}
 			break;
 		}
 	}

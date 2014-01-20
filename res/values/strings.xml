@@ -15,6 +15,11 @@
     <string name="agregar">Agregar</string>
     <string name="usuario">Usuario</string>
     <string name="invitado">Invitado</string>
+    <string name="sin_resultados">Sin resultados</string>
+    <string name="fecha">Fecha</string>
+    <string name="descripcion">Descripción</string>
+    <string name="clave">Clave</string>
+    <string name="detalle">Detalle</string>
     
     <string name="datos_paciente">Datos del paciente</string>
     <string name="actualizar_domicilio">Actualizar Domicilio</string>
@@ -23,11 +28,15 @@
     
     <string name="agregar_vacuna">Agregar Vacuna</string>
     <string name="agregar_nutricion">Agregar Control Nutricional</string>
+    <string name="agregar_eda">Agregar Control EDA</string>
+    <string name="agregar_ira">Agregar Control IRA</string>
+    <string name="agregar_accion">Agregar Accion Nutricional</string>
+    <string name="agregar_consulta">Agregar Control Consulta</string>
     
     <string name="nombre">Nombre</string>
     <string name="curp">Curp</string>
     <string name="sexo">Sexo</string>
-    <string name="grupo_sanguineo">Grupo Sanguineo</string>
+    <string name="grupo_sanguineo">G Sang</string>
     <string name="fecha_nacimiento">Fecha Nacimiento</string>
     <string name="edad">Edad</string>
     <string name="ano_nacimiento">Año nacido</string>
@@ -75,8 +84,12 @@
     <!-- OPCIONES DE SPINNER -->
     <string name="indistinto">Indistinto</string>
     <string name="masculino">Masculino</string>
-    <string name="femenino">Femenino</string>    
-
+    <string name="femenino">Femenino</string>
+    
+    <!-- Para comparaciones en código basadas en estas letras -->
+    <string name="valor_masculino">M</string>
+    <string name="valor_femenino">F</string>
+    
     <string-array name="opciones_sexo">
         <item>@string/indistinto</item>
         <item>@string/masculino</item>

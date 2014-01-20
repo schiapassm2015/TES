@@ -26,6 +26,8 @@ public class AdaptadorArrayMultiTextView<T> extends ArrayAdapter<T> {
 	private String[] bindDeAtributo; //Atributos de <T> que se mapearán
 	private int[] bindIdView; //Id's de objetos de UI que recibirán los datos de bindDeAtributo[] de T
 	
+	private ObjectViewBinder<T> miBinder = null;
+	
 	/**
 	 * Crea un adaptador que mapea los atributos bindDeAtributo[] al TextView bindHaciaIdView[] por lo que
 	 * ambos arreglos deben tener el mismo tamaño y los atributos bindDeAtributo[] deben existir en
@@ -47,11 +49,13 @@ public class AdaptadorArrayMultiTextView<T> extends ArrayAdapter<T> {
 		this.bindIdView = bindHaciaIdView;
 	}
 
+	public void setViewBinder(ObjectViewBinder<T> binder){this.miBinder = binder;}
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View salida = convertView;
 		if(salida == null){
-			LayoutInflater inflater =((Activity)contexto).getLayoutInflater(); //LayoutInflater.from(this.contexto);
+			LayoutInflater inflater =LayoutInflater.from(contexto);
 			salida = inflater.inflate(this.layoutId, parent, false);	
 		}
 		
@@ -60,18 +64,18 @@ public class AdaptadorArrayMultiTextView<T> extends ArrayAdapter<T> {
 		for(int i=0; i < this.bindIdView.length; i++){
 			String valor="";
 			try {
+				//Extraemos el valor del atributo requerido
 				valor = elemento.getClass().getField(this.bindDeAtributo[i]).get(elemento).toString();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			TextView t = (TextView) salida.findViewById(this.bindIdView[i]);
-			t.setText(valor);
+			TextView destino = (TextView) salida.findViewById(this.bindIdView[i]);
+			if(miBinder == null || !miBinder.setViewValue(destino, "setText", elemento, bindDeAtributo[i], valor))
+				destino.setText(valor);
 		}
 
 		return salida; //super.getView(position, convertView, parent);
 	}
-	
-	
 
 	@Override
 	/**

@@ -62,7 +62,7 @@ public class ManejadorNfc {
 	 */
 	private static Sesion.DatosPaciente getDatosPaciente(Tag nfcTag) throws Exception{
 		String contenido = LeerTextoPlano(nfcTag);
-		String[] piezas = contenido.split(SEPARADOR_TABLA);
+		String[] piezas = separar(contenido, SEPARADOR_TABLA);
 				
 		Sesion.DatosPaciente datosPaciente=null;
 		String version = piezas[0];
@@ -91,11 +91,11 @@ public class ManejadorNfc {
 	 * función nueva desde LeerDatosNFC()
 	 */
 	private static Sesion.DatosPaciente LeerVersion1(String[] piezas, String version){
-		String[] datosPersona = piezas[1].split(SEPARADOR_CAMPO);
+		String[] datosPersona = separar(piezas[1], SEPARADOR_CAMPO);
 		Persona persona = new Persona();
 		int n=0;
 		persona.id = datosPersona[n++];
-		persona.curp = datosPersona[n++];
+		persona.curp = existeString(datosPersona[n++]);
 		persona.nombre = datosPersona[n++];
 		persona.apellido_paterno = datosPersona[n++];
 		persona.apellido_materno = datosPersona[n++];
@@ -107,6 +107,9 @@ public class ManejadorNfc {
 		persona.numero_domicilio = existeString(datosPersona[n++]);
 		persona.colonia_domicilio = existeString(datosPersona[n++]);
 		persona.referencia_domicilio = existeString(datosPersona[n++]);
+		persona.ageb = existeString(datosPersona[n++]);
+		persona.manzana = existeString(datosPersona[n++]);
+		persona.sector = existeString(datosPersona[n++]);
 		persona.id_asu_localidad_domicilio = Integer.parseInt(datosPersona[n++]);
 		persona.cp_domicilio = Integer.parseInt(datosPersona[n++]);
 		persona.telefono_domicilio = existeString(datosPersona[n++]);
@@ -116,9 +119,8 @@ public class ManejadorNfc {
 		persona.ultima_actualizacion = datosPersona[n++];
 		persona.id_nacionalidad = Integer.parseInt(datosPersona[n++]);
 		persona.id_operadora_celular = existeInt(datosPersona[n++]);
-		//persona.ultima_actualizacion = ... TesAplicacion.getAhora()???
 		
-		String[] datosTutor = piezas[2].split(SEPARADOR_CAMPO);
+		String[] datosTutor = separar(piezas[2], SEPARADOR_CAMPO);
 		Tutor tutor = new Tutor();
 		n=0;
 		tutor.id = datosTutor[n++];
@@ -131,37 +133,37 @@ public class ManejadorNfc {
 		tutor.celular = existeString(datosTutor[n++]);
 		tutor.id_operadora_celular = existeInt(datosTutor[n++]);
 		
-		String[] datosRegistro = piezas[3].split(SEPARADOR_CAMPO);
+		String[] datosRegistro = separar(piezas[3], SEPARADOR_CAMPO);
 		RegistroCivil registro = new RegistroCivil();
 		n=0;
 		registro.id_persona = persona.id;
 		registro.id_localidad_registro_civil = Integer.parseInt(datosRegistro[n++]);
 		registro.fecha_registro = datosRegistro[n++];
 		
-		String[] listaAlergias = piezas[4].equals("")? new String[]{} : piezas[4].split(SEPARADOR_REGISTRO);
+		String[] listaAlergias = piezas[4].equals("")? new String[]{} : separar(piezas[4], SEPARADOR_REGISTRO);
 		List<PersonaAlergia> alergias = new ArrayList<PersonaAlergia>();
 		for(String regAlergia : listaAlergias){
-			String[] datosAlergia = regAlergia.split(SEPARADOR_CAMPO);
+			String[] datosAlergia = separar(regAlergia, SEPARADOR_CAMPO);
 			PersonaAlergia alergia = new PersonaAlergia();
 			alergia.id_persona = persona.id;
 			alergia.id_alergia = Integer.parseInt(datosAlergia[0]);
 			alergias.add(alergia);
 		}
 		
-		String[] listaAfiliaciones = piezas[5].equals("")? new String[]{} : piezas[5].split(SEPARADOR_REGISTRO);
+		String[] listaAfiliaciones = piezas[5].equals("")? new String[]{} : separar(piezas[5], SEPARADOR_REGISTRO);
 		List<PersonaAfiliacion> afiliaciones = new ArrayList<PersonaAfiliacion>();
 		for(String regAfiliacion : listaAfiliaciones){
-			String[] datosAfiliacion = regAfiliacion.split(SEPARADOR_CAMPO);
+			String[] datosAfiliacion = separar(regAfiliacion, SEPARADOR_CAMPO);
 			PersonaAfiliacion afiliacion = new PersonaAfiliacion();
 			afiliacion.id_persona = persona.id;
 			afiliacion.id_afiliacion = Integer.parseInt(datosAfiliacion[0]);
 			afiliaciones.add(afiliacion);
 		}
 		
-		String[] listaVacunas = piezas[6].equals("")? new String[]{} : piezas[6].split(SEPARADOR_REGISTRO);
+		String[] listaVacunas = piezas[6].equals("")? new String[]{} : separar(piezas[6], SEPARADOR_REGISTRO);
 		List<ControlVacuna> vacunas = new ArrayList<ControlVacuna>();
 		for(String regVacuna : listaVacunas){
-			String[] datosVacuna = regVacuna.split(SEPARADOR_CAMPO);
+			String[] datosVacuna = separar(regVacuna, SEPARADOR_CAMPO);
 			ControlVacuna vacuna = new ControlVacuna();
 			vacuna.id_persona = persona.id;
 			vacuna.id_vacuna = Integer.parseInt(datosVacuna[0]);
@@ -169,10 +171,10 @@ public class ManejadorNfc {
 			vacunas.add(vacuna);
 		}
 		
-		String[] listaIras = piezas[7].equals("")? new String[]{} : piezas[7].split(SEPARADOR_REGISTRO);
+		String[] listaIras = piezas[7].equals("")? new String[]{} : separar(piezas[7], SEPARADOR_REGISTRO);
 		List<ControlIra> iras = new ArrayList<ControlIra>();
 		for(String regIra : listaIras){
-			String[] datosIra = regIra.split(SEPARADOR_CAMPO);
+			String[] datosIra = separar(regIra, SEPARADOR_CAMPO);
 			ControlIra ira = new ControlIra();
 			ira.id_persona = persona.id;
 			ira.id_ira = Integer.parseInt(datosIra[0]);
@@ -180,10 +182,10 @@ public class ManejadorNfc {
 			iras.add(ira);
 		}
 		
-		String[] listaEdas = piezas[8].equals("")? new String[]{} : piezas[8].split(SEPARADOR_REGISTRO);
+		String[] listaEdas = piezas[8].equals("")? new String[]{} : separar(piezas[8], SEPARADOR_REGISTRO);
 		List<ControlEda> edas = new ArrayList<ControlEda>();
 		for(String regEda : listaEdas){
-			String[] datosEda = regEda.split(SEPARADOR_CAMPO);
+			String[] datosEda = separar(regEda, SEPARADOR_CAMPO);
 			ControlEda eda = new ControlEda();
 			eda.id_persona = persona.id;
 			eda.id_eda = Integer.parseInt(datosEda[0]);
@@ -191,10 +193,10 @@ public class ManejadorNfc {
 			edas.add(eda);
 		}
 		
-		String[] listaConsultas = piezas[9].equals("")? new String[]{} : piezas[9].split(SEPARADOR_REGISTRO);
+		String[] listaConsultas = piezas[9].equals("")? new String[]{} : separar(piezas[9], SEPARADOR_REGISTRO);
 		List<ControlConsulta> consultas = new ArrayList<ControlConsulta>();
 		for(String regConsulta : listaConsultas){
-			String[] datosConsulta = regConsulta.split(SEPARADOR_CAMPO);
+			String[] datosConsulta = separar(regConsulta, SEPARADOR_CAMPO);
 			ControlConsulta consulta = new ControlConsulta();
 			consulta.id_persona = persona.id;
 			consulta.id_consulta = Integer.parseInt(datosConsulta[0]);
@@ -202,10 +204,10 @@ public class ManejadorNfc {
 			consultas.add(consulta);
 		}
 		
-		String[] listaAcciones = piezas[10].equals("")? new String[]{} : piezas[10].split(SEPARADOR_REGISTRO);
+		String[] listaAcciones = piezas[10].equals("")? new String[]{} : separar(piezas[10], SEPARADOR_REGISTRO);
 		List<ControlAccionNutricional> acciones = new ArrayList<ControlAccionNutricional>();
 		for(String regAccion : listaAcciones){
-			String[] datosAccion = regAccion.split(SEPARADOR_CAMPO);
+			String[] datosAccion = separar(regAccion, SEPARADOR_CAMPO);
 			ControlAccionNutricional accion = new ControlAccionNutricional();
 			accion.id_persona = persona.id;
 			accion.id_accion_nutricional = Integer.parseInt(datosAccion[0]);
@@ -214,10 +216,10 @@ public class ManejadorNfc {
 		}
 		
 		//Si persona no tiene controles, no existirá última localidad, así que la validamos
-		String[] listaControles = piezas.length<12?new String[]{} : piezas[11].split(SEPARADOR_REGISTRO);
+		String[] listaControles = piezas[11].equals("")? new String[]{} : separar(piezas[11], SEPARADOR_REGISTRO);
 		List<ControlNutricional> controles = new ArrayList<ControlNutricional>();
 		for(String regControl : listaControles){
-			String[] datosControl = regControl.split(SEPARADOR_CAMPO);
+			String[] datosControl = separar(regControl, SEPARADOR_CAMPO);
 			ControlNutricional control = new ControlNutricional();
 			control.id_persona = persona.id;
 			control.peso = Double.parseDouble(datosControl[0]);
@@ -247,7 +249,7 @@ public class ManejadorNfc {
 		
 		//Datos de persona
 		salida.append(datos.persona.id + SEPARADOR_CAMPO);
-		salida.append(datos.persona.curp + SEPARADOR_CAMPO);
+		salida.append(convertirString(datos.persona.curp) + SEPARADOR_CAMPO);
 		salida.append(datos.persona.nombre + SEPARADOR_CAMPO);
 		salida.append(datos.persona.apellido_paterno + SEPARADOR_CAMPO);
 		salida.append(datos.persona.apellido_materno + SEPARADOR_CAMPO);
@@ -259,6 +261,9 @@ public class ManejadorNfc {
 		salida.append(convertirString(datos.persona.numero_domicilio) + SEPARADOR_CAMPO);
 		salida.append(convertirString(datos.persona.colonia_domicilio) + SEPARADOR_CAMPO);
 		salida.append(convertirString(datos.persona.referencia_domicilio) + SEPARADOR_CAMPO);
+		salida.append(convertirString(datos.persona.ageb) + SEPARADOR_CAMPO);
+		salida.append(convertirString(datos.persona.manzana) + SEPARADOR_CAMPO);
+		salida.append(convertirString(datos.persona.sector) + SEPARADOR_CAMPO);
 		salida.append(convertirInt(datos.persona.id_asu_localidad_domicilio) + SEPARADOR_CAMPO);
 		salida.append(datos.persona.cp_domicilio + SEPARADOR_CAMPO);
 		salida.append(convertirString(datos.persona.telefono_domicilio) + SEPARADOR_CAMPO);
@@ -350,7 +355,6 @@ public class ManejadorNfc {
 			if (i != datos.controlesNutricionales.size() - 1)
 				salida.append(SEPARADOR_REGISTRO);
 		}
-		salida.append(SEPARADOR_TABLA);
 		
 		EscribirTextoPlano(nfcTag, salida.toString());
 	}
@@ -360,6 +364,22 @@ public class ManejadorNfc {
 	private static Integer existeInt(String texto){return SIMBOLO_NULO.equals(texto)? null : Integer.parseInt(texto);}
 	private static String convertirString(String texto){return texto == null? SIMBOLO_NULO : texto;}
 	private static String convertirInt(Integer numero){return numero == null? SIMBOLO_NULO : numero+"";}
+	
+	private static String[] separar(String cadenaSeparar, String simbolo){
+		List<String> salida = new ArrayList<String>();
+		int indexSimbolo=-1, indexInicioCopia=0;
+		while( (indexSimbolo=cadenaSeparar.indexOf(simbolo, indexInicioCopia)) >=0 ){
+			salida.add(cadenaSeparar.substring(indexInicioCopia, indexSimbolo));
+			indexInicioCopia = indexSimbolo+1;
+		}
+		if(salida.size()>0) //si encontró al menos uno, puede pasar una de dos ...
+			if(cadenaSeparar.endsWith(simbolo)) //... acaba con simbolo, y por tanto a la derecha hay vacío
+				salida.add(""); //... lo remarcamos así
+			else
+				salida.add(cadenaSeparar.substring(indexInicioCopia));  //... recuperamos el último pedazo que no capturó
+		if(salida.size()==0)return new String[]{cadenaSeparar};
+		return salida.toArray(new String[]{});
+	}
 	
 	/**
 	 * Intenta extraer texto plano del tag NFC recibido

@@ -1,6 +1,14 @@
 package com.siigs.tes.datos.tablas;
 
+import java.util.List;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+
 import com.google.gson.annotations.SerializedName;
+import com.siigs.tes.datos.DatosUtil;
+import com.siigs.tes.datos.ProveedorContenido;
 
 /**
  * Esquema de tabla de base de datos
@@ -34,4 +42,21 @@ public class AccionNutricional {
 	public int _id;
 	public String descripcion;
 	public int activo; 
+	
+	public static List<AccionNutricional> getAccionesActivas(Context context){
+		Cursor cur = context.getContentResolver().query(
+				ProveedorContenido.ACCION_NUTRICIONAL_CONTENT_URI, null, ACTIVO + "=1", null, DESCRIPCION);
+		List<AccionNutricional> salida = DatosUtil.ObjetosDesdeCursor(cur, AccionNutricional.class);
+		cur.close();
+		return salida;
+	}
+	
+	public static String getDescripcion(Context context, int id){
+		Uri uri = Uri.withAppendedPath(ProveedorContenido.ACCION_NUTRICIONAL_CONTENT_URI, String.valueOf(id));
+		Cursor cur = context.getContentResolver().query(uri, null, null, null, null);
+		cur.moveToNext(); //debería haber resultados
+		String salida = cur.getString(cur.getColumnIndex(DESCRIPCION));
+		cur.close();
+		return salida;
+	}
 }

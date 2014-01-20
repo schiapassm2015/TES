@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/padding_izquierda_agregar_control"
     android:orientation="vertical" >
 
     <include
-        android:id="@+id/barra_titulo_vacuna"
+        android:id="@+id/barra_titulo_nutricion"
         layout="@layout/barra_titulo" />
 
     <LinearLayout
@@ -32,34 +33,58 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:layout_width="70dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Vacuna" />
+            android:layout_weight="2"
+            android:text="Estatura" />
 
-        <Spinner
-            android:id="@+id/spVacunas"
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/txtEstatura"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+            android:layout_weight="7"
+            android:inputType="number"
+            android:maxLength="3"
+            android:singleLine="true" />
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="CM" />
+
     </LinearLayout>
 
     <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
         <TextView
-            android:layout_width="70dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Lote" />
+            android:layout_weight="2"
+            android:text="Peso" />
 
         <EditText
-            android:id="@+id/txtLote"
-            android:layout_width="match_parent"
+            android:id="@+id/txtPeso"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:digits="@string/caracteres_permitidos" />
+            android:layout_weight="7"
+            android:inputType="numberDecimal"
+            android:maxLength="6"
+            android:singleLine="true" />
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="KG" />
+
     </LinearLayout>
 
+
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -71,16 +96,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@android:string/cancel"
-            style="@android:attr/buttonBarButtonStyle" />
+            style="@style/boton" />
         
         <Button 
             android:id="@+id/btnAgregar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/agregar"
-            style="@android:attr/buttonBarButtonStyle" />
-        
-        
+            android:layout_marginLeft="5dp"
+            style="@style/boton" />
     </LinearLayout>
 
 </LinearLayout>

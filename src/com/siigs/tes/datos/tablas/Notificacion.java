@@ -1,6 +1,13 @@
 package com.siigs.tes.datos.tablas;
 
+import java.util.List;
+
+import android.content.Context;
+import android.database.Cursor;
+
 import com.google.gson.annotations.SerializedName;
+import com.siigs.tes.datos.DatosUtil;
+import com.siigs.tes.datos.ProveedorContenido;
 
 /**
  * Esquema de tabla de base de datos
@@ -35,9 +42,17 @@ public class Notificacion {
 	
 	//POJO
 	@SerializedName("id")
-	public String _id;
+	public int _id;
 	public String titulo;
 	public String contenido;
 	public String fecha_inicio;
 	public String fecha_fin;
+	
+	public static List<Notificacion> getNotificacioones(Context context){
+		Cursor cur = context.getContentResolver().query(
+				ProveedorContenido.NOTIFICACION_CONTENT_URI, null, null, null, ID +" desc");
+		List<Notificacion> salida = DatosUtil.ObjetosDesdeCursor(cur, Notificacion.class);
+		cur.close();
+		return salida;
+	}
 }

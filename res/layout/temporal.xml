@@ -45,4 +45,10 @@
         android:layout_height="wrap_content"
         android:background="@drawable/gradiente_azul_medio"
         android:text="Mucho más rotado" />
+
+    <TextView
+        android:id="@+id/textView1"
+        style="@style/boton_menu_superior"
+        android:text="Un texto menú"/>
+
 </LinearLayout>

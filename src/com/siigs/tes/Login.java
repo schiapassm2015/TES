@@ -4,6 +4,9 @@
  */
 package com.siigs.tes;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import com.siigs.tes.datos.DatosUtil;
@@ -19,6 +22,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,6 +80,9 @@ public class Login extends DialogFragment {
 		//Estílo no_frame para que la ventana sea tipo modal
 		//setStyle(STYLE_NO_FRAME, R.style.AppBaseTheme);
 		//Método 2 para hacer la ventana modal 
+		
+		//setRetainInstance(true);
+		
 		setCancelable(false);
 		aplicacion = (TesAplicacion)getActivity().getApplication();
 	}
@@ -124,7 +131,7 @@ public class Login extends DialogFragment {
 					
 					//Validamos usuario normal
 					String clave = ((TextView)view.findViewById(R.id.txtPassword)).getText().toString();
-					if(usuarioElegido.clave.equals(clave)){
+					if(usuarioElegido.clave.equals(getMd5Hash(clave))){
 						Cerrar(Login.RESULT_USUARIO_NORMAL);
 					}else{
 						Toast.makeText(getActivity(), "Clave no reconocida", Toast.LENGTH_SHORT).show();
@@ -265,6 +272,8 @@ public class Login extends DialogFragment {
 				"\n\nPuede cambiar la URL de sincronización si lo desea.";
 		
 		final EditText txtUrl = new EditText(getActivity());
+		txtUrl.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
+		txtUrl.setSingleLine();
 		txtUrl.setText(aplicacion.getUrlSincronizacion());
 		
 		
@@ -295,4 +304,21 @@ public class Login extends DialogFragment {
 		dialogoAviso.show();
 	}
 
+	
+	public static String getMd5Hash(String input) {
+	    try {
+	        MessageDigest md = MessageDigest.getInstance("MD5");
+	        byte[] messageDigest = md.digest(input.getBytes());
+	        BigInteger number = new BigInteger(1, messageDigest);
+	        String md5 = number.toString(16);
+
+	        while (md5.length() < 32)
+	            md5 = "0" + md5;
+
+	        return md5;
+	    } catch (NoSuchAlgorithmException e) {
+	        Log.e("MD5", e.getLocalizedMessage());
+	        return "";
+	    }
+	}
 }//fin clase

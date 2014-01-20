@@ -13,6 +13,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -98,7 +99,7 @@ public class DatosUtil {
 	}
 	
 	/**
-	 * Genera dinámicamente una lista de instancias de Clase {@clase} a partir
+	 * Genera dinámicamente una lista de instancias de Clase {@link clase} a partir
 	 * del Cursor cur.
 	 * @param cur
 	 * @param clase
@@ -225,13 +226,40 @@ public class DatosUtil {
 	}
 	
 	/**
-	 * Confierte la fecha recibida al estílo día(numérico)-Mes(3 letras)-Año(numérico)
-	 * @param fecha Fecha en formato numérico aaaa-mm-dd
+	 * Convierte la fecha recibida al estílo día(numérico)-Mes(3 letras)-Año(numérico)
+	 * @param fecha Fecha en formato numérico aaaa-MM-dd
 	 * @return Fecha legible en formato dd-MMM-aaaa
 	 */
 	public static String fechaCorta(String fecha){
-		DateTime dtFecha = new DateTime(fecha);
-		return dtFecha.toString("d MMM yyyy");
+		try{
+			DateTime dtFecha = new DateTime(fecha);
+			return dtFecha.toString("d MMM yyyy");
+		}catch(Exception e){
+			return fecha;
+		}		
+	}
+	
+	/**
+	 * Convierte la fecha recibida al estílo día(numérico)-Mes(3 letras)-Año(numérico)
+	 * @param fecha Fecha en formato numérico aaaa-MM-dd HH:mm:ss
+	 * @return Fecha legible en formato dd-MMM-aaaa HH:mm
+	 */
+	public static String fechaHoraCorta(String fechaHora){
+		try{
+			DateTime dtFecha = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").parseDateTime(fechaHora);
+			return dtFecha.toString("d MMM yyyy HH:mm");
+		}catch(Exception e){
+			return fechaHora;
+		}
+	}
+
+	/**
+	 * Crea un DateTime a partir de fechaHora que debe tener formato 24h de aaaa-MM-dd HH:mm:ss
+	 * @param fechaHora Fecha a procesar en formato aaaa-MM-dd HH:mm:ss
+	 * @return
+	 */
+	public static DateTime parsearFechaHora(String fechaHora){
+		return DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").parseDateTime(fechaHora);
 	}
 	
 }//fin clase

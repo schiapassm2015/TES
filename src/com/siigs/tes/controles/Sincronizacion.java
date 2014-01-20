@@ -2,8 +2,18 @@ package com.siigs.tes.controles;
 
 import com.siigs.tes.DialogoAyuda;
 import com.siigs.tes.R;
+import com.siigs.tes.Sesion;
 import com.siigs.tes.TesAplicacion;
+import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.SincronizacionTask;
+import com.siigs.tes.datos.tablas.ArbolSegmentacion;
+import com.siigs.tes.datos.tablas.ControlAccionNutricional;
+import com.siigs.tes.datos.tablas.ControlConsulta;
+import com.siigs.tes.datos.tablas.ControlNutricional;
+import com.siigs.tes.datos.tablas.ControlEda;
+import com.siigs.tes.datos.tablas.ControlIra;
+import com.siigs.tes.datos.tablas.ControlVacuna;
+import com.siigs.tes.datos.tablas.Persona;
 import com.siigs.tes.ui.WidgetUtil;
 
 import android.app.AlertDialog;
@@ -15,9 +25,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Sincronizacion extends Fragment {
+	
+	private TesAplicacion aplicacion;
+	private Sesion sesion;
+	
+	private TextView txtVersion;
+	private TextView txtUltimaSincronizacion;
+	private TextView txtControlesSincronizar;
+	private TextView txtLocalidadAsignada;
+	private TextView txtActualizacionesPacientes;
+	
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
@@ -28,6 +49,8 @@ public class Sincronizacion extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		aplicacion = (TesAplicacion)getActivity().getApplication();
+		sesion = aplicacion.getSesion();
 	}
 
 	@Override
@@ -38,6 +61,13 @@ public class Sincronizacion extends Fragment {
 
 		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_ver, R.string.sincronizacion, 
 				R.layout.ayuda_dialogo_tes_login, getFragmentManager());
+		
+		txtVersion = (TextView)rootView.findViewById(R.id.txtVersionDatos);
+		txtUltimaSincronizacion = (TextView)rootView.findViewById(R.id.txtUltimaSincronizacion);
+		txtControlesSincronizar = (TextView)rootView.findViewById(R.id.txtControlesSincronizar);
+		txtLocalidadAsignada = (TextView)rootView.findViewById(R.id.txtLocalidad);
+		txtActualizacionesPacientes = (TextView)rootView.findViewById(R.id.txtActualizacionesPacientes);
+		
 		
 		//Botón sincronizar
 		Button btnSincronizar=(Button)rootView.findViewById(R.id.btnSincronizar);
@@ -91,7 +121,24 @@ public class Sincronizacion extends Fragment {
 	 * Actualiza widgets con la información actual
 	 */
 	private void ActualizarInformacion(){
-		//TODO crear variables privadas de cada widget actualizable en clase y poner actualizarlos aquí
+		txtVersion.setText(aplicacion.getVersionApk());
+		String fecha = aplicacion.getFechaUltimaSincronizacion();
+		txtUltimaSincronizacion.setText(DatosUtil.fechaHoraCorta(fecha));
+		
+		txtLocalidadAsignada.setText(
+				ArbolSegmentacion.getDescripcion(getActivity(), aplicacion.getUnidadMedica()));
+		
+		txtActualizacionesPacientes.setText(""+Persona.getTotalActualizadosDespues(getActivity(), 
+				fecha));
+
+		int totalControles = 0;
+		if(ControlAccionNutricional.getTotalCreadosDespues(getActivity(), fecha)>0)totalControles++;
+		if(ControlConsulta.getTotalCreadosDespues(getActivity(), fecha)>0)totalControles++;
+		if(ControlEda.getTotalCreadosDespues(getActivity(), fecha)>0)totalControles++;
+		if(ControlIra.getTotalCreadosDespues(getActivity(), fecha)>0)totalControles++;
+		if(ControlNutricional.getTotalCreadosDespues(getActivity(), fecha)>0)totalControles++;
+		if(ControlVacuna.getTotalCreadosDespues(getActivity(), fecha)>0)totalControles++;
+		txtControlesSincronizar.setText(totalControles+"");
 	}
 		
 	

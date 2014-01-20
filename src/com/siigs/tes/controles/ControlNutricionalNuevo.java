@@ -1,9 +1,8 @@
 /**
- * Muestra un diálogo modal para agregar una nueva vacuna al paciente
+ * Muestra un diálogo modal para agregar un nuevo control nutricional al paciente
  */
 package com.siigs.tes.controles;
 
-import java.util.List;
 
 import com.siigs.tes.DialogoTes;
 import com.siigs.tes.R;
@@ -12,12 +11,10 @@ import com.siigs.tes.TesAplicacion;
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.tablas.Bitacora;
 import com.siigs.tes.datos.tablas.ControlNutricional;
-import com.siigs.tes.datos.tablas.ControlVacuna;
 import com.siigs.tes.datos.tablas.ErrorSis;
 import com.siigs.tes.datos.tablas.PendientesTarjeta;
 import com.siigs.tes.datos.tablas.Persona;
-import com.siigs.tes.datos.tablas.Vacuna;
-import com.siigs.tes.ui.AdaptadorArrayMultiTextView;
+import com.siigs.tes.ui.WidgetUtil;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -33,8 +30,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * @author Axel
@@ -62,7 +59,7 @@ public class ControlNutricionalNuevo extends DialogFragment {
 		//Método 2 para hacer la ventana modal 
 		setCancelable(false);
 		
-		this.setRetainInstance(true);
+		//this.setRetainInstance(true);
 		
 		aplicacion = (TesAplicacion)getActivity().getApplication();
 		sesion = aplicacion.getSesion();
@@ -87,8 +84,8 @@ public class ControlNutricionalNuevo extends DialogFragment {
 		
 		final Persona p = sesion.getDatosPacienteActual().persona;
 		
-		TextView titulo = (TextView)vista.findViewById(R.id.barra_titulo_nutricion).findViewById(R.id.txtTituloBarra);
-		titulo.setText(R.string.agregar_nutricion);
+		WidgetUtil.setBarraTitulo(vista, R.id.barra_titulo_nutricion, R.string.agregar_nutricion, 
+				R.layout.ayuda_dialogo_tes_login, getFragmentManager());
 		
 		((TextView)vista.findViewById(R.id.txtNombre)).setText(p.getNombreCompleto());
 		
@@ -110,9 +107,22 @@ public class ControlNutricionalNuevo extends DialogFragment {
 			@Override
 			public void onClick(View v) {
 				//Validar datos
-				final double peso; //TODO Double peso = bueno or toast, return
-				final int estatura; //TODO int estatura = bueno or toast, return
-				final int talla; //TODO int talla = bueno or toast, return
+				final double peso;
+				try{
+					peso = Double.parseDouble(txtPeso.getText().toString());
+					if(peso<=0)throw new Exception("Peso ilógico");
+				}catch(Exception e){
+					Toast.makeText(getActivity(), "Introduzca un peso válido", Toast.LENGTH_LONG).show();
+					return;
+				}
+				final int estatura;
+				try{
+					estatura = Integer.parseInt(txtEstatura.getText().toString());
+					if(estatura<=10)throw new Exception("Estatura ilógica");
+				}catch(Exception e){
+					Toast.makeText(getActivity(), "Introduzca una estatura válida", Toast.LENGTH_LONG).show();
+					return;
+				}
 				
 				//Confirmación
 				AlertDialog dialogo=new AlertDialog.Builder(getActivity()).create();
@@ -125,9 +135,9 @@ public class ControlNutricionalNuevo extends DialogFragment {
 					public void onClick(DialogInterface dialog, int which) {
 						//Guardamos cambios en memoria
 						ControlNutricional controlNutricional = new ControlNutricional();
+						//Talla no se toma en cuenta en este proceso así que se deja en 0
 						controlNutricional.altura = estatura;
 						controlNutricional.peso = peso;
-						controlNutricional.talla = talla;
 						controlNutricional.id_persona = p.id;
 						controlNutricional.id_invitado = sesion.getUsuarioInvitado() != null ? 
 								sesion.getUsuarioInvitado()._id : null;
@@ -140,7 +150,7 @@ public class ControlNutricionalNuevo extends DialogFragment {
 						try {
 							ControlNutricional.AgregarNuevoControlNutricional(getActivity(), controlNutricional);
 							Bitacora.AgregarRegistro(getActivity(), sesion.getUsuario()._id, 
-									ICA, "paciente:"+p.id+", altura:"+estatura+", peso:"+peso+", talla:"+talla);
+									ICA, "paciente:"+p.id+", altura:"+estatura+", peso:"+peso);
 						} catch (Exception e) {
 							ErrorSis.AgregarError(getActivity(), sesion.getUsuario()._id, 
 									ICA, e.toString());

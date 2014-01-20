@@ -24,7 +24,7 @@ import android.widget.Toast;
 import com.siigs.tes.controles.CensoCensoNominal;
 import com.siigs.tes.controles.ContenidoControles;
 import com.siigs.tes.controles.ContenidoControles.ItemControl;
-import com.siigs.tes.datos.tablas.Persona;
+
 
 
 /**
@@ -37,6 +37,8 @@ import com.siigs.tes.datos.tablas.Persona;
  * 
  */
 public class MenuSuperior extends Fragment{
+
+	public final static String TAG = MenuSuperior.class.getSimpleName();
 	
 	/**
 	 * Interface para avisar a la actividad contenedora de este fragmento
@@ -86,7 +88,7 @@ public class MenuSuperior extends Fragment{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		this.setRetainInstance(true);
+		//this.setRetainInstance(true);
 	}
 
 	@Override
@@ -105,7 +107,7 @@ public class MenuSuperior extends Fragment{
 
 		mnAtencion = rootView.findViewById(R.id.mnAtencion);
 		mnAtencion.setOnClickListener(listener);
-		
+
 		mnCenso = rootView.findViewById(R.id.mnCenso);
 		mnCenso.setOnClickListener(listener);
 		
@@ -127,12 +129,15 @@ public class MenuSuperior extends Fragment{
 		rootView.findViewById(R.id.mnCerrar).setOnClickListener(listener);
 
 		lblTitulo = (TextView)rootView.findViewById(R.id.lblTitulo);
+		
 		if(savedInstanceState!=null){
 			if(savedInstanceState.containsKey(R.id.lblTitulo+""))
 				lblTitulo.setText(savedInstanceState.getCharSequence(lblTitulo.getId()+""));
 			
-			if(savedInstanceState.containsKey(BOTON_ACTIVADO))
-				rootView.findViewById(savedInstanceState.getInt(BOTON_ACTIVADO)).setActivated(true);
+			if(savedInstanceState.containsKey(BOTON_ACTIVADO)){
+				ultimoActivado = rootView.findViewById(savedInstanceState.getInt(BOTON_ACTIVADO));
+				ultimoActivado.setActivated(true);
+			}
 		}
 		
 		//ESCONDER BOTONES SEGÚN PERMISOS DE ACCESO
@@ -303,7 +308,7 @@ public class MenuSuperior extends Fragment{
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		Log.d("salvado","salvando estado");
+		Log.d(TAG,"salvando estado");
 		if(lblTitulo!=null)
 			outState.putCharSequence(R.id.lblTitulo+"", lblTitulo.getText());
 		

@@ -2,8 +2,11 @@ package com.siigs.tes.datos.tablas;
 
 import java.util.List;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
+import android.util.Log;
 
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
@@ -45,6 +48,14 @@ public class ControlEda {
 	public String fecha;
 	public int id_asu_um;
 
+	public static Uri AgregarNuevoControlEda(Context context, ControlEda eda) throws Exception{
+		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(eda);
+		Uri salida = context.getContentResolver().insert(ProveedorContenido.CONTROL_EDA_CONTENT_URI, cv);
+		if(salida != null)
+			Log.d(NOMBRE_TABLA, "Se ha insertado nuevo registro id: "+salida.getLastPathSegment());
+		return salida;
+	}
+	
 	public static List<ControlEda> getEdasPersona(Context context, String idPersona) {
 		Cursor cur = context.getContentResolver().query(
 				ProveedorContenido.CONTROL_EDA_CONTENT_URI, null, 
@@ -54,4 +65,15 @@ public class ControlEda {
 		return salida;
 	}
 
+	public static int getTotalCreadosDespues(Context context, String fecha){
+		Cursor cur = context.getContentResolver().query(ProveedorContenido.CONTROL_EDA_CONTENT_URI, 
+				new String[]{"count(*)"}, FECHA + ">=?", new String[]{fecha}, null);
+		if(!cur.moveToNext()){
+			cur.close();
+			return 0;
+		}
+		int salida = cur.getInt(0);
+		cur.close();
+		return salida;
+	}
 }

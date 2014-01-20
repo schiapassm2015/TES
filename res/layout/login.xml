@@ -89,24 +89,28 @@
         android:orientation="horizontal" >
 
         <Button android:id="@+id/btnSincronizar"
+            style="@style/boton"
             android:text="@string/sincronizacion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp" />
         
         <Button android:id="@+id/btnAcceder"
+            style="@style/boton"
             android:text="Acceder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"/>
         
         <Button android:id="@+id/btnInvitado"
+            style="@style/boton"
             android:text="Acceder como Invitado"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"/>
         
         <Button android:id="@+id/btnCancelar"
+            style="@style/boton"
             android:text="@string/cancelar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import com.siigs.tes.datos.tablas.*;
 import com.siigs.tes.datos.vistas.Censo;
+import com.siigs.tes.datos.vistas.EsquemasIncompletos;
+import com.siigs.tes.datos.vistas.ReportesVacunas;
 
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
@@ -240,6 +242,12 @@ public class ProveedorContenido extends ContentProvider {
 	public static final Uri REGLA_VACUNA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	        + "/" + REGLA_VACUNA_PATH);
 	
+	private static final String VIA_VACUNA_PATH = ViaVacuna.NOMBRE_TABLA;
+	public static final int VIA_VACUNA_TODOS = 1610;
+	public static final int VIA_VACUNA_ID = 1620;
+	public static final Uri VIA_VACUNA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + VIA_VACUNA_PATH);
+	
 	private static final String ESQUEMA_INCOMPLETO_PATH = EsquemaIncompleto.NOMBRE_TABLA;
 	public static final int ESQUEMA_INCOMPLETO_TODOS = 1700;
 	public static final int ESQUEMA_INCOMPLETO_ID = 1701;
@@ -251,6 +259,16 @@ public class ProveedorContenido extends ContentProvider {
 	public static final int CENSO_TODOS = 1800;
 	public static final Uri CENSO_CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	        + "/" + CENSO_PATH);
+	
+	private static final String VISTA_ESQUEMA_INCOMPLETO_PATH = "vista_esquema_incompleto";
+	public static final int VISTA_ESQUEMA_INCOMPLETO_TODOS = 1810;
+	public static final Uri VISTA_ESQUEMA_INCOMPLETO_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + VISTA_ESQUEMA_INCOMPLETO_PATH);
+	
+	private static final String REPORTE_VACUNAS_PATH = "reporte_vacunas";
+	public static final int REPORTE_VACUNAS_TODOS = 1820;
+	public static final Uri REPORTE_VACUNAS_CONTENT_URI = Uri.parse("content://" + AUTHORITY
+	        + "/" + REPORTE_VACUNAS_PATH);
 	
 	/*
 	public static final String CONTENT_ITEM_TYPE = 
@@ -357,11 +375,16 @@ public class ProveedorContenido extends ContentProvider {
 	    sURIMatcher.addURI(AUTHORITY, REGLA_VACUNA_PATH, REGLA_VACUNA_TODOS);
 	    sURIMatcher.addURI(AUTHORITY, REGLA_VACUNA_PATH + "/#", REGLA_VACUNA_ID);
 	    
+	    sURIMatcher.addURI(AUTHORITY, VIA_VACUNA_PATH, VIA_VACUNA_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, VIA_VACUNA_PATH + "/#", VIA_VACUNA_ID);
+	    
 	    sURIMatcher.addURI(AUTHORITY, ESQUEMA_INCOMPLETO_PATH, ESQUEMA_INCOMPLETO_TODOS);
 	    sURIMatcher.addURI(AUTHORITY, ESQUEMA_INCOMPLETO_PATH + "/#", ESQUEMA_INCOMPLETO_ID);
 	    
 	    //VISTAS
 	    sURIMatcher.addURI(AUTHORITY, CENSO_PATH, CENSO_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, VISTA_ESQUEMA_INCOMPLETO_PATH, VISTA_ESQUEMA_INCOMPLETO_TODOS);
+	    sURIMatcher.addURI(AUTHORITY, REPORTE_VACUNAS_PATH, REPORTE_VACUNAS_TODOS);
 	}
 	
 	
@@ -378,6 +401,8 @@ public class ProveedorContenido extends ContentProvider {
 		
 		SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
 		String[] parametros= selectionArgs;
+		
+		String groupBy = null;
 		
 		int tipoUri= ProveedorContenido.sURIMatcher.match(uri);
 		switch(tipoUri){
@@ -697,6 +722,15 @@ public class ProveedorContenido extends ContentProvider {
 			builder.setTables(ReglaVacuna.NOMBRE_TABLA);// No existe filtro
 			break;
 		
+		case ProveedorContenido.VIA_VACUNA_ID:
+			builder.setTables(ViaVacuna.NOMBRE_TABLA);
+			builder.appendWhere(ViaVacuna.ID + "=?");
+			parametros=new String[]{uri.getLastPathSegment()};
+			break;			
+		case ProveedorContenido.VIA_VACUNA_TODOS:
+			builder.setTables(ViaVacuna.NOMBRE_TABLA);// No existe filtro
+			break;
+			
 		case ProveedorContenido.ESQUEMA_INCOMPLETO_ID:
 			builder.setTables(EsquemaIncompleto.NOMBRE_TABLA);
 			//builder.appendWhere(EsquemaIncompleto.ID + "=?");
@@ -709,13 +743,23 @@ public class ProveedorContenido extends ContentProvider {
 			projection = Censo.COLUMNAS;
 			builder.setTables(Censo.TABLAS);
 			break;
+		case ProveedorContenido.VISTA_ESQUEMA_INCOMPLETO_TODOS:
+			projection = EsquemasIncompletos.COLUMNAS;
+			builder.setTables(EsquemasIncompletos.TABLAS);
+			selection = EsquemasIncompletos.WHERE + " AND " + selection;
+			break;
+		case ProveedorContenido.REPORTE_VACUNAS_TODOS:
+			projection = ReportesVacunas.COLUMNAS;
+			builder.setTables(ReportesVacunas.TABLAS);
+			groupBy = ReportesVacunas.GROUPBY;
+			break;
 		default:
 			throw new IllegalArgumentException("Uri desconocido "+tipoUri);
 		}
 		
 		//Continúa consulta con o sin parámetros según uri
 		Cursor cur= builder.query(this.basedatos.getReadableDatabase(), 
-				projection, selection, parametros, null, null, sortOrder);
+				projection, selection, parametros, groupBy, null, sortOrder);
 		//The setNotificationUri() method simply places a watch on the caller’s 
 		//content resolver such that if the data changes and the caller has 
 		//a registered change watcher, they’ll be notified. 
@@ -837,6 +881,9 @@ public class ProveedorContenido extends ContentProvider {
 			break;
 		case ProveedorContenido.REGLA_VACUNA_TODOS:
 			tabla=ReglaVacuna.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.VIA_VACUNA_TODOS:
+			tabla=ViaVacuna.NOMBRE_TABLA;
 			break;
 		case ProveedorContenido.ESQUEMA_INCOMPLETO_TODOS:
 			tabla=EsquemaIncompleto.NOMBRE_TABLA;
@@ -972,6 +1019,9 @@ public class ProveedorContenido extends ContentProvider {
 			break;
 		case ProveedorContenido.REGLA_VACUNA_TODOS:
 			tabla=ReglaVacuna.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.VIA_VACUNA_TODOS:
+			tabla=ViaVacuna.NOMBRE_TABLA;
 			break;
 		case ProveedorContenido.ESQUEMA_INCOMPLETO_TODOS:
 			tabla=EsquemaIncompleto.NOMBRE_TABLA;
@@ -1125,6 +1175,9 @@ public class ProveedorContenido extends ContentProvider {
 			break;
 		case ProveedorContenido.REGLA_VACUNA_TODOS:
 			tabla=ReglaVacuna.NOMBRE_TABLA;
+			break;
+		case ProveedorContenido.VIA_VACUNA_TODOS:
+			tabla=ViaVacuna.NOMBRE_TABLA;
 			break;
 		case ProveedorContenido.ESQUEMA_INCOMPLETO_TODOS:
 			tabla=EsquemaIncompleto.NOMBRE_TABLA;

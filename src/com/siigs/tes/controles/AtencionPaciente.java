@@ -72,7 +72,7 @@ public class AtencionPaciente extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		this.setRetainInstance(true);
+		//this.setRetainInstance(true);
 		
 		aplicacion = (TesAplicacion)getActivity().getApplication();
 		sesion = aplicacion.getSesion();
@@ -106,20 +106,27 @@ public class AtencionPaciente extends Fragment {
 		//LECTURA DE DATOS PARA SECCIÓN VER
 		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_ver, R.string.datos_paciente);
 
-		((TextView)rootView.findViewById(R.id.txtNombre)).setText(p.nombre);
-		((TextView)rootView.findViewById(R.id.txtCurp)).setText(p.curp);
+		((TextView)rootView.findViewById(R.id.txtNombre)).setText(p.getNombreCompleto());
+		((TextView)rootView.findViewById(R.id.txtCurp)).setText(p.curp ==null ? "" : p.curp);
 		((TextView)rootView.findViewById(R.id.txtEdad)).setText(DatosUtil.calcularEdad(p.fecha_nacimiento));
 		((TextView)rootView.findViewById(R.id.txtSexo)).setText(p.sexo);
 		((TextView)rootView.findViewById(R.id.txtSangre)).setText(
 				TipoSanguineo.getTipoSanguineo(getActivity(), p.id_tipo_sanguineo));
-		((TextView)rootView.findViewById(R.id.txtDireccion)).setText(p.calle_domicilio);
+		((TextView)rootView.findViewById(R.id.txtDireccion)).setText(
+				p.calle_domicilio 
+						+ (p.numero_domicilio ==null ? "" : " #" + p.numero_domicilio) 
+						+ (p.colonia_domicilio == null ? "" : ", " + p.colonia_domicilio));
 		((TextView)rootView.findViewById(R.id.txtCP)).setText(p.cp_domicilio+"");
+		((TextView)rootView.findViewById(R.id.txtReferencia)).setText(p.referencia_domicilio==null?"":p.referencia_domicilio);
+		((TextView)rootView.findViewById(R.id.txtAGEB)).setText(p.ageb==null?"":p.ageb);
+		((TextView)rootView.findViewById(R.id.txtSector)).setText(p.sector==null?"":p.sector);
+		((TextView)rootView.findViewById(R.id.txtManzana)).setText(p.manzana==null?"":p.manzana);
 		
 		String valor = getString(R.string.desconocido);
 		try{valor=ArbolSegmentacion.getDescripcion(getActivity(), p.id_asu_localidad_domicilio);}catch(Exception e){}
 		((TextView)rootView.findViewById(R.id.txtLocalidad)).setText(valor);
 		
-		((TextView)rootView.findViewById(R.id.txtFechaRegistroCivil)).setText(p.fecha_registro);
+		((TextView)rootView.findViewById(R.id.txtFechaRegistroCivil)).setText(DatosUtil.fechaHoraCorta(p.fecha_registro));
 		
 		valor = getString(R.string.desconocido);
 		try{valor = ArbolSegmentacion.getDescripcion(getActivity(), p.id_asu_localidad_nacimiento);}catch(Exception e){}
@@ -130,8 +137,10 @@ public class AtencionPaciente extends Fragment {
 		((TextView)rootView.findViewById(R.id.txtUnidadMedicaTratante)).setText(valor);
 		
 		Tutor tutor = sesion.getDatosPacienteActual().tutor;
-		String nombreTutor = tutor.nombre+" "+tutor.apellido_paterno+" "+tutor.apellido_materno;
-		((TextView)rootView.findViewById(R.id.txtTutor)).setText(nombreTutor);
+		if(tutor != null){
+			String nombreTutor = tutor.nombre+" "+tutor.apellido_paterno+" "+tutor.apellido_materno;
+			((TextView)rootView.findViewById(R.id.txtTutor)).setText(nombreTutor);
+		}
 				
 		//Lista de alergias a ver
 		final com.siigs.tes.ui.ListaSimple lsAlergiasActuales = (com.siigs.tes.ui.ListaSimple)
@@ -149,6 +158,16 @@ public class AtencionPaciente extends Fragment {
 		txtNumero.setText(p.numero_domicilio);
 		final TextView txtColonia = (TextView)rootView.findViewById(R.id.txtColonia);
 		txtColonia.setText(p.colonia_domicilio);
+		final TextView txtAGEB = (TextView)rootView.findViewById(R.id.txtAGEBeditar);
+		txtAGEB.setText(p.ageb==null?"":p.ageb);
+		final TextView txtManzana = (TextView)rootView.findViewById(R.id.txtManzanaEditar);
+		txtManzana.setText(p.manzana==null?"":p.manzana);
+		final TextView txtSector = (TextView)rootView.findViewById(R.id.txtSectorEditar);
+		txtSector.setText(p.sector==null?"":p.sector);
+		final TextView txtReferencia = (TextView)rootView.findViewById(R.id.txtReferenciaEditar);
+		txtReferencia.setText(p.referencia_domicilio==null?"":p.referencia_domicilio);
+		final TextView txtCP = (TextView)rootView.findViewById(R.id.txtCPeditar);
+		txtCP.setText(p.cp_domicilio+"");
 		
 		//Autocomplete de localidad
 		idLocalidadSeleccionada = p.id_asu_localidad_domicilio;
@@ -175,7 +194,7 @@ public class AtencionPaciente extends Fragment {
 			public void onClick(View view) {
 				//Validamos los datos
 				if(txtCalle.getText().toString().length()==0 || txtColonia.getText().toString().length()==0
-						|| txtNumero.getText().toString().length()==0){
+						|| txtNumero.getText().toString().length()==0 || txtCP.getText().toString().length()==0){
 					Toast.makeText(getActivity(), getString(R.string.aviso_llenar_campos), Toast.LENGTH_LONG).show();
 					return;
 				}
@@ -198,6 +217,11 @@ public class AtencionPaciente extends Fragment {
 						p.calle_domicilio = txtCalle.getText().toString();
 						p.colonia_domicilio = txtColonia.getText().toString();
 						p.numero_domicilio = txtNumero.getText().toString();
+						p.referencia_domicilio = txtReferencia.getText().toString();
+						p.ageb = txtAGEB.getText().toString();
+						p.sector = txtSector.getText().toString();
+						p.manzana = txtManzana.getText().toString();
+						try{p.cp_domicilio = Integer.parseInt(txtCP.getText().toString());}catch(Exception e){}
 						
 						//En bd
 						try {

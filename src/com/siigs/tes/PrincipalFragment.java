@@ -1,5 +1,6 @@
 package com.siigs.tes;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,8 +13,10 @@ import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.siigs.tes.controles.ContenidoControles;
+import com.siigs.tes.controles.ContenidoControles.ItemControl;
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
 import com.siigs.tes.datos.tablas.ControlVacuna;
@@ -35,12 +38,15 @@ import com.siigs.tes.datos.tablas.Usuario;
  */
 public class PrincipalFragment extends ListFragment {
 
+	public static final String TAG = PrincipalFragment.class.getSimpleName();
+	
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
 	 * activated item position. Only used on tablets.
 	 */
 	private static final String ESTADO_ACTIVATED_POSITION = "activated_position";
 	private static final String ESTADO_ESCONDIDO = "escondido";
+	private static final String LISTA_ACTUAL = "menu_actual";
 	
 	/**
 	 * A callback interface that all activities containing this fragment must
@@ -95,12 +101,16 @@ public class PrincipalFragment extends ListFragment {
 		
 		//Retendrá el estado del fragmento de forma que onCreate no será llamado
 		//nuevamente si {@link PrincipalActivity} es creado de nuevo
-		this.setRetainInstance(true);
+		//this.setRetainInstance(true);
 				
 		this.aplicacion = (TesAplicacion)this.getActivity().getApplication();
 		
-		//Lista vacía
-		LlenarLista(new java.util.ArrayList<ContenidoControles.ItemControl>());
+		if(savedInstanceState!=null && savedInstanceState.containsKey(LISTA_ACTUAL)){
+			LlenarLista((List<ItemControl>) savedInstanceState.getSerializable(LISTA_ACTUAL));
+		}else{
+			//Lista vacía
+			LlenarLista(new java.util.ArrayList<ContenidoControles.ItemControl>());
+		}
 		
 		//GenerarDatosFalsos(); //TODO eliminar esto
 	}
@@ -202,10 +212,7 @@ public class PrincipalFragment extends ListFragment {
 	 * paciente si se actualizará la lista aunque esté visualizada.
 	 * Regresa true en caso contrario.
 	 */
-	public boolean LlenarLista(List<ContenidoControles.ItemControl> lista){
-		if(miListaControles==lista 
-				&& lista!=ContenidoControles.CONTROLES_ATENCION)return false;
-		
+	private void LlenarLista(List<ContenidoControles.ItemControl> lista){
 		miListaControles=lista;
 		//Reglas de mapeo entre atributos del item de menú y el layout del item
 		AdaptadorArrayMultiView.Mapeo[] reglasMapeo = new AdaptadorArrayMultiView.Mapeo[]{
@@ -217,7 +224,24 @@ public class PrincipalFragment extends ListFragment {
 						R.layout.fila_principalfragment, miListaControles, reglasMapeo);
 		
 		setListAdapter(adaptador);
+	}
+	
+	/**
+	 * Navega al primer elemento de {@link lista}
+	 * @param lista
+	 * @return false (no navega) debido a que:
+	 * parámetro <strong>lista</strong> ya estaba visualizada Y
+	 * no da controles para paciente. De esta forma en un cambio de
+	 * paciente si se actualizará la lista aunque esté visualizada.
+	 * Regresa true en caso contrario.
+	 */
+	public boolean Navegar(List<ContenidoControles.ItemControl> lista){
+		if(miListaControles==lista 
+				&& lista!=ContenidoControles.CONTROLES_ATENCION)return false;
+		
+		LlenarLista(lista);
 
+		//Preselecciona primer elemento
 		if(lista.size()>0){
 			setActivatedPosition(0);
 			AvisarItemSeleccionado(0);
@@ -240,9 +264,9 @@ public class PrincipalFragment extends ListFragment {
 			
 			if(savedInstanceState.containsKey(ESTADO_ESCONDIDO)){
 				if(savedInstanceState.getBoolean(ESTADO_ESCONDIDO))
-					getFragmentManager().beginTransaction().show(this).commit();
-				else
 					getFragmentManager().beginTransaction().hide(this).commit();
+				else
+					getFragmentManager().beginTransaction().show(this).commit();
 			}
 		}
 	}
@@ -292,12 +316,16 @@ public class PrincipalFragment extends ListFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+		
 		outState.putBoolean(ESTADO_ESCONDIDO, this.isHidden());
 		
 		if (mActivatedPosition != ListView.INVALID_POSITION) {
 			// Serialize and persist the activated item position.
 			outState.putInt(ESTADO_ACTIVATED_POSITION, mActivatedPosition);
 		}
+		
+		if( miListaControles != null){Log.d(TAG, "guardando lista");
+			outState.putSerializable(LISTA_ACTUAL, (Serializable) miListaControles);}
 	}
 
 	/**

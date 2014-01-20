@@ -9,12 +9,15 @@ import com.siigs.tes.datos.tablas.Permiso;
 import com.siigs.tes.datos.tablas.Usuario;
 import com.siigs.tes.datos.tablas.UsuarioInvitado;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -46,6 +49,8 @@ public class TesAplicacion extends Application {
 
 	private Sesion sesion = null; //La sesión de uso
 	
+	private ProgressDialog pdProgreso = null; //Contenedor para diálogos de progreso
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -75,7 +80,7 @@ public class TesAplicacion extends Application {
 	    }
 	    return false;
 	}
-
+	
 	//FUNCIONES DE MANEJO DE PREFERENCIAS
 	
 	/**
@@ -83,7 +88,7 @@ public class TesAplicacion extends Application {
 	 * @return
 	 */
 	public String getUrlSincronizacion(){
-		return preferencias.getString(URL_SINCRONIZACION, "http://www.siigs.gob.mx");
+		return preferencias.getString(URL_SINCRONIZACION, "http://www.sm2015.com.mx/tes/servicios/prueba");
 	}
 	public void setUrlSincronizacion(String url){
 		SharedPreferences.Editor editor = preferencias.edit();
@@ -153,7 +158,7 @@ public class TesAplicacion extends Application {
 	}
 	
 	public String getUrlActualizacionApk(){
-		return preferencias.getString(URL_ACTUALIZACION_APK, "http://www.siigs.gob.mx");
+		return preferencias.getString(URL_ACTUALIZACION_APK, "http://www.sm2015.com.mx/tes/servicios/prueba");
 	}
 	public void setUrlActualizacionApk(String url){
 		SharedPreferences.Editor editor = preferencias.edit();
@@ -197,6 +202,16 @@ public class TesAplicacion extends Application {
 		dialogo.show();
 	}
 	
+	public String getVersionApk(){
+		String version="";
+		try {
+			version += getPackageManager().getPackageInfo(
+					getPackageName(), 0).versionCode;
+		} catch (NameNotFoundException e1) {
+			version="imposible determinar version";
+		}
+		return version;
+	}
 	
 	public String getFechaUltimaSincronizacion(){
 		String fecha = preferencias.getString(FECHA_ULTIMA_SINCRONIZACION, "2000-01-01 00:00:00");
@@ -270,5 +285,30 @@ public class TesAplicacion extends Application {
 	 * @return
 	 */
 	public Sesion getSesion(){return this.sesion;}
+	
+	
+	public void onPausa(Activity llamador){
+		if(pdProgreso !=null)
+			pdProgreso.dismiss();
+	}
+	public void onResumir(Activity llamador){
+		if(pdProgreso!=null){ // && sinctask running
+			destruirDialogoProgreso();
+			crearDialogoProgreso(llamador);
+		}
+	}
+	
+	public void crearDialogoProgreso(Activity llamador){
+		String mensaje= "El dispositivo se está sincronizando en "+getUrlSincronizacion()
+				+"\nPor favor espere.";
+		if(getEsInstalacionNueva())
+			mensaje="("+getUrlSincronizacion()+")"+"\nEsta acción puede tardar 30 minutos. Por favor espere.";
+		boolean indeterminado=true, cancelable=false;
+		this.pdProgreso = ProgressDialog.show(llamador, "Sincronizando", 
+				mensaje, indeterminado, cancelable);
+	}
+	public void destruirDialogoProgreso(){this.pdProgreso = null;}
+	public ProgressDialog getDialogoProgreso(){return pdProgreso;}
+
 	
 }

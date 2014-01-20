@@ -68,7 +68,10 @@ public class Tutor {
 		
 		Cursor cur = context.getContentResolver().query(ProveedorContenido.TUTOR_CONTENT_URI, null, 
 				ID+"=?", new String[]{idTutor}, null);
-		if(!cur.moveToNext())return null;
+		if(!cur.moveToNext()){
+			cur.close();
+			return null;
+		}
 		Tutor salida = null;
 		try {
 			salida = DatosUtil.ObjetoDesdeCursor(cur, Tutor.class);

@@ -27,6 +27,8 @@ public class AdaptadorArrayMultiView<T> extends ArrayAdapter<T> {
 	private List<T> datos;
 	
 	private Mapeo[] reglasMapeo;
+
+	private ObjectViewBinder<T> miBinder = null;
 	
 	/**
 	 * Crea un adaptador que mapea los atributos definidos en mapeoAtributoView a widgets/views
@@ -46,11 +48,13 @@ public class AdaptadorArrayMultiView<T> extends ArrayAdapter<T> {
 		this.reglasMapeo = mapeoAtributoView;
 	}
 
+	public void setViewBinder(ObjectViewBinder<T> binder){this.miBinder = binder;}
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View salida = convertView;
 		if(salida == null){
-			LayoutInflater inflater =((Activity)contexto).getLayoutInflater(); //LayoutInflater.from(this.contexto);
+			LayoutInflater inflater = LayoutInflater.from(contexto);
 			salida = inflater.inflate(this.layoutId, parent, false);	
 		}
 		
@@ -64,9 +68,10 @@ public class AdaptadorArrayMultiView<T> extends ArrayAdapter<T> {
 				e.printStackTrace();
 			}
 			
-			Object destino = (Object)salida.findViewById(regla.idViewDestino);
+			View destino = salida.findViewById(regla.idViewDestino);
 			try {
-				destino.getClass().getMethod(regla.metodoInvocarEnIdView, regla.tipoDatoMetodoInvocarEnIdView).invoke(destino, valor);
+				if(miBinder == null || !miBinder.setViewValue(destino, regla.metodoInvocarEnIdView, elemento, regla.atributoPorCopiar, valor))
+					destino.getClass().getMethod(regla.metodoInvocarEnIdView, regla.tipoDatoMetodoInvocarEnIdView).invoke(destino, valor);
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {

@@ -73,7 +73,7 @@ public class PrincipalActivity extends FragmentActivity implements
 			MenuSuperior.OnAccionMenuListener listener=new MenuSuperior.OnAccionMenuListener() {
 				@Override
 				public void onSeleccionarMenu(List<ItemControl> lista) {
-					if(!lfMenuIzquierdo.LlenarLista(lista))
+					if(!lfMenuIzquierdo.Navegar(lista))
 						return;
 					
 					if(lista.size()<=1){
@@ -144,6 +144,7 @@ public class PrincipalActivity extends FragmentActivity implements
 		aplicacion.CerrarSesion();
 		getSupportFragmentManager().beginTransaction().hide(lfMenuIzquierdo).commit();
 		getSupportFragmentManager().beginTransaction().replace(
+				//TODO reemplazar este control vacío con posible versión grande de MenuSuperior
 				R.id.seccion_detail_container, new ControlFragment()).commit();
 		miMenuSuperior.PedirLoginUsuario();
 	}
@@ -165,7 +166,7 @@ public class PrincipalActivity extends FragmentActivity implements
 	}
 	
 	/**
-	 * Callback de {@link ControlVacunasNuevo.Callbacks} indicando
+	 * Callback de {@link DialogoTes.Callbacks} indicando
 	 * que el dialogo está listo para recibir avisos de tags NFC
 	 * @param llamador
 	 */
@@ -175,7 +176,7 @@ public class PrincipalActivity extends FragmentActivity implements
 	}
 	
 	/**
-	 * Callback de {@link ControlVacunasNuevo.Callbacks} indicando
+	 * Callback de {@link DialogoTes.Callbacks} indicando
 	 * que el dialogo ya no requiere recibir avisos de tags NFC
 	 */
 	@Override
@@ -195,7 +196,7 @@ public class PrincipalActivity extends FragmentActivity implements
 			// adding or replacing the detail fragment using a
 			// fragment transaction.
 			Bundle arguments = new Bundle();
-			arguments.putString(ControlFragment.ARG_ITEM_ID, id);
+			arguments.putString(ContenidoControles.ARG_ICA, id);
 			Fragment fragment=null;
 			try {
 				fragment = (Fragment)ContenidoControles.CONTROLES_TODOS_MAP
@@ -207,6 +208,8 @@ public class PrincipalActivity extends FragmentActivity implements
 			}
 			fragment.setArguments(arguments);
 			
+			//Censo es "linkeado" a {@link MenuSuperior} de forma que Censo invocará onActivityResult()
+			//con su request_code y esto lo escuchará {@link MenuSuperior} para mostrar un paciente en BD.
 			if(fragment instanceof CensoCensoNominal){
 				fragment.setTargetFragment(this.miMenuSuperior, CensoCensoNominal.REQUEST_CODE);
 			}
@@ -235,6 +238,21 @@ public class PrincipalActivity extends FragmentActivity implements
 	public void onBackPressed() {
 		this.moveTaskToBack(true);
 	}
+
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		aplicacion.onPausa(this);
+	}
+
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		aplicacion.onResumir(this);
+	}
+	
 	
 	
 }//fin clase

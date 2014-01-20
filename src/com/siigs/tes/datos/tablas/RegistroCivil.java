@@ -44,7 +44,10 @@ public class RegistroCivil {
 		Cursor cur = context.getContentResolver().query(
 				ProveedorContenido.REGISTRO_CIVIL_CONTENT_URI, null, 
 				ID_PERSONA+"=?", new String[]{idPersona}, null);
-		if(!cur.moveToNext())return null;
+		if(!cur.moveToNext()){
+			cur.close();
+			return null;
+		}
 		RegistroCivil salida = DatosUtil.ObjetoDesdeCursor(cur, RegistroCivil.class);
 		cur.close();
 		return salida;

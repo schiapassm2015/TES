@@ -17,6 +17,7 @@ import com.siigs.tes.datos.tablas.PendientesTarjeta;
 import com.siigs.tes.datos.tablas.Persona;
 import com.siigs.tes.datos.tablas.Vacuna;
 import com.siigs.tes.ui.AdaptadorArrayMultiTextView;
+import com.siigs.tes.ui.WidgetUtil;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -61,7 +62,7 @@ public class ControlVacunasNuevo extends DialogFragment {
 		//Método 2 para hacer la ventana modal 
 		setCancelable(false);
 		
-		this.setRetainInstance(true);
+		//this.setRetainInstance(true);
 		
 		aplicacion = (TesAplicacion)getActivity().getApplication();
 		sesion = aplicacion.getSesion();
@@ -86,8 +87,8 @@ public class ControlVacunasNuevo extends DialogFragment {
 		
 		final Persona p = sesion.getDatosPacienteActual().persona;
 		
-		TextView titulo = (TextView)vista.findViewById(R.id.barra_titulo_vacuna).findViewById(R.id.txtTituloBarra);
-		titulo.setText(R.string.agregar_vacuna);
+		WidgetUtil.setBarraTitulo(vista, R.id.barra_titulo_vacuna, R.string.agregar_vacuna, 
+				R.layout.ayuda_dialogo_tes_login, getFragmentManager());
 		
 		((TextView)vista.findViewById(R.id.txtNombre)).setText(p.getNombreCompleto());
 		

@@ -13,7 +13,7 @@
         <TextView 
             android:id="@+id/txtDatosBasicos"
             style="@style/datos_basicos_paciente"
-            android:text="[NOMBRE]"/>    
+            android:text="[DATOS BÁSICOS]"/>    
         
         <LinearLayout
             android:id="@+id/accion_ver_esquema"

@@ -30,6 +30,9 @@ public class Persona {
 	public final static String NUMERO_DOMICILIO = "numero_domicilio";
 	public final static String COLONIA_DOMICILIO = "colonia_domicilio";
 	public final static String REFERENCIA_DOMICILIO = "referencia_domicilio";
+	public final static String AGEB = "ageb";
+	public final static String MANZANA = "manzana";
+	public final static String SECTOR = "sector";
 	public final static String ID_ASU_LOCALIDAD_DOMICILIO= "id_asu_localidad_domicilio";
 	public final static String CP_DOMICILIO = "cp_domicilio";
 	public final static String TELEFONO_DOMICILIO = "telefono_domicilio";
@@ -50,7 +53,7 @@ public class Persona {
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
 		_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
 		ID + " TEXT NOT NULL , " +
-		CURP + " TEXT NOT NULL, "+
+		CURP + " TEXT DEFAULT NULL, "+
 		NOMBRE + " TEXT NOT NULL, "+
 		APELLIDO_PATERNO + " TEXT NOT NULL, " +
 		APELLIDO_MATERNO + " TEXT NOT NULL, " +
@@ -62,6 +65,9 @@ public class Persona {
 		NUMERO_DOMICILIO + " TEXT DEFAULT NULL, "+
 		COLONIA_DOMICILIO + " TEXT DEFAULT NULL, "+
 		REFERENCIA_DOMICILIO + " TEXT DEFAULT NULL, "+
+		AGEB + " TEXT DEFAULT NULL, " +
+		MANZANA + " TEXT DEFAULT NULL, " +
+		SECTOR + " TEXT DEFAULT NULL, " +
 		ID_ASU_LOCALIDAD_DOMICILIO + " INTEGER NOT NULL, "+
 		CP_DOMICILIO + " INTEGER NOT NULL, "+
 		TELEFONO_DOMICILIO + " TEXT DEFAULT NULL, "+
@@ -95,6 +101,9 @@ public class Persona {
 	public String numero_domicilio;
 	public String colonia_domicilio;
 	public String referencia_domicilio;
+	public String ageb;
+	public String manzana;
+	public String sector;
 	public int id_asu_localidad_domicilio;
 	public int cp_domicilio;
 	public String telefono_domicilio;
@@ -110,7 +119,10 @@ public class Persona {
 	public static Persona getPersona(Context context, int _id) throws Exception{
 		Cursor cur = context.getContentResolver().query(
 				ProveedorContenido.PERSONA_CONTENT_URI, null, _ID+"="+_id, null, null);
-		if(!cur.moveToNext())return null;
+		if(!cur.moveToNext()){
+			cur.close();
+			return null;
+		}
 		
 		Persona salida = DatosUtil.ObjetoDesdeCursor(cur, Persona.class);
 		cur.close();
@@ -121,5 +133,17 @@ public class Persona {
 		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(p);
 		if(context.getContentResolver().insert(ProveedorContenido.PERSONA_CONTENT_URI, cv)==null)
 			context.getContentResolver().update(ProveedorContenido.PERSONA_CONTENT_URI, cv, ID+"=?", new String[]{p.id});
+	}
+	
+	public static int getTotalActualizadosDespues(Context context, String fecha){
+		Cursor cur = context.getContentResolver().query(ProveedorContenido.PERSONA_CONTENT_URI, new String[]{"count(*)"}, 
+				ULTIMA_ACTUALIZACION + ">=?", new String[]{fecha}, null);
+		if(!cur.moveToNext()){
+			cur.close();
+			return 0;
+		}
+		int salida = cur.getInt(0);
+		cur.close();
+		return salida;
 	}
 }

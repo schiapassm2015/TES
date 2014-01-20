@@ -25,10 +25,16 @@ public class EsquemaIncompleto {
 		ID_PERSONA + " TEXT NOT NULL, "+
 		ID_VACUNA + " INTEGER NOT NULL, " +
 		PRIORIDAD + " INTEGER NOT NULL" +
-		"); ";
+		"); "
+		+"CREATE INDEX idx_"+NOMBRE_TABLA+" ON "+NOMBRE_TABLA+" ( "
+		+ID_PERSONA + "," + ID_VACUNA + "); ";
 	
 	//POJO
 	public String id_persona;
 	public int id_vacuna;
 	public int prioridad;
+	
+	//Prioridades posibles
+	public final static int PRIORIDAD_0 = 0;
+	public final static int PRIORIDAD_1 = 1;
 }

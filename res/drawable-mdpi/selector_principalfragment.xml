@@ -10,11 +10,23 @@ a travéz del layout {@link fila_principalfragment} -->
         android:state_pressed="true"
         android:drawable="@color/boton_menu_presionado" />
 
+    <!-- Estos sirven cuando se usa teclado externo -->
     <item 
-        android:state_activated="true"
+        android:state_selected="true"
+        android:drawable="@color/boton_menu_activado" />
+    <item 
+        android:state_focused="true"
+        android:drawable="@color/boton_menu_activado" />
+    <!-- Fin solo teclado -->
+
+
+    
+    <item 
+        android:state_activated="true" 
         android:drawable="@color/boton_menu_activado" />
     
     <item 
         android:drawable="@color/boton_menu_normal"/>
+    
     
 </selector>

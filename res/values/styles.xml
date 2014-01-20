@@ -17,7 +17,7 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="android:windowNoTitle" >true</item>
         <item name="android:editTextStyle">@style/APP_EditTextStyle</item>
-        <!-- <item name="android:buttonStyle">@style/APP_ButtonStyle</item>-->
+        <item name="android:buttonStyle">@style/APP_ButtonStyle</item>
     </style>
     
     <!-- INICIO Colores básicos -->
@@ -26,6 +26,7 @@
     <color name="boton_menu_activado">#099</color>
     
     <color name="nombre_usuario">#61ac1e</color>
+    <color name="grafica_linea_paciente">#00f</color>
     <!-- FIN Colores básicos -->
     
     <!-- INICIO Dimensiones básicas -->
@@ -34,6 +35,16 @@
     <dimen name="separacion_nombre_usuario_de_botones_menu">5dp</dimen>
     <dimen name="alto_menu_superior">40dp</dimen>
     <dimen name="margin_top_seccion_izquierda">5dp</dimen>
+    <dimen name="padding_izquierda_agregar_control">5dp</dimen>
+    <dimen name="columna_comun_ira_eda_accion_fecha">130dp</dimen>
+    <dimen name="columna_comun_ira_eda_accion_um">150dp</dimen>
+    <dimen name="columna_comun_ira_eda_accion_clave">40dp</dimen>
+    <dimen name="columna_comun_ira_eda_accion_detalle">240dp</dimen>
+    <dimen name="alto_fila_comun_ira_eda_accion">30dp</dimen>
+    <dimen name="columna_reportes_vacunas_vacuna">150dp</dimen>
+    <dimen name="columna_reportes_vacunas_aplicadas">80dp</dimen>
+    <dimen name="columna_reportes_vacunas_lotes">40dp</dimen>
+    <dimen name="columna_reportes_vacunas_sinlote">60dp</dimen>
     <!-- FIN Dimensiones básicas -->
     
     <!-- Estílo de los cuadros de texto -->
@@ -46,18 +57,37 @@
     <!-- Estílo de los botones -->
     <style name="APP_ButtonStyle" parent="@android:style/Widget.Button">
         <item name="android:background">@drawable/selector_button</item>
-        <!-- <item name="android:fontFamily">sans-serif-light</item>-->
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
     </style>
-    
+    <!-- Este estílo existe porque no se pudo sobreescribir todo botón en interfas con APP_ButtonStyle.
+    En cuanto se descubra cómo propagar APP_ButtonStyle a todo botón, este estílo podrá eliminarse -->
+    <style name="boton">
+        <item name="android:background">@drawable/selector_button</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
     
     <style name="boton_menu_superior">
         <item name="android:gravity">center</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingRight">2dp</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:drawablePadding">2dp</item>
         <item name="android:background">@drawable/selector_principalfragment</item>
     </style>
     
@@ -69,6 +99,12 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <!-- Atributo de un campo en formulario -->
+    <style name="atributo">
+        <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
     
     <style name="datos_basicos_paciente">
@@ -76,12 +112,21 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
     
+    
+    <style name="celda_header">
+        <item name="android:background">@drawable/borde</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:gravity">center</item>
+    </style>
+    
     <!-- Celdas de tabla para mostrar el esquema de vacunas aplicaddas/no aplicadas/no aplicables -->
     <style name="celda_header_control_vacuna">
         <item name="android:layout_width">34dp</item>
         <item name="android:layout_height">32dp</item>
-        <item name="android:background">@drawable/gradiente_verde_borde</item>
+        <item name="android:background">@drawable/borde</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#fff</item>
         <item name="android:gravity">center</item>
     </style>
     

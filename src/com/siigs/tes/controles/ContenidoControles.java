@@ -1,11 +1,13 @@
 package com.siigs.tes.controles;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.siigs.tes.ControlFragment;
+import com.siigs.tes.R;
 import com.siigs.tes.datos.tablas.Permiso;
 
 /**
@@ -13,6 +15,10 @@ import com.siigs.tes.datos.tablas.Permiso;
  */
 public class ContenidoControles {
 
+	//Indica a cada fragmento creado el ICA en esta clase que lo identificó  (normalmente de tipo ICA_XXX_LISTAR)
+	//Se aprovecha solo por  {@link CensoCensoNominal} para distinguir entre una vista de Censo y una de Esquema Incompleto
+	public final static String ARG_ICA = "parametro_ica";
+	
 	//Todos los items.
 	public static List<ItemControl> CONTROLES_TODOS = new ArrayList<ItemControl>();
 	//Todos los items por ID.
@@ -67,12 +73,25 @@ public class ContenidoControles {
 		public final static int ICA_CONTROLVACUNA_VER = 105;
 		public final static int ICA_CONTROLVACUNA_INSERTAR = 104;
 	public final static int ICA_CONTROLNUTRICIONAL_LISTAR = 89;
+		//Acciones internas
 		public final static int ICA_CONTROLNUTRICIONAL_VER = 88;
 		public final static int ICA_CONTROLNUTRICIONAL_INSERTAR = 87;
 	public final static int ICA_CONTROLACCIONNUTRICIONAL_LISTAR = 76;
+		//Acciones internas
+		public final static int ICA_CONTROLACCIONNUTRICIONAL_VER = 75;
+		public final static int ICA_CONTROLACCIONNUTRICIONAL_INSERTAR = 74;
 	public final static int ICA_EDA_LISTAR = 83;
+		//Acciones internas
+		public final static int ICA_EDA_VER = 82;
+		public final static int ICA_EDA_INSERTAR = 81;
 	public final static int ICA_IRA_LISTAR = 86;
+		//Acciones internas
+		public final static int ICA_IRA_VER = 85;
+		public final static int ICA_IRA_INSERTAR = 84;
 	public final static int ICA_CONTROLCONSULTA_LISTAR = 80;
+		//Acciones internas
+		public final static int ICA_CONTROLCONSULTA_VER = 79;
+		public final static int ICA_CONTROLCONSULTA_INSERTAR = 78;
 	
 	public final static int ICA_CENSO_LISTAR = 131;
 	
@@ -107,31 +126,31 @@ public class ContenidoControles {
 		if(permisos == null)return;
 		
 		if(ExistePermiso(ICA_PACIENTE_LISTAR, permisos)){
-			item=new ItemControl(ICA_PACIENTE_LISTAR, "Paciente", AtencionPaciente.class, android.R.drawable.btn_plus);
+			item=new ItemControl(ICA_PACIENTE_LISTAR, "Paciente", AtencionPaciente.class, R.drawable.paciente);
 			addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
 		}
 		if(ExistePermiso(ICA_CONTROLVACUNA_LISTAR, permisos)){
-			item=new ItemControl(ICA_CONTROLVACUNA_LISTAR, "Control de Vacunación", ControlVacunas.class);
+			item=new ItemControl(ICA_CONTROLVACUNA_LISTAR, "Control de Vacunación", ControlVacunas.class, R.drawable.vacunacion);
 			addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
 		}
 		if(ExistePermiso(ICA_CONTROLNUTRICIONAL_LISTAR, permisos)){
-			item=new ItemControl(ICA_CONTROLNUTRICIONAL_LISTAR, "Control Nutricional", ControlFragment.class);
+			item=new ItemControl(ICA_CONTROLNUTRICIONAL_LISTAR, "Control Nutricional", ControlNutricional.class, R.drawable.nutricion);
 			addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
 		}
 		if(ExistePermiso(ICA_CONTROLACCIONNUTRICIONAL_LISTAR, permisos)){
-			item=new ItemControl(ICA_CONTROLACCIONNUTRICIONAL_LISTAR, "Acciones Nutricionales", ControlFragment.class);
+			item=new ItemControl(ICA_CONTROLACCIONNUTRICIONAL_LISTAR, "Acciones Nutricionales", ControlAccionNutricional.class, R.drawable.nutricionales);
 			addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
 		}
 		if(ExistePermiso(ICA_IRA_LISTAR, permisos)){
-			item=new ItemControl(ICA_IRA_LISTAR, "Control IRAs", ControlFragment.class);
+			item=new ItemControl(ICA_IRA_LISTAR, "Control IRAs", ControlIras.class, R.drawable.iras);
 			addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
 		}
 		if(ExistePermiso(ICA_EDA_LISTAR, permisos)){
-			item=new ItemControl(ICA_EDA_LISTAR, "Control EDAs", ControlFragment.class);
+			item=new ItemControl(ICA_EDA_LISTAR, "Control EDAs", ControlEdas.class, R.drawable.edas);
 			addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
 		}
 		if(ExistePermiso(ICA_CONTROLCONSULTA_LISTAR, permisos)){
-			item=new ItemControl(ICA_CONTROLCONSULTA_LISTAR, "Control Consultas", ControlFragment.class);
+			item=new ItemControl(ICA_CONTROLCONSULTA_LISTAR, "Control Consultas", ControlConsultas.class, R.drawable.consultas);
 			addItem(item, CONTROLES_ATENCION, CONTROLES_ATENCION_MAP);
 		}
 		
@@ -145,7 +164,7 @@ public class ContenidoControles {
 		//Controles de Esquemas incompletos
 		CONTROLES_ESQUEMAS.clear();CONTROLES_ESQUEMAS_MAP.clear();
 		if(ExistePermiso(ICA_ESQUEMAS_LISTAR, permisos)){
-			item=new ItemControl(ICA_ESQUEMAS_LISTAR, "Esquemas incompletos", ControlFragment.class);
+			item=new ItemControl(ICA_ESQUEMAS_LISTAR, "Esquemas incompletos", CensoCensoNominal.class);
 			addItem(item, CONTROLES_ESQUEMAS, CONTROLES_ESQUEMAS_MAP);
 		}
 		
@@ -156,7 +175,7 @@ public class ContenidoControles {
 			addItem(item, CONTROLES_NOTIFICACIONES, CONTROLES_NOTIFICACIONES_MAP);
 		}
 		if(ExistePermiso(ICA_NOTIFICACION_REPORTE_LISTAR, permisos)){
-			item=new ItemControl(ICA_NOTIFICACION_REPORTE_LISTAR, "Reportes de desempeño", ControlFragment.class);
+			item=new ItemControl(ICA_NOTIFICACION_REPORTE_LISTAR, "Reportes de desempeño", Reportes.class);
 			addItem(item, CONTROLES_NOTIFICACIONES, CONTROLES_NOTIFICACIONES_MAP);
 		}
 		
@@ -170,7 +189,7 @@ public class ContenidoControles {
 		//Controles de Configuracion
 		CONTROLES_CONFIGURACION.clear();CONTROLES_CONFIGURACION_MAP.clear();
 		if(ExistePermiso(ICA_CONFIGURAR__CONFIGURAR, permisos)){
-			item=new ItemControl(ICA_CONFIGURAR__CONFIGURAR, "Configuración", ControlFragment.class);
+			item=new ItemControl(ICA_CONFIGURAR__CONFIGURAR, "Configuración", Configuracion.class);
 			addItem(item, CONTROLES_CONFIGURACION, CONTROLES_CONFIGURACION_MAP);
 		}
 		
@@ -220,7 +239,10 @@ public class ContenidoControles {
 	/**
 	 * item que representa un Control (elemento de lista) de un menú.
 	 */
-	public static class ItemControl {
+	public static class ItemControl implements Serializable {
+
+		//private static final long serialVersionUID = 2260447284334905773L;
+		
 		public String id;
 		public String titulo;
 		public Class<?> clase;
