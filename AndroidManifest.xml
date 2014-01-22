@@ -20,7 +20,9 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <!-- clearTaskOnLaunch="false" permite que no se pierdan diálogos y contexto al iniciar la app desde Home -->
         <activity 
+            android:clearTaskOnLaunch="false"
             android:name="com.siigs.tes.PrincipalActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape">

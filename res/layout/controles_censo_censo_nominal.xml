@@ -75,6 +75,9 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal -->
 
         <Button
             android:id="@+id/btnFiltrar"
+            android:drawableStart="@drawable/filtro"
+            android:drawablePadding="-80dp"
+            android:paddingLeft="50dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"

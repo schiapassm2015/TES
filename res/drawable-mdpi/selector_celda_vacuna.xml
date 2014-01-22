@@ -10,6 +10,6 @@ a travéz del layout {@link fila_principalfragment} -->
         android:drawable="@drawable/gradiente_naranja" />
     
     <item 
-        android:drawable="@drawable/borde_blanco"/>
+        android:drawable="@drawable/borde_celda_vacuna"/>
     
  </selector>

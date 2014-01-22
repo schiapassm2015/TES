@@ -171,7 +171,7 @@ public class ContenidoControles {
 		//Controles de Notificaciones
 		CONTROLES_NOTIFICACIONES.clear();CONTROLES_NOTIFICACIONES_MAP.clear();
 		if(ExistePermiso(ICA_NOTIFICACION_LISTAR, permisos)){
-			item=new ItemControl(ICA_NOTIFICACION_LISTAR, "Notificaciones", Notificaciones.class);
+			item=new ItemControl(ICA_NOTIFICACION_LISTAR, "Notificaciones", Notificaciones.class, R.drawable.notificacion);
 			addItem(item, CONTROLES_NOTIFICACIONES, CONTROLES_NOTIFICACIONES_MAP);
 		}
 		if(ExistePermiso(ICA_NOTIFICACION_REPORTE_LISTAR, permisos)){

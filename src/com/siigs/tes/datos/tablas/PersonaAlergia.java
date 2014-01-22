@@ -45,6 +45,13 @@ public class PersonaAlergia {
 	public String id_persona;
 	public int id_alergia;
 	public String ultima_actualizacion;
+
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof PersonaAlergia))return false;
+		PersonaAlergia c = (PersonaAlergia)o;
+		return id_alergia == c.id_alergia && id_persona.equals(c.id_persona);
+	}
 	
 	public static Uri AgregarNuevaAlergia(Context context, PersonaAlergia alergia){
 		ContentValues cv = new ContentValues();

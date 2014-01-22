@@ -54,6 +54,13 @@ public class ControlVacuna {
 	public String codigo_barras;
 	public transient Integer id_invitado; //transient pues no se envía en JSON
 	
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof ControlVacuna))return false;
+		ControlVacuna c = (ControlVacuna)o;
+		return id_vacuna == c.id_vacuna && fecha.equals(c.fecha) && id_persona.equals(c.id_persona);
+	}
+
 	public static Uri AgregarNuevoControlVacuna(Context context, ControlVacuna vacuna) throws Exception{
 		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(vacuna);
 		Uri salida = context.getContentResolver().insert(ProveedorContenido.CONTROL_VACUNA_CONTENT_URI, cv);

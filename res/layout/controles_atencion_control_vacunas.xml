@@ -93,7 +93,8 @@
                     
                     <TextView
                         style="@style/celda_titulo_control_vacuna"
-                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:background="#005fae"
+                        android:textColor="#fff"
                         android:text="@string/bcg" />
                     
                     <TextView
@@ -121,7 +122,8 @@
                     
                     <TextView
                         style="@style/celda_titulo_control_vacuna"
-                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:background="#f78f24"
+                        android:textColor="#fff"
                         android:text="@string/hepatitis_b" />
                     
                     <TextView
@@ -153,7 +155,8 @@
                     
                     <TextView
                         style="@style/celda_titulo_control_vacuna"
-                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:background="#0094c9"
+                        android:textColor="#fff"
                         android:text="@string/pentavalente" />
                     
                     <TextView 
@@ -187,7 +190,8 @@
                     
                     <TextView
                         style="@style/celda_titulo_control_vacuna"
-                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:background="#c9bb00"
+                        android:textColor="#fff"
                         android:text="@string/dpt" />
                     
                     <TextView 
@@ -215,7 +219,8 @@
                     
                     <TextView
                         style="@style/celda_titulo_control_vacuna"
-                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:background="#006a5a"
+                        android:textColor="#fff"
                         android:text="@string/rotavirus" />
                     
                     <TextView 
@@ -247,7 +252,8 @@
                     
                     <TextView
                         style="@style/celda_titulo_control_vacuna"
-                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:background="#00a7e6"
+                        android:textColor="#fff"
                         android:text="Neumocósica Conjugada" />
                     
                     <TextView 
@@ -279,7 +285,8 @@
                     
                     <TextView
                         style="@style/celda_titulo_control_vacuna"
-                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:background="#f499c1"
+                        android:textColor="#fff"
                         android:text="Influenza" />
                     
                     <TextView 
@@ -311,7 +318,8 @@
                     
                     <TextView
                         style="@style/celda_titulo_control_vacuna"
-                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:background="#794098"
+                        android:textColor="#fff"
                         android:text="SRP" />
                     
                     <TextView 
@@ -341,7 +349,8 @@
                     
                     <TextView
                         style="@style/celda_titulo_control_vacuna"
-                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:background="#b73092"
+                        android:textColor="#fff"
                         android:text="SABIN" />
                     
                     <TextView
@@ -368,7 +377,8 @@
                     
                     <TextView
                         style="@style/celda_titulo_control_vacuna"
-                        android:background="@drawable/gradiente_azul_medio_borde"
+                        android:background="#f6945c"
+                        android:textColor="#fff"
                         android:text="SR" />
                     
                     <TextView

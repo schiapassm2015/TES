@@ -60,7 +60,18 @@ public class DatosUtil {
 	}
 	
 	/**
-	 * Construye una instancia de la Clase {@clase} y asigna sus campos públicos NO estáticos
+	 * Construye y devuelve un objeto de la Clase {@link clase} a partir de <b>jsonString</b>
+	 * @param jsonString
+	 * @param clase
+	 * @return
+	 */
+	public static <T> T ObjetoDesdeJson(String jsonString, Class<T> clase){
+		Gson gson = new Gson();
+		return gson.fromJson(jsonString, clase);
+	}
+	
+	/**
+	 * Construye una instancia de la Clase {@link clase} y asigna sus campos públicos NO estáticos
 	 * con los valores contenidos en el Cursor {@cur}. Para esto tanto los campos a asignar
 	 * en clase como los campos en el registro de cur deben tener los mismos nombres.  
 	 * @param cur Cursor que ya debe apuntar al registro que se desea convertir
@@ -69,7 +80,7 @@ public class DatosUtil {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	public static <T> T ObjetoDesdeCursor(Cursor cur, Class clase) throws InstantiationException, IllegalAccessException{
+	public static <T> T ObjetoDesdeCursor(Cursor cur, Class<T> clase) throws InstantiationException, IllegalAccessException{
 		T salida = (T)clase.newInstance();
 		
 		for (Field field : salida.getClass().getFields()) {
@@ -221,7 +232,7 @@ public class DatosUtil {
 		
 		if(periodo.getYears()<=0) {
 			if(periodo.getMonths()<=0) return periodo.getWeeks()+" semanas, "+periodo.getDays()+" días";
-			else return periodo.getMonths()+" meses, "+ periodo.toStandardDays().getDays();
+			else return periodo.getMonths()+" meses, "+ periodo.minusMonths(periodo.getMonths()).toStandardDays().getDays()+" días";
 		}else return periodo.getYears()+" años, "+ periodo.getMonths()+" meses";	
 	}
 	
@@ -262,4 +273,13 @@ public class DatosUtil {
 		return DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").parseDateTime(fechaHora);
 	}
 	
+	/**
+	 * Indica si fecha1 es menor que fecha2
+	 * @param fecha1
+	 * @param feccha2
+	 * @return
+	 */
+	public static boolean esFechaHoraMenor(String fecha1, String feccha2){
+		return DatosUtil.parsearFechaHora(fecha1).isBefore(DatosUtil.parsearFechaHora(feccha2));
+	}
 }//fin clase

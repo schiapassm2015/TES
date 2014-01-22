@@ -48,6 +48,13 @@ public class ControlIra {
 	public String fecha;
 	public int id_asu_um;
 
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof ControlIra))return false;
+		ControlIra c = (ControlIra)o;
+		return id_ira == c.id_ira && fecha.equals(c.fecha) && id_persona.equals(c.id_persona);
+	}
+	
 	public static Uri AgregarNuevoControlIra(Context context, ControlIra ira) throws Exception{
 		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(ira);
 		Uri salida = context.getContentResolver().insert(ProveedorContenido.CONTROL_IRA_CONTENT_URI, cv);

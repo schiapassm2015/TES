@@ -57,6 +57,13 @@ public class ControlNutricional {
 	public int talla;
 	public transient Integer id_invitado; //transient pues no se envía en JSON
 
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof ControlNutricional))return false;
+		ControlNutricional c = (ControlNutricional)o;
+		return fecha.equals(c.fecha) && id_persona.equals(c.id_persona);
+	}
+	
 	public static Uri AgregarNuevoControlNutricional(Context context, ControlNutricional control) throws Exception{
 		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(control);
 		Uri salida = context.getContentResolver().insert(ProveedorContenido.CONTROL_NUTRICIONAL_CONTENT_URI, cv);

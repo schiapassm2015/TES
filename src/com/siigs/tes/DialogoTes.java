@@ -4,6 +4,8 @@
  */
 package com.siigs.tes;
 
+import java.util.List;
+
 import com.siigs.tes.datos.ManejadorNfc;
 import com.siigs.tes.datos.tablas.PendientesTarjeta;
 
@@ -76,6 +78,7 @@ public class DialogoTes extends DialogFragment {
 		args.putSerializable(DialogoTes.PARAM_MODO_OPERACION, modoOperacion);
 		dialogo.setArguments(args);
 		dialogo.setTargetFragment(llamador, DialogoTes.REQUEST_CODE);
+		dialogo.setPendienteTarjeta(pendiente);
 		dialogo.show(llamador.getFragmentManager(),
 				//.beginTransaction().setCustomAnimations(android.R.animator.fade_out, android.R.animator.fade_in), 
 				DialogoTes.TAG);
@@ -94,6 +97,8 @@ public class DialogoTes extends DialogFragment {
 	private boolean modoEscrituraNFC;
 	
 	private PendientesTarjeta pendiente = null; //Pendiente que mandaría a escribir
+	private List<PendientesTarjeta> pendientesResueltos = null; //En login esta lista podría recibir valores
+	private View txtPasarTesDeNuevo=null;
 	
 	/**
 	 * Usado para comunicarse con actividad contenedora la cual DEBE implementar
@@ -148,7 +153,13 @@ public class DialogoTes extends DialogFragment {
 		setCancelable(false);
 		
 		//INICIA MODO ESCUCHA REDIRIGIENDO A ACTIVIDAD PADRE EN CASO DE ENCONTRAR ALGO
-		adaptadorNFC = NfcAdapter.getDefaultAdapter(getActivity());
+		try{
+			adaptadorNFC = NfcAdapter.getDefaultAdapter(getActivity());
+		}catch(Exception e){
+			String msg = "No es posible iniciar la antena NFC. Asegúrese de que esta tableta cuenta con NFC" +
+					" y que se encuentre activo en las opciones de su tableta";
+			Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+		}
 		pendingIntentNFC = PendingIntent.getActivity(getActivity(), 0, 
 				new Intent(getActivity(), getActivity().getClass())
 					.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
@@ -175,7 +186,8 @@ public class DialogoTes extends DialogFragment {
 		
 		//TODO si no cambian mucho los layout, fusionarlos en uno solo pues ahora son casi iguales
 		if(modoOperacion == ModoOperacion.LOGIN){
-			vista=inflater.inflate(R.layout.dialogo_tes_login, container,false);			
+			vista=inflater.inflate(R.layout.dialogo_tes_login, container,false);
+			txtPasarTesDeNuevo = vista.findViewById(R.id.txtPasarTesDeNuevo);
 		}else{
 			vista=inflater.inflate(R.layout.dialogo_tes_guardar, container,false);			
 		}
@@ -213,28 +225,50 @@ public class DialogoTes extends DialogFragment {
 	public void onTagNfcDetectado(Tag tag){
 		try {
 			if(this.modoOperacion == ModoOperacion.LOGIN){
-				ManejadorNfc.LeerDatosNFC(tag, getActivity());
+				if(pendientesResueltos== null){
+					//Es una lectura normal
+					pendientesResueltos = ManejadorNfc.LeerDatosNFC(tag, getActivity());
+					if(pendientesResueltos.size()>0){
+						//Hay pendientes resueltos pero deben guardarse ahora mismo en tarjeta o nada se modifica en BD
+						txtPasarTesDeNuevo.setVisibility(View.VISIBLE);
+						return;
+					}
+				}else{
+					//Se pasó la tarjeta nuevamente después de tener pendientes a resolver
+					GuardarDatosEnTes(tag);
+					for(PendientesTarjeta pendiente : pendientesResueltos)
+						PendientesTarjeta.MarcarPendienteResuelto(getActivity(), pendiente);
+				}
 				Cerrar(DialogoTes.RESULT_OK);
 			}else if(this.modoOperacion == ModoOperacion.GUARDAR){
-				Sesion.DatosPaciente datosPaciente = 
-						((TesAplicacion)getActivity().getApplication()).getSesion().getDatosPacienteActual();
-				//Esta validación se quitó pues desafortunadamente la tarjeta puede ser desconfigurada
-				//facilmente al intentar escribirla, por lo que una tarjeta que se usaba en paciente
-				//podría desconfigurarse en una mala escritura, lo que después la dejaría inutilizable
-				//en este sistema. Quitamos esta comparación para permitir intentar reescribir
-				/*if(!ManejadorNfc.nfcTagPerteneceApersona(datosPaciente.persona.id, tag)){
-					Toast.makeText(getActivity(), "La TES presentada no pertenece al paciente "
-							+ datosPaciente.persona.nombre + datosPaciente.persona.apellido_paterno
-							+ datosPaciente.persona.apellido_materno, Toast.LENGTH_LONG).show();
-					return;
-				}*/
-				ManejadorNfc.EscribirDatosNFC(tag, datosPaciente);
-				Toast.makeText(getActivity(), getString(R.string.informacion_guardada_en_tes), Toast.LENGTH_SHORT).show();
+				GuardarDatosEnTes(tag);
 				Cerrar(DialogoTes.RESULT_OK);
 			}
 		} catch (Exception e) {
 			Toast.makeText(getActivity(), e.getMessage() + ":\n"+e.toString(), Toast.LENGTH_LONG).show();
 		}
+	}
+	
+	/**
+	 * Llama al guardado de los datos del paciente en tarjeta NFC
+	 * @param tag
+	 * @throws Exception
+	 */
+	private void GuardarDatosEnTes(Tag tag) throws Exception{
+		Sesion.DatosPaciente datosPaciente = 
+				((TesAplicacion)getActivity().getApplication()).getSesion().getDatosPacienteActual();
+		//Esta validación se quitó pues desafortunadamente la tarjeta puede ser desconfigurada
+		//facilmente al intentar escribirla, por lo que una tarjeta que se usaba en paciente
+		//podría desconfigurarse en una mala escritura, lo que después la dejaría inutilizable
+		//en este sistema. Quitamos esta comparación para permitir intentar reescribir
+		/*if(!ManejadorNfc.nfcTagPerteneceApersona(datosPaciente.persona.id, tag)){
+			Toast.makeText(getActivity(), "La TES presentada no pertenece al paciente "
+					+ datosPaciente.persona.nombre + datosPaciente.persona.apellido_paterno
+					+ datosPaciente.persona.apellido_materno, Toast.LENGTH_LONG).show();
+			return;
+		}*/
+		ManejadorNfc.EscribirDatosNFC(tag, datosPaciente);
+		Toast.makeText(getActivity(), getString(R.string.informacion_guardada_en_tes), Toast.LENGTH_SHORT).show();
 	}
 	
 	/**

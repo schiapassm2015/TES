@@ -48,6 +48,13 @@ public class ControlConsulta {
 	public String fecha;
 	public int id_asu_um;
 
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof ControlConsulta))return false;
+		ControlConsulta c = (ControlConsulta)o;
+		return id_consulta == c.id_consulta && fecha.equals(c.fecha) && id_persona.equals(c.id_persona);
+	}
+	
 	public static Uri AgregarNuevoControlConsulta(Context context, ControlConsulta consulta) throws Exception{
 		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(consulta);
 		Uri salida = context.getContentResolver().insert(ProveedorContenido.CONTROL_CONSULTA_CONTENT_URI, cv);

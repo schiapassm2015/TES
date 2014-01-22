@@ -41,35 +41,35 @@
                <LinearLayout android:orientation="horizontal"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
-                   android:background="@drawable/borde">
+                   style="@style/celda_header">
                    
                    <TextView 
                        android:layout_width="@dimen/columna_reportes_vacunas_vacuna" 
                        android:layout_height="match_parent"
                        android:text="Vacuna" 
                        android:gravity="center" 
-                       android:background="@drawable/borde" />
+                       style="@style/celda_header" />
                    
                    <TextView 
                        android:layout_width="@dimen/columna_reportes_vacunas_aplicadas" 
                        android:layout_height="match_parent"
                        android:text="Aplicadas" 
                        android:gravity="center" 
-                       android:background="@drawable/borde" />        
+                       style="@style/celda_header" />        
                    
                    <TextView 
                        android:layout_width="@dimen/columna_reportes_vacunas_lotes" 
                        android:layout_height="match_parent"
                        android:text="Lotes" 
                        android:gravity="center" 
-                       android:background="@drawable/borde" />
+                       style="@style/celda_header" />
                    
                    <TextView 
                        android:layout_width="@dimen/columna_reportes_vacunas_sinlote" 
                        android:layout_height="match_parent"
                        android:text="Sin Lote" 
                        android:gravity="center" 
-                       android:background="@drawable/borde" />
+                       style="@style/celda_header" />
                    
                </LinearLayout>
 
@@ -110,35 +110,35 @@
                <LinearLayout android:orientation="horizontal"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
-                   android:background="@drawable/borde">
+                   style="@style/celda_header">
                    
                    <TextView 
                        android:layout_width="@dimen/columna_reportes_vacunas_vacuna" 
                        android:layout_height="match_parent"
                        android:text="Vacuna" 
                        android:gravity="center" 
-                       android:background="@drawable/borde" />
+                       style="@style/celda_header" />
                    
                    <TextView 
                        android:layout_width="@dimen/columna_reportes_vacunas_aplicadas" 
                        android:layout_height="match_parent"
                        android:text="Aplicadas" 
                        android:gravity="center" 
-                       android:background="@drawable/borde" />        
+                       style="@style/celda_header" />        
                    
                    <TextView 
                        android:layout_width="@dimen/columna_reportes_vacunas_lotes" 
                        android:layout_height="match_parent"
                        android:text="Lotes" 
                        android:gravity="center" 
-                       android:background="@drawable/borde" />
+                       style="@style/celda_header" />
                    
                    <TextView 
                        android:layout_width="@dimen/columna_reportes_vacunas_sinlote" 
                        android:layout_height="match_parent"
                        android:text="Sin Lote" 
                        android:gravity="center" 
-                       android:background="@drawable/borde" />
+                       style="@style/celda_header" />
                    
                </LinearLayout>
 

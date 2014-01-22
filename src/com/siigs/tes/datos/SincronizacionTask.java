@@ -626,16 +626,20 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 					reader.beginArray();
 					while(reader.hasNext()){
 						PendientesTarjeta pendiente = gson.fromJson(reader, PendientesTarjeta.class);
-						fila = DatosUtil.ContentValuesDesdeObjeto(pendiente);
-						uri = ProveedorContenido.PENDIENTES_TARJETA_CONTENT_URI;
-						//TODO PENDIENTE BORRAR REGISTROS FORÁNEOS NO RESUELTOS ANTES DE RECIBIR NUEVOS
-						cr.insert(uri, fila);
+						PendientesTarjeta.AgregarNuevoPendienteForaneo(contexto, pendiente);
+						//fila = DatosUtil.ContentValuesDesdeObjeto(pendiente);
+						//uri = ProveedorContenido.PENDIENTES_TARJETA_CONTENT_URI;
+						//cr.insert(uri, fila);
 							//cr.update(uri, fila, PendientesTarjeta.ID_PERSONA+"=? and "+PendientesTarjeta.REGISTRO_JSON +"=? ",new String[]{pendiente.id_persona,});
 					}
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(ArbolSegmentacion.NOMBRE_TABLA)){
 					InterpretarArbolSegmentacion(gson, reader, cr);
+					/*InterpretarAtributoInsertMasivo(gson, reader, cr, 
+							ProveedorContenido.ARBOL_SEGMENTACION_CONTENT_URI, 
+							ArbolSegmentacion.ID+"=?", new String[]{ArbolSegmentacion.ID}, 
+							"Arbol de segmentación", ArbolSegmentacion.class);*/
 					
 				}else if(atributo.equalsIgnoreCase(ReglaVacuna.NOMBRE_TABLA)){
 					publishProgress("Interpretando Reglas de vacunación");
@@ -675,6 +679,9 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(Persona.NOMBRE_TABLA)){
+					/*InterpretarAtributoInsertMasivo(gson, reader, cr, 
+							ProveedorContenido.PERSONA_CONTENT_URI, Persona.ID+"=?", new String[]{Persona.ID}, 
+							"Personas", Persona.class);*/
 					publishProgress("Interpretando Personas");
 					reader.beginArray();
 					while(reader.hasNext()){
@@ -841,6 +848,9 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(EsquemaIncompleto.NOMBRE_TABLA)){
+					/*InterpretarAtributoInsertMasivo(gson, reader, cr, 
+							ProveedorContenido.ESQUEMA_INCOMPLETO_CONTENT_URI, null, null, 
+							"Esquemas incompletos", EsquemaIncompleto.class);*/
 					publishProgress("Interpretando Esquemas incompletos");
 					reader.beginArray();
 					while(reader.hasNext()){
@@ -886,6 +896,74 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 		}
 	}//fin InterpretarDatosServidor
 	
+	/**
+	 * Realiza un insert de elementos en caso de ser instalación nueva. Si es instalación NO nueva
+	 * inserta un registro a la vez y en caso de error de base de datos en insersión intentará un
+	 * update del registro. En cualquier caso se manda a publicar mensajes de status constantemente.
+	 * @param gson Parseador de Json usado para crear <b>reader</b>
+	 * @param reader Lector de Gson creado con el parseador <b>gson</b>
+	 * @param cr Puente de acceso al ContentProvider de base de datos
+	 * @param uriConsulta Uri que describe el script de base de datos a ejecutar
+	 * @param updateWhere Se usa en caso de que sea necesasrio ejecutar un UPDATE en base de datos. 
+	 * Un valor null indicará que no se ejecutará un UPDATE 
+	 * @param updateWhereCamposLlave si <b>updateWhere</b> difiere de null este campo debe contener los nombres de
+	 * los campos en la fila a actualizar usados como llave primaria para ejecutar correctamente UPDATE
+	 * @param atributo Título usado para mostrar mensajes en sincronización
+	 * @param clase Tipo de clase en uso para manejo de los datos en el parseo de Json
+	 * @throws IOException
+	 * @throws IllegalAccessException
+	 */
+	private <T> void InterpretarAtributoInsertMasivo(Gson gson, JsonReader reader, ContentResolver cr, 
+			Uri uriConsulta, String updateWhere, String[] updateWhereCamposLlave, String atributo, Class<T> clase) throws IOException, IllegalAccessException{
+		
+		publishProgress("Interpretando " + atributo);
+		Uri uri = uriConsulta;
+		int registros=0; //contador de registros procesados
+		int limite=500; //límite para acumular bulkinsert (en instalación nueva) o reportar progreso (no nueva)
+
+		reader.beginArray();
+		
+		if(this.aplicacion.getEsInstalacionNueva()){
+			List<Class<T>> lista = new ArrayList<Class<T>>(limite);
+			
+			while(reader.hasNext()){
+				lista.add( (Class<T>) gson.fromJson(reader, clase));
+				if(lista.size()==limite || !reader.hasNext()){
+					ContentValues[] filas = new ContentValues[lista.size()];
+					publishProgress(atributo+"\nGenerando "+lista.size()+" elementos");
+					int n=0;
+					for(Class<T> elemento : lista)
+						filas[n++] = DatosUtil.ContentValuesDesdeObjeto(elemento);
+					registros+=lista.size();
+					publishProgress("Insertando "+lista.size()+" elementos de "+registros+" hasta ahora");
+					cr.bulkInsert(uri, filas);
+					//	cr.update(uri, fila, ArbolSegmentacion.ID+"="+arbol._id,null);
+					lista.clear();
+				}
+			}
+		}else{
+			
+			while(reader.hasNext()){
+				Class<T> elemento = gson.fromJson(reader, clase);
+				ContentValues fila = DatosUtil.ContentValuesDesdeObjeto(elemento);
+				if(cr.insert(uri, fila)==null && updateWhere!=null){
+					String[] args = null;
+					if(updateWhereCamposLlave != null){
+						List<String> listaArgs = new ArrayList<String>();
+						for(String campo : updateWhereCamposLlave)
+							listaArgs.add(fila.getAsString(campo));
+						args = new String[listaArgs.size()];
+						args = listaArgs.toArray(args);
+					}
+					cr.update(uri, fila, updateWhere, args);
+				}
+				if( ++registros % limite == 0 )
+					publishProgress("Procesados "+registros+" elementos");
+			}
+		}
+		
+		reader.endArray();
+	}//fin InterpretarAtributoInsertMasivo
 	
 	private void InterpretarArbolSegmentacion(Gson gson, JsonReader reader, ContentResolver cr) throws IOException, IllegalAccessException{
 		publishProgress("Interpretando Arbol de Segmentación");
@@ -1059,7 +1137,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 			}
 			cur.close();
 			
-			//TABLA PERSONA X AFILIACION ???????????????????????? REGISTRO CIVIL ?????
+			//TABLA PERSONA X AFILIACION
 			where = PersonaAfiliacion.ULTIMA_ACTUALIZACION + ">=?";
 			valoresWhere= valoresWhereSincronizacion;
 			cur = cr.query(ProveedorContenido.PERSONA_AFILIACION_CONTENT_URI, null, where, valoresWhere, null);
@@ -1147,6 +1225,15 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 			}
 			cur.close();
 
+			//TES_PENDIENTES_TARJETA
+			cur = PendientesTarjeta.getPendientesPorSincronizar(contexto);
+			if(cur.getCount()>0){
+				excepciones = new String[]{PendientesTarjeta.ES_PENDIENTE_LOCAL, PendientesTarjeta.RESUELTO};
+				JSONArray filas = DatosUtil.CrearJsonArray(cur, excepciones);
+				datosSalida.put(PendientesTarjeta.NOMBRE_TABLA, filas);
+			}
+			cur.close();
+			
 			//TABLA BITÁCORA
 			where = Bitacora.FECHA_HORA + ">=?";
 			valoresWhere= valoresWhereSincronizacion;
@@ -1175,8 +1262,6 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	        parametros.add(new BasicNameValuePair(PARAMETRO_SESION, idSesion));
 	        parametros.add(new BasicNameValuePair(PARAMETRO_ACCION, ACCION_ENVIAR_SERVIDOR));
 	        parametros.add(new BasicNameValuePair(PARAMETRO_DATOS, datosSalida.toString() ));
-
-///////////////////////TODO TES_PENDIENTES_TARJETA..... PENDIENTE
 	        
 	        publishProgress("Enviando a servidor datos de "+datosSalida.length()+" tablas");
 			String json = webHelper.RequestPost(aplicacion.getUrlSincronizacion(), parametros);

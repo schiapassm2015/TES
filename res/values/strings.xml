@@ -8,6 +8,7 @@
     <string name="desconocido">DESCONOCIDO</string>
     <string name="MARCA_VACUNA">X</string>
     <string name="acerque_tes">Toque la tableta con la TES</string>
+    <string name="acerque_tes_de_nuevo">Hay pendientes que guardar en la tarjeta. Por favor toque la tableta con la TES una vez mas.</string>
     <string name="acerque_tes_guardar">Toque la tableta con la TES para guardar</string>
     <string name="informacion_guardada_en_tes">Información del paciente guardada en TES</string>
     <string name="cancelar">Cancelar</string>

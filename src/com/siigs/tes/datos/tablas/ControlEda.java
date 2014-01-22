@@ -48,6 +48,13 @@ public class ControlEda {
 	public String fecha;
 	public int id_asu_um;
 
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof ControlEda))return false;
+		ControlEda c = (ControlEda)o;
+		return id_eda == c.id_eda && fecha.equals(c.fecha) && id_persona.equals(c.id_persona);
+	}
+	
 	public static Uri AgregarNuevoControlEda(Context context, ControlEda eda) throws Exception{
 		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(eda);
 		Uri salida = context.getContentResolver().insert(ProveedorContenido.CONTROL_EDA_CONTENT_URI, cv);

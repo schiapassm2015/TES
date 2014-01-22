@@ -46,7 +46,7 @@
 	                    android:layout_width="0dp"
 	                    android:layout_height="match_parent"
 	                    android:layout_weight="1"
-	                    android:background="@drawable/gradiente_azul"/>
+	                    android:background="@color/grafica_linea_paciente"/>
 	                
 	                <TextView
 	                    android:layout_width="wrap_content"
@@ -57,7 +57,7 @@
 	                    android:layout_width="0dp"
 	                    android:layout_height="match_parent"
 	                    android:layout_weight="1"
-	                    android:background="@drawable/gradiente_amarillo"/>
+	                    android:background="#ffcc0a"/>
 	                
 	                <TextView
 	                    android:layout_width="wrap_content"
@@ -68,7 +68,7 @@
 	                    android:layout_width="0dp"
 	                    android:layout_height="match_parent"
 	                    android:layout_weight="1"
-	                    android:background="@drawable/gradiente_verde"/>
+	                    android:background="#61ac1e"/>
 	                
 	                <TextView
 	                    android:layout_width="wrap_content"
@@ -79,7 +79,7 @@
 	                    android:layout_width="0dp"
 	                    android:layout_height="match_parent"
 	                    android:layout_weight="1"
-	                    android:background="@drawable/gradiente_naranja"/>
+	                    android:background="#f78f24"/>
 	                
 	                <TextView
 	                    android:layout_width="wrap_content"
@@ -90,7 +90,7 @@
 	                    android:layout_width="0dp"
 	                    android:layout_height="match_parent"
 	                    android:layout_weight="1"
-	                    android:background="@drawable/gradiente_rojo"/>
+	                    android:background="#e82128"/>
 	            </LinearLayout>
             
         </LinearLayout>

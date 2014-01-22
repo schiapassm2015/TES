@@ -43,6 +43,13 @@ public class PersonaAfiliacion {
 	public int id_afiliacion;
 	public String ultima_actualizacion;
 
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof PersonaAfiliacion))return false;
+		PersonaAfiliacion c = (PersonaAfiliacion)o;
+		return id_afiliacion == c.id_afiliacion && id_persona.equals(c.id_persona);
+	}
+	
 	public static List<PersonaAfiliacion> getAfiliacionesPersona(Context context, String idPersona) {
 		Cursor cur = context.getContentResolver().query(
 				ProveedorContenido.PERSONA_AFILIACION_CONTENT_URI, null, 

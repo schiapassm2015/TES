@@ -8,7 +8,7 @@
         android:layout_alignParentLeft="true"
         style="@style/nombre_usuario"
         android:layout_marginRight="@dimen/separacion_nombre_usuario_de_botones_menu"
-        android:text="[JAIME]"/>
+        android:text="[Usuario]"/>
     
     <HorizontalScrollView
         android:background="@color/boton_menu_normal"
@@ -64,7 +64,7 @@
             <TextView
                 android:id="@+id/mnInvitados"
 			    style="@style/boton_menu_superior"
-			    android:drawableLeft="@drawable/ayuda"
+			    android:drawableLeft="@drawable/invitados"
 			    android:text="@string/invitados"/>
 		    
             <TextView

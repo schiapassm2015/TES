@@ -149,6 +149,7 @@ public class ControlVacunas extends Fragment {
 				continue;
 			}
 			//La vacuna debe ser marcada
+			celda.setBackgroundColor(getResources().getColor(R.color.vacuna_aplicable));
 			celda.setText(getText(R.string.MARCA_VACUNA));
 		}
 	}

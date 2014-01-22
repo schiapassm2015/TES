@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.JsonSyntaxException;
 import com.siigs.tes.Sesion;
 import com.siigs.tes.TesAplicacion;
 import com.siigs.tes.datos.tablas.ControlAccionNutricional;
@@ -13,6 +14,8 @@ import com.siigs.tes.datos.tablas.ControlEda;
 import com.siigs.tes.datos.tablas.ControlIra;
 import com.siigs.tes.datos.tablas.ControlNutricional;
 import com.siigs.tes.datos.tablas.ControlVacuna;
+import com.siigs.tes.datos.tablas.ErrorSis;
+import com.siigs.tes.datos.tablas.PendientesTarjeta;
 import com.siigs.tes.datos.tablas.Persona;
 import com.siigs.tes.datos.tablas.PersonaAfiliacion;
 import com.siigs.tes.datos.tablas.PersonaAlergia;
@@ -37,15 +40,25 @@ public class ManejadorNfc {
 	//VERSIONES POSIBLES DE DATOS A CONSIDERAR
 	private static final String VERSION_1 ="1";
 	
-	public static void LeerDatosNFC(Tag nfcTag, Context contexto) throws Exception{
+	/**
+	 * Ejecuta lectura ...
+	 * @param nfcTag
+	 * @param contexto
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<PendientesTarjeta> LeerDatosNFC(Tag nfcTag, Context contexto) throws Exception{
 		TesAplicacion aplicacion = (TesAplicacion)contexto.getApplicationContext();
 		
 		Sesion.DatosPaciente datosPaciente = getDatosPaciente(nfcTag);
 		
-		//TODO checar si tiene pendientes, insertar en datosPaciente, actualizar tes_pendientes si le hice algo
-		//TODO 			si agregué pendientes, reescribir DatosPaciente en NFC
+		//Checamos si hay pendientes para el paciente
+		List<PendientesTarjeta> pendientesResueltos = validarPendientesResueltos(contexto, datosPaciente);
 		
+		//Ponemos este paciente leído como el actual en atención
 		aplicacion.getSesion().setDatosPacienteNuevo(datosPaciente);
+		
+		return pendientesResueltos;
 	}
 	
 	public static boolean nfcTagPerteneceApersona(String idUsuarioValidar, Tag nfcTag){
@@ -379,6 +392,143 @@ public class ManejadorNfc {
 				salida.add(cadenaSeparar.substring(indexInicioCopia));  //... recuperamos el último pedazo que no capturó
 		if(salida.size()==0)return new String[]{cadenaSeparar};
 		return salida.toArray(new String[]{});
+	}
+	
+	//HELPERS PARA PENDIENTES
+	/**
+	 * Verifica los pendientes por resolver para el paciente definido en <b>datosPaciente</b>
+	 * @param contexto
+	 * @param datosPaciente
+	 * @return
+	 */
+	private static List<PendientesTarjeta> validarPendientesResueltos(Context contexto, Sesion.DatosPaciente datosPaciente){
+		//Checamos si hay pendientes para el paciente
+		List<PendientesTarjeta> pendientesResueltos = new ArrayList<PendientesTarjeta>();
+		List<PendientesTarjeta> pendientesResolver = 
+				PendientesTarjeta.getPendientesPaciente(contexto, datosPaciente.persona.id);
+		if(pendientesResolver.size()>0){
+			for(PendientesTarjeta pendiente : pendientesResolver){ 
+				try{
+					if(pendiente.tabla.equals(ControlVacuna.NOMBRE_TABLA)){
+						ControlVacuna nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, ControlVacuna.class);
+						if(!InsertarEnLista(nuevo, datosPaciente.vacunas))
+							continue;
+					}else if(pendiente.tabla.equals(ControlNutricional.NOMBRE_TABLA)){
+						ControlNutricional nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, ControlNutricional.class);
+						if(!InsertarEnLista(nuevo, datosPaciente.controlesNutricionales))
+							continue;
+					}else if(pendiente.tabla.equals(ControlAccionNutricional.NOMBRE_TABLA)){
+						ControlAccionNutricional nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, ControlAccionNutricional.class);
+						if(!InsertarEnLista(nuevo, datosPaciente.accionesNutricionales))
+							continue;
+					}else if(pendiente.tabla.equals(ControlConsulta.NOMBRE_TABLA)){
+						ControlConsulta nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, ControlConsulta.class);
+						if(!InsertarEnLista(nuevo, datosPaciente.consultas))
+							continue;
+					}else if(pendiente.tabla.equals(ControlIra.NOMBRE_TABLA)){
+						ControlIra nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, ControlIra.class);
+						if(!InsertarEnLista(nuevo, datosPaciente.iras))
+							continue;
+					}else if(pendiente.tabla.equals(ControlEda.NOMBRE_TABLA)){
+						ControlEda nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, ControlEda.class);
+						if(!InsertarEnLista(nuevo, datosPaciente.edas))
+							continue;
+						
+						//ESTOS ELEMENTOS SE AGREGAN DIRECTO PUES NO HAY ORDEN ESPECÍFICO REQUERIDO
+					}else if(pendiente.tabla.equals(PersonaAlergia.NOMBRE_TABLA)){
+						PersonaAlergia nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, PersonaAlergia.class);
+						if(datosPaciente.alergias.contains(nuevo))continue;
+						else datosPaciente.alergias.add(nuevo);
+					}else if(pendiente.tabla.equals(PersonaAfiliacion.NOMBRE_TABLA)){
+						PersonaAfiliacion nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, PersonaAfiliacion.class);
+						if(datosPaciente.afiliaciones.contains(nuevo))continue;
+						else datosPaciente.afiliaciones.add(nuevo);
+						//PENDIENTES DE ASIGNACIÓN DIRECTA (SIN LISTA)
+					}else if(pendiente.tabla.equals(RegistroCivil.NOMBRE_TABLA)){
+						RegistroCivil nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, RegistroCivil.class);
+						datosPaciente.registroCivil = nuevo;
+					}else if(pendiente.tabla.equals(Tutor.NOMBRE_TABLA)){
+						Tutor nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, Tutor.class);
+						if(esFechaHoraMenor(datosPaciente.tutor.ultima_actualizacion, nuevo.ultima_actualizacion))
+							datosPaciente.tutor = nuevo;
+						else continue;
+					}else if(pendiente.tabla.equals(Persona.NOMBRE_TABLA)){
+						Persona nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, Persona.class);
+						if(esFechaHoraMenor(datosPaciente.persona.ultima_actualizacion, nuevo.ultima_actualizacion))
+							datosPaciente.persona = nuevo;
+						else continue;
+					}else{
+						continue; //ESTO NUNCA DEBERÍA SUCEDER a menos que se tratara de un tipo de pendiente muy nuevo en app vieja 
+					}
+					pendientesResueltos.add(pendiente);
+					//PendientesTarjeta.MarcarPendienteResuelto(contexto, pendiente);
+					
+				}catch(JsonSyntaxException jse){
+					int idUsuario=((TesAplicacion)contexto.getApplicationContext()).getSesion().getUsuario()._id;
+					ErrorSis.AgregarError(contexto, idUsuario, 0, "Json incorrecto en pendiente de persona:"+
+							pendiente.id_persona+", fecha:"+pendiente.fecha+", tabla:"+pendiente.tabla);
+				}
+				
+			}//fin ciclo pendientes
+			
+			//Esta línea no se puede ejecutar pues la tarjeta fue leída previamente y hay que pasarla de nuevo
+			//físicamente antes de poder escribir. En consecuencia tampoco se puede marcar como resuelto su pendiente aún
+			//EscribirDatosNFC(nfcTag, datosPaciente);
+		}//fin si hay pendientes
+		return pendientesResueltos;
+	}
+	
+	/**
+	 * Inserta objeto en lista en posición ordenada de menor a mayor.
+	 * Si objeto tiene una fecha menor que otros elementos de lista, se insertará en medio
+	 * NOTA: Esta implementación improvisada puede cambiarse por una llamada a 
+	 * Collections.sort(lista, new InstanciaComparador() ) donde InstanciaComparador es
+	 * una clase que implementa Comparator<T>{Compare();}
+	 * @param objeto
+	 * @param lista
+	 */
+	private static <T> boolean InsertarEnLista(T objeto, List<T> lista){
+		if(lista.contains(objeto))return false; //pues no es necesario agregarlo más veces
+		
+		int indice;
+		for(indice=0; indice < lista.size(); indice++){
+			
+			if(objeto instanceof ControlVacuna){
+				if(esFechaHoraMenor( ((ControlVacuna) objeto).fecha, 
+						((ControlVacuna)lista.get(indice)).fecha) )
+					break;
+			}else if(objeto instanceof ControlNutricional){
+				if(esFechaHoraMenor( ((ControlNutricional) objeto).fecha, 
+						((ControlNutricional)lista.get(indice)).fecha) )
+					break;
+			}else if(objeto instanceof ControlAccionNutricional){
+				if(esFechaHoraMenor( ((ControlAccionNutricional) objeto).fecha, 
+						((ControlAccionNutricional)lista.get(indice)).fecha) )
+					break;
+			}else if(objeto instanceof ControlConsulta){
+				if(esFechaHoraMenor( ((ControlConsulta) objeto).fecha, 
+						((ControlConsulta)lista.get(indice)).fecha) )
+					break;
+			}else if(objeto instanceof ControlIra){
+				if(esFechaHoraMenor( ((ControlIra) objeto).fecha, 
+						((ControlIra)lista.get(indice)).fecha) )
+					break;
+			}else if(objeto instanceof ControlEda){
+				if(esFechaHoraMenor( ((ControlEda) objeto).fecha, 
+						((ControlEda)lista.get(indice)).fecha) )
+					break;
+			}
+		}
+		//Inserta objeto en la posición adecuada según su fecha
+		lista.add(indice, objeto);
+		return true;
+	}
+	//Helper para convertir tiempo
+	private static boolean esFechaHoraMenor(String fecha1, String feccha2){
+		try{
+			return DatosUtil.esFechaHoraMenor(fecha1, feccha2);
+		}catch(Exception e){
+			return false;}
 	}
 	
 	/**

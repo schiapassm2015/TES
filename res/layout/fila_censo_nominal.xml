@@ -23,7 +23,7 @@ similar a una tabla -->
 	        android:layout_weight="1"
 	        android:text="Paterno"
 	        android:gravity="center"
-	        android:textColor="#0000ff"/>
+	        android:textColor="@color/link_texto"/>
         
 	    <TextView android:id="@+id/txtPaternoTutor"
 	        android:background="@drawable/borde_gris"
@@ -32,7 +32,7 @@ similar a una tabla -->
 	        android:layout_weight="1"
 	        android:text="Paterno"
 	        android:gravity="center"
-	        android:textColor="#0000ff"/>
+	        android:textColor="@color/link_texto"/>
     </LinearLayout>
     
     <LinearLayout
@@ -49,7 +49,7 @@ similar a una tabla -->
 	        android:layout_weight="1"
 	        android:text="Materno"
 	        android:gravity="center"
-	        android:textColor="#0000ff"/>
+	        android:textColor="@color/link_texto"/>
         
 	    <TextView android:id="@+id/txtMaternoTutor"
 	        android:background="@drawable/borde_gris"
@@ -58,7 +58,7 @@ similar a una tabla -->
 	        android:layout_weight="1"
 	        android:text="Materno"
 	        android:gravity="center"
-	        android:textColor="#0000ff"/>
+	        android:textColor="@color/link_texto"/>
     </LinearLayout>
     
     <LinearLayout
@@ -75,7 +75,7 @@ similar a una tabla -->
 	        android:layout_weight="1"
 	        android:text="Nombre"
 	        android:gravity="center"
-	        android:textColor="#0000ff"/>
+	        android:textColor="@color/link_texto"/>
         
 	    <TextView android:id="@+id/txtNombreTutor"
 	        android:background="@drawable/borde_gris"
@@ -84,7 +84,7 @@ similar a una tabla -->
 	        android:layout_weight="1"
 	        android:text="Nombre"
 	        android:gravity="center"
-	        android:textColor="#0000ff"/>
+	        android:textColor="@color/link_texto"/>
     </LinearLayout>
     
     <TextView android:id="@+id/txtDomicilio"

@@ -251,6 +251,12 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
 			//Fecha nacimiento
 			if(view.getId()==R.id.txtFechaNacimiento){
 				((TextView)view).setText(DatosUtil.fechaCorta(cur.getString(col)));
+				//Usamos el bind de fecha para asignar color de fondo pero pudo ser otro objeto
+				int fondo;
+				if(cur.getPosition() % 2 ==0)
+					fondo = R.drawable.selector_fila_tabla;
+				else fondo = R.drawable.selector_fila_tabla_alterno;
+					((LinearLayout)view.getParent()).setBackgroundResource(fondo);
 				return true;
 			}
 			
@@ -274,7 +280,13 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
 			}
 			
 			//BOTÓN PARA DAR CAPACIDAD DE ATENDER A UN PACIENTE SIN TES
-			if(view.getId()==R.id.txtPaterno || view.getId()==R.id.txtMaterno || view.getId()==R.id.txtNombre)
+			if(view.getId()==R.id.txtPaterno || view.getId()==R.id.txtMaterno || view.getId()==R.id.txtNombre){
+				//NOTA: Esta extracción de ID se hace aquí porque en el evento click
+				// cur tendrá un contexto distinto y devolverá cualquier valor
+				int nColId = esVistaCenso ? 
+						cur.getColumnIndex(Censo._ID_PACIENTE) : 
+							cur.getColumnIndex(EsquemasIncompletos._ID_PACIENTE);
+				final int idPersona = cur.getInt(nColId);
 				((LinearLayout)view.getParent()).setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
@@ -288,7 +300,7 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								//Encapsulamos id de la persona
-								int idPersona = cur.getInt(cur.getColumnIndex(Persona._ID));
+								//int col = cur.
 								Intent datos = new Intent();
 								datos.putExtra(PARAM_ID_PERSONA, idPersona);
 								//Avisamos al target que hemos realizado acción de solicitar atención para alguien
@@ -299,6 +311,7 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
 						dialogo.show();
 					}
 				});
+			}
 			
 			return false; //false para que binder siga haciendo su chamba automática
 		}

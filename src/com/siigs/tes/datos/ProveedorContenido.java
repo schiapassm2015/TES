@@ -677,11 +677,11 @@ public class ProveedorContenido extends ContentProvider {
 			builder.setTables(Tutor.NOMBRE_TABLA);// No existe filtro
 			break;
 			
-		case ProveedorContenido.PENDIENTES_TARJETA_ID:
+		/*case ProveedorContenido.PENDIENTES_TARJETA_ID: //LA TABLA NO IDENTIFICA REGISTROS POR UN SOLO ID
 			builder.setTables(PendientesTarjeta.NOMBRE_TABLA);
 			builder.appendWhere(PendientesTarjeta.ID + "=?");
 			parametros=new String[]{uri.getLastPathSegment()};
-			break;			
+			break;*/			
 		case ProveedorContenido.PENDIENTES_TARJETA_TODOS:
 			builder.setTables(PendientesTarjeta.NOMBRE_TABLA);// No existe filtro
 			break;

@@ -51,6 +51,13 @@ public class ControlAccionNutricional {
 	public int id_asu_um;
 	public transient Integer id_invitado; //transient pues no se envía en JSON
 
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof ControlAccionNutricional))return false;
+		ControlAccionNutricional c = (ControlAccionNutricional)o;
+		return id_accion_nutricional == c.id_accion_nutricional 
+				&& fecha.equals(c.fecha) && id_persona.equals(c.id_persona);
+	}
 	
 	public static Uri AgregarNuevoControlAccionNutricional(Context context, 
 			ControlAccionNutricional accion) throws Exception{
