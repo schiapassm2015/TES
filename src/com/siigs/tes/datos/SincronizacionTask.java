@@ -41,7 +41,6 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
@@ -102,6 +101,9 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	
 	private HttpHelper webHelper;
 		
+	//banderas de status
+	boolean pedirPrimerosDatosDeNuevo = false; //Indicará que se debe pedir de nuevo datos iniciales al servidor
+	
 	
 	public SincronizacionTask(Activity invocador, AlertDialog resultado){
 		super();
@@ -119,7 +121,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();
-		//aplicacion.setUrlSincronizacion("http://192.168.3.14/tes/servicios/prueba");///////TODO BORRRRRRARRRR
+		//aplicacion.setUrlSincronizacion("http://192.168.3.14/tes/servicios/prueba");
 		aplicacion.crearDialogoProgreso(invocador);
 	}
 
@@ -170,8 +172,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 		}
 		
 		
-		//NOTA: ESTE CÓDIGO ES TEMPORAL Y DEBE SER REEMPLAZADO POR UNA FUNCIÓN ÚNICA QUE NOTIFICA
-		//EL MENSAJE DE ABAJO PARA EL CASO DE PEDIR ACTUALIZACIÓN DEL SOFTWARE
+
 		this.dlgResultado.setMessage(resultado);
 		
 		if(aplicacion.getRequiereActualizarApk()){
@@ -401,9 +402,14 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 		stream = GuardarAbrirStream(stream);
 		
 		try {
-			InterpretarDatosServidor(stream);
+			InterpretarDatosServidor(stream); // aquí puede cambiar bandera para pedir primeros datos de nuevo
 			
-			EnviarResultado(idSesion, RESULTADO_OK,null);
+			if(pedirPrimerosDatosDeNuevo){
+				AccionPrimerosDatos(idSesion); //Hace su propio EnviarResultado();
+			}else{
+				EnviarResultado(idSesion, RESULTADO_OK,null);
+			}
+			
 			
 		}catch (SQLiteException e){
 			msgError = "Error al interpretar actualizaciones recibidas para base de datos local:" + e.toString(); 
@@ -447,11 +453,36 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 				
 				if(atributo.equalsIgnoreCase("id_tipo_censo")){
 					publishProgress("Asignando tipo de senso");
-					aplicacion.setTipoCenso( reader.nextInt() );
+					int nuevoCenso = reader.nextInt();
+					if(aplicacion.getTipoCenso() != nuevoCenso){
+						//Habrá cambio de censo así que borramos TODAS las transaccionales
+						publishProgress("Borrando tablas transaccionales");
+						cr.delete(ProveedorContenido.PERSONA_CONTENT_URI, null, null);
+						cr.delete(ProveedorContenido.PERSONA_AFILIACION_CONTENT_URI, null, null);
+						cr.delete(ProveedorContenido.PERSONA_ALERGIA_CONTENT_URI, null, null);
+						cr.delete(ProveedorContenido.PERSONA_TUTOR_CONTENT_URI, null, null);
+						cr.delete(ProveedorContenido.TUTOR_CONTENT_URI, null, null);
+						cr.delete(ProveedorContenido.ANTIGUO_DOMICILIO_CONTENT_URI, null, null);
+						cr.delete(ProveedorContenido.ANTIGUA_UM_CONTENT_URI, null, null);
+						cr.delete(ProveedorContenido.REGISTRO_CIVIL_CONTENT_URI, null, null);
+						cr.delete(ProveedorContenido.CONTROL_VACUNA_CONTENT_URI, null, null);
+						pedirPrimerosDatosDeNuevo=true;
+					}
+					aplicacion.setTipoCenso(nuevoCenso);
 					
 				}else if(atributo.equalsIgnoreCase("id_asu_um")){
 					publishProgress("Asignando unidad médica");
 					aplicacion.setUnidadMedica( reader.nextInt() );
+					
+				}else if(atributo.equalsIgnoreCase("persona_x_borrar")){
+					publishProgress("Borrando Personas específicas");
+					reader.beginArray();
+					while(reader.hasNext()){
+						String idPersona = reader.nextString();
+						publishProgress("Borrando persona "+idPersona);
+						cr.delete(ProveedorContenido.PERSONA_CONTENT_URI, Persona.ID+"=?", new String[]{idPersona});
+					}
+					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(Grupo.NOMBRE_TABLA)){
 					publishProgress("Interpretando Grupos");
@@ -525,54 +556,6 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 					}
 					reader.endArray();
 					
-				}else if(atributo.equalsIgnoreCase(AccionNutricional.NOMBRE_TABLA)){
-					publishProgress("Interpretando Acciones Nutricionales");
-					reader.beginArray();
-					while(reader.hasNext()){
-						AccionNutricional accion = gson.fromJson(reader, AccionNutricional.class);
-						fila = DatosUtil.ContentValuesDesdeObjeto(accion);
-						uri = ProveedorContenido.ACCION_NUTRICIONAL_CONTENT_URI;
-						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, AccionNutricional.ID+"="+accion._id,null);
-					}
-					reader.endArray();
-					
-				}else if(atributo.equalsIgnoreCase(Ira.NOMBRE_TABLA)){
-					publishProgress("Interpretando Iras");
-					reader.beginArray();
-					while(reader.hasNext()){
-						Ira ira = gson.fromJson(reader, Ira.class);
-						fila = DatosUtil.ContentValuesDesdeObjeto(ira);
-						uri = ProveedorContenido.IRA_CONTENT_URI;
-						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, Ira.ID+"="+ira._id,null);
-					}
-					reader.endArray();
-					
-				}else if(atributo.equalsIgnoreCase(Eda.NOMBRE_TABLA)){
-					publishProgress("Interpretando Edas");
-					reader.beginArray();
-					while(reader.hasNext()){
-						Eda eda = gson.fromJson(reader, Eda.class);
-						fila = DatosUtil.ContentValuesDesdeObjeto(eda);
-						uri = ProveedorContenido.EDA_CONTENT_URI;
-						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, Eda.ID+"="+eda._id,null);
-					}
-					reader.endArray();
-					
-				}else if(atributo.equalsIgnoreCase(Consulta.NOMBRE_TABLA)){
-					publishProgress("Interpretando Consultas");
-					reader.beginArray();
-					while(reader.hasNext()){
-						Consulta consulta = gson.fromJson(reader, Consulta.class);
-						fila = DatosUtil.ContentValuesDesdeObjeto(consulta);
-						uri = ProveedorContenido.CONSULTA_CONTENT_URI;
-						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, Consulta.ID+"="+consulta._id,null);
-					}
-					reader.endArray();
-					
 				}else if(atributo.equalsIgnoreCase(Alergia.NOMBRE_TABLA)){
 					publishProgress("Interpretando Alergias");
 					reader.beginArray();
@@ -635,11 +618,11 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(ArbolSegmentacion.NOMBRE_TABLA)){
-					InterpretarArbolSegmentacion(gson, reader, cr);
-					/*InterpretarAtributoInsertMasivo(gson, reader, cr, 
+					//InterpretarArbolSegmentacion(gson, reader, cr);
+					InterpretarAtributoInsertMasivo(gson, reader, cr, 
 							ProveedorContenido.ARBOL_SEGMENTACION_CONTENT_URI, 
 							ArbolSegmentacion.ID+"=?", new String[]{ArbolSegmentacion.ID}, 
-							"Arbol de segmentación", ArbolSegmentacion.class);*/
+							"Arbol de segmentación", ArbolSegmentacion.class);
 					
 				}else if(atributo.equalsIgnoreCase(ReglaVacuna.NOMBRE_TABLA)){
 					publishProgress("Interpretando Reglas de vacunación");
@@ -665,9 +648,13 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 					}
 					reader.endArray();
 					
+					
 				//////////////////TABLAS TRANSACCIONALES/////////////////
 				}else if(atributo.equalsIgnoreCase(Tutor.NOMBRE_TABLA)){
-					publishProgress("Interpretando Tutores");
+					InterpretarAtributoInsertMasivo(gson, reader, cr, 
+							ProveedorContenido.TUTOR_CONTENT_URI, Tutor.ID+"=?", new String[]{Tutor.ID}, 
+							"Tutores", Tutor.class);
+					/*publishProgress("Interpretando Tutores");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Tutor tutor = gson.fromJson(reader, Tutor.class);
@@ -676,13 +663,13 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 						if(cr.insert(uri, fila)==null)
 							cr.update(uri, fila, Tutor.ID+"=?",new String[]{tutor.id});
 					}
-					reader.endArray();
+					reader.endArray();*/
 					
 				}else if(atributo.equalsIgnoreCase(Persona.NOMBRE_TABLA)){
-					/*InterpretarAtributoInsertMasivo(gson, reader, cr, 
+					InterpretarAtributoInsertMasivo(gson, reader, cr, 
 							ProveedorContenido.PERSONA_CONTENT_URI, Persona.ID+"=?", new String[]{Persona.ID}, 
-							"Personas", Persona.class);*/
-					publishProgress("Interpretando Personas");
+							"Personas", Persona.class);
+					/*publishProgress("Interpretando Personas");
 					reader.beginArray();
 					while(reader.hasNext()){
 						Persona persona = gson.fromJson(reader, Persona.class);
@@ -691,10 +678,14 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 						if(cr.insert(uri, fila)==null)
 							cr.update(uri, fila, Persona.ID+"=?",new String[]{persona.id});
 					}
-					reader.endArray();
+					reader.endArray();*/
 					
 				}else if(atributo.equalsIgnoreCase(PersonaTutor.NOMBRE_TABLA)){
-					publishProgress("Interpretando Personas con Tutores");
+					InterpretarAtributoInsertMasivo(gson, reader, cr,
+							ProveedorContenido.PERSONA_TUTOR_CONTENT_URI, 
+							PersonaTutor.ID_PERSONA+"=?", new String[]{PersonaTutor.ID_PERSONA},
+							"Personas con Tutores", PersonaTutor.class);
+					/*publishProgress("Interpretando Personas con Tutores");
 					reader.beginArray();
 					while(reader.hasNext()){
 						PersonaTutor persona_tutor = gson.fromJson(reader, PersonaTutor.class);
@@ -703,10 +694,14 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 						if(cr.insert(uri, fila)==null)
 							cr.update(uri, fila, PersonaTutor.ID_PERSONA+"=?",new String[]{persona_tutor.id_persona});
 					}
-					reader.endArray();
+					reader.endArray();*/
 					
 				}else if(atributo.equalsIgnoreCase(PersonaAlergia.NOMBRE_TABLA)){
-					publishProgress("Interpretando Personas con alergias");
+					InterpretarAtributoInsertMasivo(gson, reader, cr, 
+							ProveedorContenido.PERSONA_ALERGIA_CONTENT_URI, 
+							PersonaAlergia.ID_PERSONA+"=?", new String[]{PersonaAlergia.ID_PERSONA},
+							"Personas con alergias", PersonaAlergia.class);
+					/*publishProgress("Interpretando Personas con alergias");
 					reader.beginArray();
 					while(reader.hasNext()){
 						PersonaAlergia persona_alergia = gson.fromJson(reader, PersonaAlergia.class);
@@ -715,10 +710,15 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 						if(cr.insert(uri, fila)==null)
 							cr.update(uri, fila, PersonaAlergia.ID_PERSONA+"=?",new String[]{persona_alergia.id_persona});
 					}
-					reader.endArray();
+					reader.endArray();*/
 					
 				}else if(atributo.equalsIgnoreCase(PersonaAfiliacion.NOMBRE_TABLA)){
-					publishProgress("Interpretando Personas con afiliaciones");
+					InterpretarAtributoInsertMasivo(gson, reader, cr, 
+							ProveedorContenido.PERSONA_AFILIACION_CONTENT_URI, 
+							PersonaAfiliacion.ID_PERSONA+"=? and "+PersonaAfiliacion.ID_AFILIACION+"=?", 
+							new String[]{PersonaAfiliacion.ID_PERSONA, PersonaAfiliacion.ID_AFILIACION}, 
+							"Personas con afiliaciones", PersonaAfiliacion.class);
+					/*publishProgress("Interpretando Personas con afiliaciones");
 					reader.beginArray();
 					while(reader.hasNext()){
 						PersonaAfiliacion persona_afiliacion = gson.fromJson(reader, PersonaAfiliacion.class);
@@ -729,10 +729,14 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 									+PersonaAfiliacion.ID_AFILIACION+"=?",
 									new String[]{persona_afiliacion.id_persona, persona_afiliacion.id_afiliacion+""});
 					}
-					reader.endArray();
+					reader.endArray();*/
 					
 				}else if(atributo.equalsIgnoreCase(RegistroCivil.NOMBRE_TABLA)){
-					publishProgress("Interpretando Registro Civil");
+					InterpretarAtributoInsertMasivo(gson, reader, cr, 
+							ProveedorContenido.REGISTRO_CIVIL_CONTENT_URI, 
+							RegistroCivil.ID_PERSONA+"=?",new String[]{RegistroCivil.ID_PERSONA}, 
+							"Registro Civil", RegistroCivil.class);
+					/*publishProgress("Interpretando Registro Civil");
 					reader.beginArray();
 					while(reader.hasNext()){
 						RegistroCivil registro = gson.fromJson(reader, RegistroCivil.class);
@@ -741,7 +745,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 						if(cr.insert(uri, fila)==null)
 							cr.update(uri, fila, RegistroCivil.ID_PERSONA+"=?",new String[]{registro.id_persona});
 					}
-					reader.endArray();
+					reader.endArray();*/
 					
 				}else if(atributo.equalsIgnoreCase(AntiguaUM.NOMBRE_TABLA)){
 					publishProgress("Interpretando Antiguas unidades médicas");
@@ -770,7 +774,11 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 					reader.endArray();
 					
 				}else if(atributo.equalsIgnoreCase(ControlVacuna.NOMBRE_TABLA)){
-					publishProgress("Interpretando Controles de Vacunas");
+					InterpretarAtributoInsertMasivo(gson, reader, cr, ProveedorContenido.CONTROL_VACUNA_CONTENT_URI, 
+							ControlVacuna.ID_VACUNA+"=? and "+ ControlVacuna.FECHA+"=? and "+ControlVacuna.ID_PERSONA+"=?", 
+							new String[]{ControlVacuna.ID_VACUNA, ControlVacuna.FECHA, ControlVacuna.ID_PERSONA}, 
+							"Controles de Vacunas", ControlVacuna.class);
+					/*publishProgress("Interpretando Controles de Vacunas");
 					reader.beginArray();
 					while(reader.hasNext()){
 						ControlVacuna control_vacuna = gson.fromJson(reader, ControlVacuna.class);
@@ -780,78 +788,13 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 							cr.update(uri, fila, ControlVacuna.ID_PERSONA+"=? and "+ ControlVacuna.FECHA+"=?", 
 									new String[]{control_vacuna.id_persona, control_vacuna.fecha});
 					}
-					reader.endArray();
-					
-				}else if(atributo.equalsIgnoreCase(ControlIra.NOMBRE_TABLA)){
-					publishProgress("Interpretando Controles de Iras");
-					reader.beginArray();
-					while(reader.hasNext()){
-						ControlIra control_ira = gson.fromJson(reader, ControlIra.class);
-						fila = DatosUtil.ContentValuesDesdeObjeto(control_ira);
-						uri = ProveedorContenido.CONTROL_IRA_CONTENT_URI;
-						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, ControlIra.ID_PERSONA+"=? and "+ ControlIra.FECHA+"=?", 
-									new String[]{control_ira.id_persona, control_ira.fecha});
-					}
-					reader.endArray();
-					
-				}else if(atributo.equalsIgnoreCase(ControlEda.NOMBRE_TABLA)){
-					publishProgress("Interpretando Controles de Edas");
-					reader.beginArray();
-					while(reader.hasNext()){
-						ControlEda control_eda = gson.fromJson(reader, ControlEda.class);
-						fila = DatosUtil.ContentValuesDesdeObjeto(control_eda);
-						uri = ProveedorContenido.CONTROL_EDA_CONTENT_URI;
-						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, ControlEda.ID_PERSONA+"=? and "+ ControlEda.FECHA+"=?", 
-									new String[]{control_eda.id_persona, control_eda.fecha});
-					}
-					reader.endArray();
-					
-				}else if(atributo.equalsIgnoreCase(ControlConsulta.NOMBRE_TABLA)){
-					publishProgress("Interpretando Controles de Consultas");
-					reader.beginArray();
-					while(reader.hasNext()){
-						ControlConsulta control_consulta = gson.fromJson(reader, ControlConsulta.class);
-						fila = DatosUtil.ContentValuesDesdeObjeto(control_consulta);
-						uri = ProveedorContenido.CONTROL_CONSULTA_CONTENT_URI;
-						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, ControlConsulta.ID_PERSONA+"=? and "+ ControlConsulta.FECHA+"=?", 
-									new String[]{control_consulta.id_persona, control_consulta.fecha});
-					}
-					reader.endArray();
-					
-				}else if(atributo.equalsIgnoreCase(ControlAccionNutricional.NOMBRE_TABLA)){
-					publishProgress("Interpretando Controles de Acciones Nutricionales");
-					reader.beginArray();
-					while(reader.hasNext()){
-						ControlAccionNutricional control_accion = gson.fromJson(reader, ControlAccionNutricional.class);
-						fila = DatosUtil.ContentValuesDesdeObjeto(control_accion);
-						uri = ProveedorContenido.CONTROL_ACCION_NUTRICIONAL_CONTENT_URI;
-						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, ControlAccionNutricional.ID_PERSONA+"=? and "+ ControlAccionNutricional.FECHA+"=?", 
-									new String[]{control_accion.id_persona, control_accion.fecha});
-					}
-					reader.endArray();
-					
-				}else if(atributo.equalsIgnoreCase(ControlNutricional.NOMBRE_TABLA)){
-					publishProgress("Interpretando Controles Nutricionales");
-					reader.beginArray();
-					while(reader.hasNext()){
-						ControlNutricional control_nutricional = gson.fromJson(reader, ControlNutricional.class);
-						fila = DatosUtil.ContentValuesDesdeObjeto(control_nutricional);
-						uri = ProveedorContenido.CONTROL_NUTRICIONAL_CONTENT_URI;
-						if(cr.insert(uri, fila)==null)
-							cr.update(uri, fila, ControlNutricional.ID_PERSONA+"=? and "+ ControlNutricional.FECHA+"=?", 
-									new String[]{control_nutricional.id_persona, control_nutricional.fecha});
-					}
-					reader.endArray();
+					reader.endArray();*/
 					
 				}else if(atributo.equalsIgnoreCase(EsquemaIncompleto.NOMBRE_TABLA)){
-					/*InterpretarAtributoInsertMasivo(gson, reader, cr, 
+					InterpretarAtributoInsertMasivo(gson, reader, cr, 
 							ProveedorContenido.ESQUEMA_INCOMPLETO_CONTENT_URI, null, null, 
-							"Esquemas incompletos", EsquemaIncompleto.class);*/
-					publishProgress("Interpretando Esquemas incompletos");
+							"Esquemas incompletos", EsquemaIncompleto.class);
+					/*publishProgress("Interpretando Esquemas incompletos");
 					reader.beginArray();
 					while(reader.hasNext()){
 						EsquemaIncompleto esquema = gson.fromJson(reader, EsquemaIncompleto.class);
@@ -859,7 +802,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 						uri = ProveedorContenido.ESQUEMA_INCOMPLETO_CONTENT_URI;
 						cr.insert(uri, fila); //No hay updates en caso de haber repetidos (tabla debería estar vacía antes)
 					}
-					reader.endArray();
+					reader.endArray();*/
 					
 				}else{
 					//Se recibió algo que NO se puede interpretar (así pues mal formado)
@@ -877,6 +820,8 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 			reader.close();
 			if(!contexto.deleteFile(ARCHIVO_JSON))
 				publishProgress("No se borró archivo temporal de descarga");
+			
+				
 		}catch(UnsupportedEncodingException e) {
 			e.printStackTrace();
 			//Sucede al intentar leer UTF-8. Nunca debería suceder
@@ -923,19 +868,20 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 
 		reader.beginArray();
 		
-		if(this.aplicacion.getEsInstalacionNueva()){
-			List<Class<T>> lista = new ArrayList<Class<T>>(limite);
+		if(this.aplicacion.getEsInstalacionNueva() || clase==EsquemaIncompleto.class || pedirPrimerosDatosDeNuevo){
+			List<T> lista = new ArrayList<T>(limite);
 			
 			while(reader.hasNext()){
-				lista.add( (Class<T>) gson.fromJson(reader, clase));
+				T obj = gson.fromJson(reader, clase);
+				lista.add(obj);
 				if(lista.size()==limite || !reader.hasNext()){
 					ContentValues[] filas = new ContentValues[lista.size()];
 					publishProgress(atributo+"\nGenerando "+lista.size()+" elementos");
 					int n=0;
-					for(Class<T> elemento : lista)
+					for(T elemento : lista)
 						filas[n++] = DatosUtil.ContentValuesDesdeObjeto(elemento);
 					registros+=lista.size();
-					publishProgress("Insertando "+lista.size()+" elementos de "+registros+" hasta ahora");
+					publishProgress(atributo+"\nInsertando "+lista.size()+" elementos de "+registros+" hasta ahora");
 					cr.bulkInsert(uri, filas);
 					//	cr.update(uri, fila, ArbolSegmentacion.ID+"="+arbol._id,null);
 					lista.clear();
@@ -944,7 +890,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 		}else{
 			
 			while(reader.hasNext()){
-				Class<T> elemento = gson.fromJson(reader, clase);
+				T elemento = gson.fromJson(reader, clase);
 				ContentValues fila = DatosUtil.ContentValuesDesdeObjeto(elemento);
 				if(cr.insert(uri, fila)==null && updateWhere!=null){
 					String[] args = null;
@@ -958,54 +904,14 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 					cr.update(uri, fila, updateWhere, args);
 				}
 				if( ++registros % limite == 0 )
-					publishProgress("Procesados "+registros+" elementos");
+					publishProgress(atributo+"\nProcesados "+registros+" elementos");
 			}
 		}
 		
 		reader.endArray();
 	}//fin InterpretarAtributoInsertMasivo
 	
-	private void InterpretarArbolSegmentacion(Gson gson, JsonReader reader, ContentResolver cr) throws IOException, IllegalAccessException{
-		publishProgress("Interpretando Arbol de Segmentación");
-		Uri uri = ProveedorContenido.ARBOL_SEGMENTACION_CONTENT_URI;
-		int registros=0; //contador de registros procesados
-		int limite=500; //límite para acumular bulkinsert (en instalación nueva) o reportar progreso (no nueva)
-
-		reader.beginArray();
 		
-		if(this.aplicacion.getEsInstalacionNueva()){
-			List<ArbolSegmentacion> lista = new ArrayList<ArbolSegmentacion>(limite);
-			
-			while(reader.hasNext()){
-				lista.add((ArbolSegmentacion) gson.fromJson(reader, ArbolSegmentacion.class));
-				if(lista.size()==limite || !reader.hasNext()){
-					ContentValues[] filas = new ContentValues[lista.size()];
-					publishProgress("Generandoo "+lista.size()+" ramas");
-					int n=0;
-					for(ArbolSegmentacion arbol : lista)
-						filas[n++] = DatosUtil.ContentValuesDesdeObjeto(arbol);
-					registros+=lista.size();
-					publishProgress("Insertando "+lista.size()+" ramas de "+registros+" hasta ahora");
-					cr.bulkInsert(uri, filas);
-					//	cr.update(uri, fila, ArbolSegmentacion.ID+"="+arbol._id,null);
-					lista.clear();
-				}
-			}
-		}else{
-			
-			while(reader.hasNext()){
-				ArbolSegmentacion arbol = gson.fromJson(reader, ArbolSegmentacion.class);
-				ContentValues fila = DatosUtil.ContentValuesDesdeObjeto(arbol);
-				if(cr.insert(uri, fila)==null)
-					cr.update(uri, fila, ArbolSegmentacion.ID+"="+ arbol._id, null);
-				if( ++registros % limite == 0 )
-					publishProgress("Procesadas "+registros+" ramas");
-			}
-		}
-		
-		reader.endArray();
-	}//fin InterpretarArbolSegmentacion
-	
 	/**
 	 * Guarda stream en disco. Cierra el stream original y regresa el archivo generado al principio
 	 * en un FileInputStream abierto y listo para consumirse
@@ -1044,6 +950,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	private void BorrarDatosAntesSinc(){
 		ContentResolver cr = contexto.getContentResolver();
 		cr.delete(ProveedorContenido.ESQUEMA_INCOMPLETO_CONTENT_URI, null, null);
+		cr.delete(ProveedorContenido.NOTIFICACION_CONTENT_URI, null, null);
 		cr.delete(ProveedorContenido.PENDIENTES_TARJETA_CONTENT_URI, null, null);
 	}
 	
@@ -1169,62 +1076,7 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 				datosSalida.put(ControlVacuna.NOMBRE_TABLA, filas);
 			}
 			cur.close();
-			
-			//TABLA CONTROL IRA
-			where = ControlIra.FECHA + ">=?";
-			valoresWhere= valoresWhereSincronizacion;
-			cur = cr.query(ProveedorContenido.CONTROL_IRA_CONTENT_URI, null, where, valoresWhere, null);
-			if(cur.getCount()>0){
-				excepciones= new String[]{ControlIra._ID};
-				JSONArray filas = DatosUtil.CrearJsonArray(cur,excepciones);
-				datosSalida.put(ControlIra.NOMBRE_TABLA, filas);
-			}
-			cur.close();
-			
-			//TABLA CONTROL EDA
-			where = ControlEda.FECHA + ">=?";
-			valoresWhere= valoresWhereSincronizacion;
-			cur = cr.query(ProveedorContenido.CONTROL_EDA_CONTENT_URI, null, where, valoresWhere, null);
-			if(cur.getCount()>0){
-				excepciones= new String[]{ControlEda._ID};
-				JSONArray filas = DatosUtil.CrearJsonArray(cur,excepciones);
-				datosSalida.put(ControlEda.NOMBRE_TABLA, filas);
-			}
-			cur.close();
-			
-			//TABLA CONTROL CONSULTA
-			where = ControlConsulta.FECHA + ">=?";
-			valoresWhere= valoresWhereSincronizacion;
-			cur = cr.query(ProveedorContenido.CONTROL_CONSULTA_CONTENT_URI, null, where, valoresWhere, null);
-			if(cur.getCount()>0){
-				excepciones= new String[]{ControlConsulta._ID};
-				JSONArray filas = DatosUtil.CrearJsonArray(cur,excepciones);
-				datosSalida.put(ControlConsulta.NOMBRE_TABLA, filas);
-			}
-			cur.close();
-			
-			//TABLA CONTROL ACCION NUTRICIONAL
-			where = ControlAccionNutricional.FECHA + ">=?";
-			valoresWhere= valoresWhereSincronizacion;
-			cur = cr.query(ProveedorContenido.CONTROL_ACCION_NUTRICIONAL_CONTENT_URI, null, where, valoresWhere, null);
-			if(cur.getCount()>0){
-				excepciones= new String[]{ControlAccionNutricional._ID};
-				JSONArray filas = DatosUtil.CrearJsonArray(cur,excepciones);
-				datosSalida.put(ControlAccionNutricional.NOMBRE_TABLA, filas);
-			}
-			cur.close();
-			
-			//TABLA CONTROL NUTRICIONAL
-			where = ControlNutricional.FECHA + ">=?";
-			valoresWhere= valoresWhereSincronizacion;
-			cur = cr.query(ProveedorContenido.CONTROL_NUTRICIONAL_CONTENT_URI, null, where, valoresWhere, null);
-			if(cur.getCount()>0){
-				excepciones= new String[]{ControlNutricional._ID};
-				JSONArray filas = DatosUtil.CrearJsonArray(cur,excepciones);
-				datosSalida.put(ControlNutricional.NOMBRE_TABLA, filas);
-			}
-			cur.close();
-
+						
 			//TES_PENDIENTES_TARJETA
 			cur = PendientesTarjeta.getPendientesPorSincronizar(contexto);
 			if(cur.getCount()>0){
@@ -1302,46 +1154,8 @@ public class SincronizacionTask extends AsyncTask<String, String, String> {
 	private void DefinirComoDispositivoSinActualizar(String urlActualizacion){
 		this.aplicacion.setRequiereActualizarApk(true);
 		this.aplicacion.setUrlActualizacionApk(urlActualizacion);
-	}
-		
-	private void GenerarAccionX(){//TODO Borrar esta función
-		String jsonString="{\"llave_sesion\":\"milla'veSe,sion\",\"unidad_medica\":321,\"atributo2\":\"\",\"atributo3\":\"abc\",\"catalogo1\":[{\"id\":789,\"campo2\":\"qwe\",\"campo3\":\"valCampo3\"},{\"id\":456,\"campo2\":\"txt\",\"campo3\":\"bvc\"}],\"catalogo2\":[{\"id\":987,\"campo2\":\"poi\",\"campo3\":\"rfv\"},{\"id\":963,\"campo2\":\"kjh\",\"campo3\":\"olm\"}],\"catalogo3\":[{\"id\":741,\"campo2\":\"c3val2\",\"campo3\":\"c3val3\"},{\"id\":147,\"campo2\":\"c3f2v2\",\"campo3\":\"c3f2v3\"}]}";
-		
-		try {
-			JSONObject js=new JSONObject(jsonString);
-			String llave, atr2, atr3;
-			llave=js.getString("llave_sesion");
-			atr2=js.getString("atributo2");
-			atr3=js.getString("atributo3");
-			String salida="llave:"+llave+", um:"+js.getInt("unidad_medica")+", atr2:"+atr2+", atr3:"+atr3;
-			
-			JSONArray[] catalogos={js.getJSONArray("catalogo1"), 
-					js.getJSONArray("catalogo2"), js.getJSONArray("catalogo3")};
-			for(int c=0;c<catalogos.length;c++){
-				JSONArray cat=catalogos[c];
-				salida+="--catalogo"+c+"--";
-				for(int i=0;i<cat.length();i++){
-					JSONObject fila= cat.getJSONObject(i);
-					salida+="fila: id="+fila.getInt("id")+", c2="+fila.getString("campo2")+", c3="+fila.getString("campo3");
-				}
-			}
-			
-			
-			
-			JSONObject nuevo = new JSONObject();
-			JSONObject fil=new JSONObject();fil.put("id", 123).put("columna2", "c2").put("columna3", "c3");
-			JSONArray ncat=new JSONArray();ncat.put(fil);
-			fil=new JSONObject();fil.put("id", 987).put("columna2", "f2c2").put("columna3", "f2c3");
-			ncat.put(fil);
-			nuevo.put("llavesesion", 852);nuevo.put("um", 741);nuevo.put("atributo2", "atr2").put("atributo3", nuevo.toString())
-			.put("catalogo1",ncat);
-			Log.d(TAG, "JSON nuevo: "+nuevo.toString(3));
-			Log.d(TAG, "Parseado correcto: "+salida);
-		} catch (JSONException e) {
-			Log.d(TAG, "Error al parsear JSON: "+e.toString());
-			e.printStackTrace();
-		}
-	}
+	}		
+
 	
 	
 	/**

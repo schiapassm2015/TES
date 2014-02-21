@@ -7,6 +7,7 @@ package com.siigs.tes;
 import java.util.List;
 
 import com.siigs.tes.datos.ManejadorNfc;
+import com.siigs.tes.datos.tablas.ErrorSis;
 import com.siigs.tes.datos.tablas.PendientesTarjeta;
 
 import android.app.Activity;
@@ -93,7 +94,6 @@ public class DialogoTes extends DialogFragment {
 	private NfcAdapter adaptadorNFC;
 	private PendingIntent pendingIntentNFC;
 	private IntentFilter writeTagFiltersNFC[];
-	private Tag tagNFC;
 	private boolean modoEscrituraNFC;
 	
 	private PendientesTarjeta pendiente = null; //Pendiente que mandaría a escribir
@@ -209,8 +209,8 @@ public class DialogoTes extends DialogFragment {
 		btnAyuda.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				int layout = modoOperacion == ModoOperacion.LOGIN //TODO CREAR LAYOUT ayuda_dialogo_tes_guardar
-						? R.layout.ayuda_dialogo_tes_login : R.layout.ayuda_dialogo_tes_login;
+				int layout = modoOperacion == ModoOperacion.LOGIN
+						? R.string.ayuda_tes_login : R.string.ayuda_tes_guardar;
 				DialogoAyuda.CrearNuevo(getFragmentManager(), layout);
 			}
 		});
@@ -245,7 +245,11 @@ public class DialogoTes extends DialogFragment {
 				Cerrar(DialogoTes.RESULT_OK);
 			}
 		} catch (Exception e) {
-			Toast.makeText(getActivity(), e.getMessage() + ":\n"+e.toString(), Toast.LENGTH_LONG).show();
+			String msg = e.getMessage() + ":\n"+e.toString();
+			Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+			ErrorSis.AgregarError(getActivity(), 
+					((TesAplicacion)getActivity().getApplication()).getSesion().getUsuario()._id, 
+					ErrorSis.ERROR_DESCONOCIDO, "NFC:"+msg);
 		}
 	}
 	

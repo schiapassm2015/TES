@@ -61,10 +61,27 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal -->
             android:id="@+id/txtAnoNacimiento"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="35"
+            android:layout_weight="12"
             android:inputType="number"
             android:maxLength="4" />
 
+        <TextView
+            style="@style/atributo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:gravity="center_horizontal"
+            android:text="@string/ageb" />
+
+        <EditText
+            android:id="@+id/txtAGEB"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="13"
+            android:inputType="textCapCharacters"
+            android:digits="@string/caracteres_permitidos"
+            android:maxLength="4" />
+        
         <Button
             android:id="@+id/btnVerTodos"
             android:layout_width="0dp"
@@ -167,6 +184,13 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal -->
                     android:text="@string/curp" />
 
                 <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    style="@style/celda_header"
+                    android:gravity="center"
+                    android:text="@string/ageb" />
+                
+                <TextView
                     android:layout_width="70dp"
                     android:layout_height="match_parent"
                     style="@style/celda_header"
@@ -180,83 +204,15 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal -->
                     android:gravity="center"
                     android:text="@string/sexo" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/celda_header"
-                    android:orientation="vertical" >
 
+                    <!-- 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         style="@style/celda_header"
                         android:gravity="center"
                         android:text="Esquema de Vacunación" />
-
-                    <!-- Títulos de grupos de vacunas -->
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/celda_header"
-                        android:orientation="horizontal" >
-
-                        <TextView
-                            android:layout_width="30dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
-                            android:gravity="center"
-                            android:text="@string/bcg" />
-
-                        <TextView
-                            android:layout_width="54dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
-                            android:gravity="center"
-                            android:text="@string/hepatitis_b" />
-
-                        <TextView
-                            android:layout_width="72dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
-                            android:gravity="center"
-                            android:text="Pentavalente" />
-
-                        <TextView
-                            android:layout_width="30dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
-                            android:gravity="center"
-                            android:text="@string/dpt" />
-
-                        <TextView
-                            android:layout_width="36dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
-                            android:gravity="center"
-                            android:text="SRP" />
-
-                        <TextView
-                            android:layout_width="54dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
-                            android:gravity="center"
-                            android:text="@string/rotavirus" />
-
-                        <TextView
-                            android:layout_width="54dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
-                            android:gravity="center"
-                            android:text="Neumococo" />
-
-                        <TextView
-                            android:layout_width="54dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
-                            android:gravity="center"
-                            android:text="Influenza" />
-                    </LinearLayout>
+ 					-->
 
                     <!-- Celdas de vacunas individuales (U,1,2,3,R,etc) -->
 
@@ -269,177 +225,144 @@ se compone de Grupo:controles, Subgrupo:censo, Control:censo_nominal -->
                         <!-- BCG -->
 
                         <TextView
-                            android:layout_width="30dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="U" />
+                            android:text="@string/bcg" />
 
                         <!-- Hepatitis B -->
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="1" />
+                            android:text="HB1" />
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="2" />
+                            android:text="HB2" />
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="3" />
+                            android:text="HB3" />
 
                         <!-- Pentavalente -->
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="1" />
+                            android:text="PA1" />
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="2" />
+                            android:text="PA2" />
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="3" />
+                            android:text="PA3" />
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="4" />
+                            android:text="PA4" />
 
                         <!-- DPT -->
 
                         <TextView
-                            android:layout_width="30dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="R" />
+                            android:text="DPTR" />
 
                         <!-- SRP -->
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="1" />
+                            android:text="SRP1" />
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="R" />
+                            android:text="SRP2" />
 
                         <!-- Rotavirus -->
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="1" />
+                            android:text="RV1" />
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="2" />
+                            android:text="RV2" />
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="3" />
+                            android:text="RV3" />
 
                         <!-- Neumococo -->
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="1" />
+                            android:text="NC1" />
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="2" />
+                            android:text="NC2" />
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="3" />
+                            android:text="NC3" />
 
                         <!-- Influenza -->
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="1" />
+                            android:text="IN1" />
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="2" />
+                            android:text="IN2" />
 
                         <TextView
-                            android:layout_width="18dp"
-                            android:layout_height="match_parent"
-                            style="@style/celda_header"
+                            style="@style/header_vacuna"
                             android:gravity="center"
-                            android:text="R" />
+                            android:text="INR" />
                     </LinearLayout>
-                </LinearLayout>
+                    
             </LinearLayout>
 
             <!-- DATOS -->
+
+			<ProgressBar android:id="@+id/pbProgreso"
+			    android:indeterminateOnly="true"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:visibility="gone"/>
 
             <ListView
                 android:id="@+id/lvResultados"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 tools:listitem="@layout/fila_censo_nominal" >
+                
+                
             </ListView>
 
             <TextView
                 android:id="@+id/txtSinResultados"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/sin_resultados"
+                style="@style/sin_resultados"
                 android:visibility="gone" />
+            
         </LinearLayout>
     </HorizontalScrollView>
 

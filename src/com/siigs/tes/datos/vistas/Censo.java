@@ -19,7 +19,7 @@ public class Censo {
 	public static final String MASCULINO = "M";
 	public static final String FEMENINO = "F";
 	
-	public static CursorLoader getCenso(Context context, String nombre, Integer anoNacimiento, String sexo){
+	public static CursorLoader getCenso(Context context, String nombre, Integer anoNacimiento, String sexo, String ageb){
 		String selection = "1=1";
 		if(nombre != null)
 			selection += " AND (p."+Persona.NOMBRE + " LIKE '%"+nombre+"%' OR p."+Persona.APELLIDO_PATERNO
@@ -29,6 +29,8 @@ public class Censo {
 			selection += " AND '" + anoNacimiento + "'=" + "strftime('%Y', p."+Persona.FECHA_NACIMIENTO+")";
 		if(sexo != null)
 			selection += " AND " + "p."+Persona.SEXO + "='"+sexo+"'";
+		if(ageb != null)
+			selection += " AND " + "p."+Persona.AGEB + "='"+ageb+"'";
 		return new CursorLoader(context, ProveedorContenido.CENSO_CONTENT_URI, null, selection, null, null);
 	}
 	
@@ -72,6 +74,9 @@ public class Censo {
 	public final static String REFERENCIA_DOMICILIO = Persona.REFERENCIA_DOMICILIO;
 	private final static String COL_REFERENCIA_DOMICILIO = "p." + Persona.REFERENCIA_DOMICILIO + " " + REFERENCIA_DOMICILIO;
 
+	public final static String AGEB = Persona.AGEB;
+	private final static String COL_AGEB = "p." + Persona.AGEB + " " + AGEB;
+	
 	public final static String CURP = Persona.CURP;
 	private final static String COL_CURP = "p." + Persona.CURP+ " " + CURP;
 	
@@ -146,7 +151,7 @@ public class Censo {
 	//Columnas para la consulta del ContentProvider
 	public final static String[] COLUMNAS = new String[]{COL__ID_PACIENTE, COL_NOMBRE_PACIENTE, COL_APPAT_PACIENTE, 
 		COL_APMAT_PACIENTE, COL_NOMBRE_TUTOR, COL_APPAT_TUTOR, COL_APMAT_TUTOR, COL_CALLE_DOMICILIO, 
-		COL_NUMERO_DOMICILIO, COL_COLONIA_DOMICILIO, COL_REFERENCIA_DOMICILIO, COL_CURP, COL_FECHA_NACIMIENTO, 
+		COL_NUMERO_DOMICILIO, COL_COLONIA_DOMICILIO, COL_REFERENCIA_DOMICILIO, COL_AGEB, COL_CURP, COL_FECHA_NACIMIENTO, 
 		COL_SEXO, COL_BCG, COL_HEPATITIS_1, COL_HEPATITIS_2, COL_HEPATITIS_3, COL_PENTAVALENTE_1, 
 		COL_PENTAVALENTE_2, COL_PENTAVALENTE_3,	COL_PENTAVALENTE_4, COL_DPT_R, COL_SRP_1, COL_SRP_2, 
 		COL_ROTAVIRUS_1, COL_ROTAVIRUS_2, COL_ROTAVIRUS_3, COL_NEUMOCOCO_1, COL_NEUMOCOCO_2, COL_NEUMOCOCO_3, 

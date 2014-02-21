@@ -8,11 +8,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.siigs.tes.controles.ContenidoControles;
-import com.siigs.tes.datos.tablas.ControlAccionNutricional;
-import com.siigs.tes.datos.tablas.ControlConsulta;
-import com.siigs.tes.datos.tablas.ControlEda;
-import com.siigs.tes.datos.tablas.ControlIra;
-import com.siigs.tes.datos.tablas.ControlNutricional;
 import com.siigs.tes.datos.tablas.ControlVacuna;
 import com.siigs.tes.datos.tablas.Permiso;
 import com.siigs.tes.datos.tablas.Persona;
@@ -73,11 +68,6 @@ public class Sesion {
 		public List<PersonaAlergia> alergias=new ArrayList<PersonaAlergia>();
 		public List<PersonaAfiliacion> afiliaciones = new ArrayList<PersonaAfiliacion>();
 		public List<ControlVacuna> vacunas = new ArrayList<ControlVacuna>();
-		public List<ControlIra> iras = new ArrayList<ControlIra>();
-		public List<ControlEda> edas = new ArrayList<ControlEda>();
-		public List<ControlConsulta> consultas = new ArrayList<ControlConsulta>();
-		public List<ControlAccionNutricional> accionesNutricionales = new ArrayList<ControlAccionNutricional>();
-		public List<ControlNutricional> controlesNutricionales = new ArrayList<ControlNutricional>();
 		
 		public static DatosPaciente cargarDesdeBaseDatos(Context context, int _idPersona){
 			try{
@@ -87,16 +77,8 @@ public class Sesion {
 				List<PersonaAlergia> alergias = PersonaAlergia.getAlergiasPersona(context, paciente.id);
 				List<PersonaAfiliacion> afiliaciones = PersonaAfiliacion.getAfiliacionesPersona(context, paciente.id);
 				List<ControlVacuna> vacunas = ControlVacuna.getVacunasPersona(context, paciente.id);
-				List<ControlIra> iras = ControlIra.getIrasPersona(context, paciente.id);
-				List<ControlEda> edas = ControlEda.getEdasPersona(context, paciente.id);
-				List<ControlConsulta> consultas = ControlConsulta.getConsultasPersona(context, paciente.id);
-				List<ControlAccionNutricional> accionesNutricionales = 
-						ControlAccionNutricional.getAccionesNutricionalesPersona(context, paciente.id);
-				List<ControlNutricional> controlesNutricionales = 
-						ControlNutricional.getControlesNutricionalesPersona(context, paciente.id);
 				
-				return new DatosPaciente(paciente, tutor, registro, alergias, afiliaciones, vacunas, iras,
-						edas, consultas, accionesNutricionales, controlesNutricionales, false);
+				return new DatosPaciente(paciente, tutor, registro, alergias, afiliaciones, vacunas, false);
 			}catch(Exception e){
 				Log.d(TAG, "No se pudo cargar historial de paciente desde base de datos con _id:"+_idPersona+"\n"+e);
 				return null;
@@ -104,21 +86,13 @@ public class Sesion {
 		}
 		
 		public DatosPaciente(Persona p, Tutor t, RegistroCivil rc, List<PersonaAlergia> alergias, 
-				List<PersonaAfiliacion> afiliaciones, List<ControlVacuna> vacunas, List<ControlIra> iras,
-				List<ControlEda> edas, List<ControlConsulta> consultas,
-				List<ControlAccionNutricional> accionesNutricionales, 
-				List<ControlNutricional> controlesNutricionales, boolean cargadoDesdeNfc){
+				List<PersonaAfiliacion> afiliaciones, List<ControlVacuna> vacunas, boolean cargadoDesdeNfc){
 			persona = p;
 			tutor = t;
 			registroCivil = rc;
 			this.alergias = alergias;
 			this.afiliaciones = afiliaciones;
 			this.vacunas = vacunas;
-			this.iras = iras;
-			this.edas = edas;
-			this.consultas = consultas;
-			this.accionesNutricionales = accionesNutricionales;
-			this.controlesNutricionales = controlesNutricionales;
 			this.cargadoDesdeNfc = cargadoDesdeNfc;
 		}
 		

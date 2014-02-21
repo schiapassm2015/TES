@@ -43,7 +43,7 @@ public class ControlVacuna {
 		ID_ASU_UM + " INTEGER NOT NULL, "+
 		CODIGO_BARRAS + " TEXT DEFAULT NULL, "+
 		ID_INVITADO + " INTEGER DEFAULT NULL, "+
-		"UNIQUE (" + ID_PERSONA + "," + FECHA + ")" +
+		"UNIQUE (" + ID_PERSONA + "," + FECHA + "," + ID_VACUNA + ")" +
 		"); ";
 	
 	//POJO
@@ -72,7 +72,7 @@ public class ControlVacuna {
 	public static List<ControlVacuna> getVacunasPersona(Context context, String idPersona) {
 		Cursor cur = context.getContentResolver().query(
 				ProveedorContenido.CONTROL_VACUNA_CONTENT_URI, null, 
-				ID_PERSONA+"=?", new String[]{idPersona}, null);
+				ID_PERSONA+"=?", new String[]{idPersona}, FECHA+" ASC");
 		List<ControlVacuna> salida = DatosUtil.ObjetosDesdeCursor(cur, ControlVacuna.class);
 		cur.close();
 		return salida;

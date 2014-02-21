@@ -2,7 +2,6 @@ package com.siigs.tes.datos.tablas;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
@@ -38,11 +37,11 @@ public class Tutor {
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
 		_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "+
 		ID + " TEXT NOT NULL , " +
-		CURP + " TEXT NOT NULL, "+
-		NOMBRE + " TEXT NOT NULL, "+
-		APELLIDO_PATERNO + " TEXT NOT NULL, " +
-		APELLIDO_MATERNO + " TEXT NOT NULL, " +
-		SEXO + " TEXT NOT NULL, " +
+		CURP + " TEXT NOT NULL COLLATE NOCASE, "+
+		NOMBRE + " TEXT NOT NULL COLLATE NOCASE, "+
+		APELLIDO_PATERNO + " TEXT NOT NULL COLLATE NOCASE, " +
+		APELLIDO_MATERNO + " TEXT NOT NULL COLLATE NOCASE, " +
+		SEXO + " TEXT NOT NULL COLLATE NOCASE, " +
 		TELEFONO + " TEXT DEFAULT NULL, "+
 		CELULAR + " TEXT DEFAULT NULL, "+
 		ID_OPERADORA_CELULAR + " INTEGER DEFAULT NULL, "+

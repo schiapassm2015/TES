@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.google.gson.annotations.SerializedName;
+import com.siigs.tes.R;
 import com.siigs.tes.datos.ProveedorContenido;
 
 /**
@@ -43,7 +44,10 @@ public class TipoSanguineo {
 	public static String getTipoSanguineo(Context context, int idTipoSanguineo){
 		Uri uri = Uri.withAppendedPath(ProveedorContenido.TIPO_SANGUINEO_CONTENT_URI, String.valueOf(idTipoSanguineo));
 		Cursor cur = context.getContentResolver().query(uri, null, null, null, null);
-		cur.moveToNext(); //debería haber resultados
+		if(!cur.moveToNext()){ //debería haber resultados
+			cur.close();
+			return context.getString(R.string.desconocido);
+		}
 		String salida = cur.getString(cur.getColumnIndex(DESCRIPCION));
 		cur.close();
 		return salida;

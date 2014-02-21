@@ -99,7 +99,7 @@ public class DatosUtil {
 	    		field.set(salida, null);
 	    		break;
 	    	case Cursor.FIELD_TYPE_FLOAT: //NO EXISTÍA DOUBLE ASÍ QUE USAMOS FLOAT
-	    		field.setDouble(salida, cur.getDouble(index));
+	    		field.set(salida, cur.getDouble(index));
 	    		break;
 	    	default:
 	    		throw new IllegalAccessException("No se reconoce el tipo de columna "+cur.getType(index)+" para el campo "+field.getName()+" de la clase "+clase.getName());

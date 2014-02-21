@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
 import com.google.gson.annotations.SerializedName;
 import com.siigs.tes.datos.DatosUtil;
@@ -46,6 +47,15 @@ public class ViaVacuna {
 		Cursor cur = context.getContentResolver().query(
 				ProveedorContenido.VIA_VACUNA_CONTENT_URI, null, ACTIVO + "=1", null, DESCRIPCION);
 		List<ViaVacuna> salida = DatosUtil.ObjetosDesdeCursor(cur, ViaVacuna.class);
+		cur.close();
+		return salida;
+	}
+	
+	public static String getDescripcion(Context context, int id){
+		Uri uri = Uri.withAppendedPath(ProveedorContenido.VIA_VACUNA_CONTENT_URI, String.valueOf(id));
+		Cursor cur = context.getContentResolver().query(uri, new String[]{DESCRIPCION}, null, null, null);
+		cur.moveToNext(); //debería haber resultados
+		String salida = cur.getString(cur.getColumnIndex(DESCRIPCION));
 		cur.close();
 		return salida;
 	}

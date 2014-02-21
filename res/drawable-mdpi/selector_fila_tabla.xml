@@ -7,7 +7,7 @@
     <item 
         android:state_pressed="true" 
         android:state_enabled="true"
-        android:drawable="@drawable/gradiente_azul_medio"/>
+        android:drawable="@color/fila_tabla_pressed"/>
     
     <item
         android:state_enabled="true"

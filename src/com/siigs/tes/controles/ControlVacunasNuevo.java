@@ -3,6 +3,7 @@
  */
 package com.siigs.tes.controles;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.siigs.tes.DialogoTes;
@@ -13,9 +14,12 @@ import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.tablas.Bitacora;
 import com.siigs.tes.datos.tablas.ControlVacuna;
 import com.siigs.tes.datos.tablas.ErrorSis;
+import com.siigs.tes.datos.tablas.EsquemaIncompleto;
 import com.siigs.tes.datos.tablas.PendientesTarjeta;
 import com.siigs.tes.datos.tablas.Persona;
+import com.siigs.tes.datos.tablas.ReglaVacuna;
 import com.siigs.tes.datos.tablas.Vacuna;
+import com.siigs.tes.datos.tablas.ViaVacuna;
 import com.siigs.tes.ui.AdaptadorArrayMultiTextView;
 import com.siigs.tes.ui.WidgetUtil;
 
@@ -31,6 +35,8 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -88,22 +94,50 @@ public class ControlVacunasNuevo extends DialogFragment {
 		final Persona p = sesion.getDatosPacienteActual().persona;
 		
 		WidgetUtil.setBarraTitulo(vista, R.id.barra_titulo_vacuna, R.string.agregar_vacuna, 
-				R.layout.ayuda_dialogo_tes_login, getFragmentManager());
+				R.string.ayuda_agregar_vacuna, getFragmentManager());
 		
-		((TextView)vista.findViewById(R.id.txtNombre)).setText(p.getNombreCompleto());
+		WidgetUtil.setDatosBasicosPaciente(vista, p);
+		
+		final TextView txtViaVacuna = (TextView)vista.findViewById(R.id.txtViaVacuna);
+		final TextView txtDosis = (TextView)vista.findViewById(R.id.txtDosis);
+		final TextView txtRegion = (TextView)vista.findViewById(R.id.txtRegion);
 		
 		//Lista de vacunas
 		final Spinner spVacunas = (Spinner)vista.findViewById(R.id.spVacunas);
-		List<Vacuna> vacunas = Vacuna.getVacunasActivas(getActivity());
+		List<Vacuna> vacunasPosibles = Vacuna.getVacunasActivas(getActivity());
+		List<Vacuna> vacunasAplicables = new ArrayList<Vacuna>();
+		for(Vacuna vac : vacunasPosibles){
+			String motivo = ReglaVacuna.motivoNoEsAplicableVacuna(getActivity(), vac._id, sesion.getDatosPacienteActual());
+			if(motivo.equals("")) //Si es aplicable
+				vacunasAplicables.add(vac);
+		}
 		AdaptadorArrayMultiTextView<Vacuna> adaptador = new AdaptadorArrayMultiTextView<Vacuna>(
-				getActivity(), android.R.layout.simple_dropdown_item_1line, vacunas, 
+				getActivity(), android.R.layout.simple_dropdown_item_1line, vacunasAplicables, 
 				new String[]{Vacuna.DESCRIPCION}, new int[]{android.R.id.text1});
 		spVacunas.setAdapter(adaptador);
 		
+		spVacunas.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override public void onItemSelected(AdapterView<?> av, View view, int position, long id) {
+				txtViaVacuna.setText(R.string.desconocido);
+				txtDosis.setText(R.string.desconocido);
+				txtRegion.setText(R.string.desconocido);
+				Vacuna vacuna = (Vacuna)spVacunas.getSelectedItem();
+				try {
+					ReglaVacuna regla = ReglaVacuna.getReglaDeVacuna(getActivity(), vacuna._id);
+					txtViaVacuna.setText(ViaVacuna.getDescripcion(getActivity(), regla.id_via_vacuna));
+					txtDosis.setText(regla.dosis==null ? getString(R.string.ninguno) : regla.dosis+"");
+					txtRegion.setText(regla.region==null ? getString(R.string.ninguno) : regla.region);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			@Override public void onNothingSelected(AdapterView<?> arg0) {}
+		});
+		
 		if(getArguments()!=null && getArguments().containsKey(PARAM_ID_VACUNA)){
 			int idBuscar = getArguments().getInt(PARAM_ID_VACUNA);
-			for(int i=0;i<vacunas.size();i++)
-				if(vacunas.get(i)._id==idBuscar){
+			for(int i=0;i<vacunasAplicables.size();i++)
+				if(vacunasAplicables.get(i)._id==idBuscar){
 					spVacunas.setSelection(i);
 					break;
 				}
@@ -158,6 +192,8 @@ public class ControlVacunasNuevo extends DialogFragment {
 									ICA, e.toString());
 							e.printStackTrace();
 						}
+						try{EsquemaIncompleto.BorrarEsquema(getActivity(), vacuna.id_persona, vacuna.id_vacuna);}
+						catch(Exception e){}
 						//Si no funcionara el guardado generamos un pendiente
 						PendientesTarjeta pendiente = new PendientesTarjeta();
 						pendiente.id_persona = p.id;

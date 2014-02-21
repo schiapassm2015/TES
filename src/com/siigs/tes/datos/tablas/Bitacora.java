@@ -3,7 +3,6 @@ package com.siigs.tes.datos.tablas;
 import android.content.ContentValues;
 import android.content.Context;
 
-import com.google.gson.annotations.SerializedName;
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
 
@@ -35,7 +34,7 @@ public class Bitacora {
 		ID_USUARIO + " INTEGER NOT NULL, " +
 		ID_CONTROLADOR_ACCION + " INTEGER NOT NULL, "+
 		FECHA_HORA + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), "+
-		PARAMETROS + " TEXT DEFAULT NULL "+
+		PARAMETROS + " TEXT DEFAULT NULL COLLATE NOCASE"+
 		"); ";
 	
 	//POJO

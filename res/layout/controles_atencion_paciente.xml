@@ -442,7 +442,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:digits="@string/caracteres_permitidos"
-                    android:inputType="text"
+                    android:inputType="textCapCharacters"
                     android:maxLength="4" />
 
                 <TextView

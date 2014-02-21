@@ -1,0 +1,25 @@
+# view AndroidManifest.xml #generated:35
+-keep class com.siigs.tes.ControlActivity { <init>(...); }
+
+# view res/layout/activity_principal_twopane.xml #generated:10
+-keep class com.siigs.tes.MenuSuperior { <init>(...); }
+
+# view AndroidManifest.xml #generated:24
+-keep class com.siigs.tes.PrincipalActivity { <init>(...); }
+
+# view res/layout/activity_principal_onepane.xml #generated:3
+# view res/layout/activity_principal_twopane.xml #generated:41
+-keep class com.siigs.tes.PrincipalFragment { <init>(...); }
+
+# view AndroidManifest.xml #generated:17
+-keep class com.siigs.tes.TesAplicacion { <init>(...); }
+
+# view AndroidManifest.xml #generated:44
+-keep class com.siigs.tes.datos.ProveedorContenido { <init>(...); }
+
+# view res/layout/controles_atencion_control_vacunas.xml #generated:455
+# view res/layout/controles_atencion_paciente.xml #generated:305
+# view res/layout/controles_reportes.xml #generated:147
+# view res/layout/controles_reportes.xml #generated:78
+-keep class com.siigs.tes.ui.ListaSimple { <init>(...); }
+

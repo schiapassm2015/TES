@@ -3,25 +3,16 @@
  */
 package com.siigs.tes.datos;
 
-import com.siigs.tes.datos.tablas.AccionNutricional;
 import com.siigs.tes.datos.tablas.Afiliacion;
 import com.siigs.tes.datos.tablas.Alergia;
 import com.siigs.tes.datos.tablas.AntiguaUM;
 import com.siigs.tes.datos.tablas.AntiguoDomicilio;
 import com.siigs.tes.datos.tablas.ArbolSegmentacion;
 import com.siigs.tes.datos.tablas.Bitacora;
-import com.siigs.tes.datos.tablas.Consulta;
-import com.siigs.tes.datos.tablas.ControlAccionNutricional;
-import com.siigs.tes.datos.tablas.ControlConsulta;
-import com.siigs.tes.datos.tablas.ControlEda;
-import com.siigs.tes.datos.tablas.ControlIra;
-import com.siigs.tes.datos.tablas.ControlNutricional;
 import com.siigs.tes.datos.tablas.ControlVacuna;
-import com.siigs.tes.datos.tablas.Eda;
 import com.siigs.tes.datos.tablas.ErrorSis;
 import com.siigs.tes.datos.tablas.EsquemaIncompleto;
 import com.siigs.tes.datos.tablas.Grupo;
-import com.siigs.tes.datos.tablas.Ira;
 import com.siigs.tes.datos.tablas.Nacionalidad;
 import com.siigs.tes.datos.tablas.Notificacion;
 import com.siigs.tes.datos.tablas.OperadoraCelular;
@@ -39,6 +30,7 @@ import com.siigs.tes.datos.tablas.Usuario;
 import com.siigs.tes.datos.tablas.UsuarioInvitado;
 import com.siigs.tes.datos.tablas.Vacuna;
 import com.siigs.tes.datos.tablas.ViaVacuna;
+import com.siigs.tes.datos.vistas.EsquemasIncompletos;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -57,18 +49,22 @@ public class BaseDatos extends SQLiteOpenHelper {
 	private static final String DB_NAME = "tes_datos.db";
 	
 	//SCHEMA
-	private static final String[] TABLAS = {AccionNutricional.CREATE_TABLE, Afiliacion.CREATE_TABLE,
+	private static final String[] SCRIPTS = {
+			//TABLAS
+			Afiliacion.CREATE_TABLE,
 			Alergia.CREATE_TABLE, AntiguaUM.CREATE_TABLE, AntiguoDomicilio.CREATE_TABLE, 
-			ArbolSegmentacion.CREATE_TABLE, Bitacora.CREATE_TABLE, Consulta.CREATE_TABLE, 
-			ControlAccionNutricional.CREATE_TABLE, ControlConsulta.CREATE_TABLE, ControlEda.CREATE_TABLE, 
-			ControlIra.CREATE_TABLE, ControlNutricional.CREATE_TABLE, ControlVacuna.CREATE_TABLE, 
-			Eda.CREATE_TABLE, ErrorSis.CREATE_TABLE, EsquemaIncompleto.CREATE_TABLE, Grupo.CREATE_TABLE, Ira.CREATE_TABLE, 
+			ArbolSegmentacion.CREATE_TABLE, Bitacora.CREATE_TABLE, ControlVacuna.CREATE_TABLE, 
+			ErrorSis.CREATE_TABLE, EsquemaIncompleto.CREATE_TABLE, Grupo.CREATE_TABLE,
 			Nacionalidad.CREATE_TABLE, Notificacion.CREATE_TABLE, OperadoraCelular.CREATE_TABLE, 
 			PendientesTarjeta.CREATE_TABLE,	Permiso.CREATE_TABLE, Persona.CREATE_TABLE, 
 			PersonaAfiliacion.CREATE_TABLE, PersonaAlergia.CREATE_TABLE, PersonaTutor.CREATE_TABLE, 
 			RegistroCivil.CREATE_TABLE, TipoSanguineo.CREATE_TABLE, Tutor.CREATE_TABLE, 
 			Usuario.CREATE_TABLE, UsuarioInvitado.CREATE_TABLE, Vacuna.CREATE_TABLE, ReglaVacuna.CREATE_TABLE,
-			ViaVacuna.CREATE_TABLE
+			ViaVacuna.CREATE_TABLE,
+			//Indices
+			EsquemaIncompleto.INDEX,
+			//Vistas
+			EsquemasIncompletos.CREAR_VISTA
 			};
 	
 	private static final String DB_SCHEMA_DROP = "PRAGMA writable_schema = 1;"+
@@ -88,9 +84,9 @@ public class BaseDatos extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		Log.d(TAG, "Inicia creación de tablas");
-		for(String tabla : BaseDatos.TABLAS){
-			Log.d(TAG, tabla);
-			db.execSQL(tabla);
+		for(String script : BaseDatos.SCRIPTS){
+			Log.d(TAG, script);
+			db.execSQL(script);
 		}
 		Log.d(TAG, "Fin creación de tablas");
 		//Hacer cualquier insert default aquí
@@ -121,7 +117,6 @@ public class BaseDatos extends SQLiteOpenHelper {
 	
 	@Override
 	public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
 		super.onDowngrade(db, oldVersion, newVersion);
 	}
 

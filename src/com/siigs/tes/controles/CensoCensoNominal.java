@@ -8,7 +8,6 @@ import com.siigs.tes.Sesion;
 import com.siigs.tes.TesAplicacion;
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.tablas.EsquemaIncompleto;
-import com.siigs.tes.datos.tablas.Persona;
 import com.siigs.tes.datos.vistas.Censo;
 import com.siigs.tes.datos.vistas.EsquemasIncompletos;
 
@@ -34,8 +33,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * @author Axel
@@ -63,11 +64,15 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
 	private static final String FILTRO_NOMBRE = "filtro_nombre";
 	private static final String FILTRO_SEXO = "filtro_sexo";
 	private static final String FILTRO_ANO_NACIMIENTO = "filtro_ano_nacimiento";
+	private static final String FILTRO_AGEB = "filtro_ageb";
 	private static final String FILTRO = "filtro"; //usado para salvar estado de filtroBusqueda
 	private Bundle filtroBusqueda=null;
-	private static final int ID_LOADER_CENSO = 1; //identifica el loader si hubiera varios
+	
+	private static final int ID_LOADER_CENSO = 1; //identifica el loader de datos
+	
 	private ListView lvResultados = null;
 	private SimpleCursorAdapter adaptadorCenso = null;
+	private ProgressBar pbProgreso = null;
 	
 	private TesAplicacion aplicacion;
 	private Sesion sesion;
@@ -112,15 +117,17 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
 				android.R.layout.simple_spinner_dropdown_item);
 		spSexo.setAdapter(adaptadorSexo);
 		
+		//Filtros
 		final EditText txtNombre = (EditText)rootView.findViewById(R.id.txtNombre);
-		//Año nacimiento
 		final EditText txtAno = (EditText)rootView.findViewById(R.id.txtAnoNacimiento);
+		final EditText txtAgeb = (EditText)rootView.findViewById(R.id.txtAGEB);
 	
 		//CARGA DE DATOS
 		if(savedInstanceState != null && savedInstanceState.containsKey(FILTRO))
 			filtroBusqueda = savedInstanceState.getBundle(FILTRO);
 		lvResultados = (ListView) rootView.findViewById(R.id.lvResultados);
 		lvResultados.setEmptyView(rootView.findViewById(R.id.txtSinResultados));
+		pbProgreso = (ProgressBar)rootView.findViewById(R.id.pbProgreso);
 		CrearAdaptador();
 		LlenarResultados(filtroBusqueda);
 		if(savedInstanceState != null && savedInstanceState.containsKey(ESTADO_SCROLL_LISTA))
@@ -144,10 +151,14 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
 				else if(sexo.equals(getString(R.string.masculino)))sexo = Censo.MASCULINO;
 				else sexo = Censo.FEMENINO;
 				
+				String ageb = txtAgeb.getText().toString().trim();
+				if(ageb.equals(""))ageb = null;
+				
 				Bundle filtro = new Bundle();
 				if(nombre!=null)filtro.putString(FILTRO_NOMBRE, nombre);
 				if(sexo!=null)filtro.putString(FILTRO_SEXO, sexo);
 				if(anoNacimiento!=null)filtro.putInt(FILTRO_ANO_NACIMIENTO, anoNacimiento);
+				if(ageb != null) filtro.putString(FILTRO_AGEB, ageb);
 				
 				LlenarResultados(filtro);
 			}
@@ -173,7 +184,7 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
 		//if(esVistaCenso){ //Este if se comenta pues actualmente Censo y Esquemas usan las mismas columnas ...
 			bindDeColumna = new String[]{Censo.NOMBRE_PACIENTE, Censo.APPAT_PACIENTE, Censo.APMAT_PACIENTE,
 					Censo.NOMBRE_TUTOR, Censo.APPAT_TUTOR, Censo.APMAT_TUTOR,
-					Censo.CALLE_DOMICILIO, Censo.CURP, Censo.FECHA_NACIMIENTO, Censo.SEXO, Censo.BCG,
+					Censo.CALLE_DOMICILIO, Censo.AGEB, Censo.CURP, Censo.FECHA_NACIMIENTO, Censo.SEXO, Censo.BCG,
 					Censo.HEPATITIS_1, Censo.HEPATITIS_2, Censo.HEPATITIS_3, Censo.PENTAVALENTE_1,
 					Censo.PENTAVALENTE_2, Censo.PENTAVALENTE_3, Censo.PENTAVALENTE_4, Censo.DPT_R, 
 					Censo.SRP_1, Censo.SRP_2, Censo.ROTAVIRUS_1, Censo.ROTAVIRUS_2,
@@ -183,7 +194,7 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
 			
 		int[] bindAview = new int[]			{R.id.txtNombre, R.id.txtPaterno, R.id.txtMaterno,
 				R.id.txtNombreTutor, R.id.txtPaternoTutor, R.id.txtMaternoTutor,
-				R.id.txtDomicilio, R.id.txtCurp, R.id.txtFechaNacimiento, R.id.txtSexo, R.id.txtBCG_U,
+				R.id.txtDomicilio, R.id.txtAGEB, R.id.txtCurp, R.id.txtFechaNacimiento, R.id.txtSexo, R.id.txtBCG_U,
 				R.id.txtHepatitis_1, R.id.txtHepatitis_2, R.id.txtHepatitis_3, R.id.txtPentavalente_1,
 				R.id.txtPentavalente_2, R.id.txtPentavalente_3, R.id.txtPentavalente_4, R.id.txtDPT_R, 
 				R.id.txtSRP_1, R.id.txtSRP_2, R.id.txtROTAVIRUS_1, R.id.txtROTAVIRUS_2,
@@ -260,7 +271,7 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
 				return true;
 			}
 			
-			//Fecha nacimiento
+			//Curp
 			if(view.getId()==R.id.txtCurp && cur.isNull(col)){
 				((TextView)view).setText("");
 				return true;
@@ -281,7 +292,7 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
 			
 			//BOTÓN PARA DAR CAPACIDAD DE ATENDER A UN PACIENTE SIN TES
 			if(view.getId()==R.id.txtPaterno || view.getId()==R.id.txtMaterno || view.getId()==R.id.txtNombre){
-				//NOTA: Esta extracción de ID se hace aquí porque en el evento click
+				//NOTA: Esta extracción de ID_PERSONA se hace aquí porque en el evento click
 				// cur tendrá un contexto distinto y devolverá cualquier valor
 				int nColId = esVistaCenso ? 
 						cur.getColumnIndex(Censo._ID_PACIENTE) : 
@@ -317,8 +328,7 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
 		}
 	};
 	
-	
-	
+		
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -342,15 +352,19 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int idLoader, Bundle args) {    	
+		String nombre = args.containsKey(FILTRO_NOMBRE) ? args.getString(FILTRO_NOMBRE) : null;
+		Integer ano = args.containsKey(FILTRO_ANO_NACIMIENTO) ? args.getInt(FILTRO_ANO_NACIMIENTO) : null;
+		String sexo = args.containsKey(FILTRO_SEXO) ? args.getString(FILTRO_SEXO) : null;
+		String ageb = args.containsKey(FILTRO_AGEB) ? args.getString(FILTRO_AGEB) : null;
+		
     	switch(idLoader){
     	case ID_LOADER_CENSO:
-    		String nombre = args.containsKey(FILTRO_NOMBRE) ? args.getString(FILTRO_NOMBRE) : null;
-    		Integer ano = args.containsKey(FILTRO_ANO_NACIMIENTO) ? args.getInt(FILTRO_ANO_NACIMIENTO) : null;
-    		String sexo = args.containsKey(FILTRO_SEXO) ? args.getString(FILTRO_SEXO) : null;
-    		if(esVistaCenso)
-    			return Censo.getCenso(getActivity(), nombre, ano, sexo);
-    		else
-    			return EsquemasIncompletos.getEsquemasIncompletos(getActivity(), nombre, ano, sexo);
+    		if(pbProgreso!=null)pbProgreso.setVisibility(View.VISIBLE);
+    		if(esVistaCenso){
+    			return Censo.getCenso(getActivity(), nombre, ano, sexo, ageb);
+    		}else{
+    			return EsquemasIncompletos.getEsquemasIncompletos(getActivity(), nombre, ano, sexo, ageb);
+    		}
     	}
     	return null;
 	}
@@ -363,12 +377,13 @@ public class CensoCensoNominal extends Fragment implements LoaderManager.LoaderC
         	//su cursor lo cual escuchará el ListView y 
         	//visualizará los datos.
 			this.adaptadorCenso.swapCursor(cursor);
+			if(pbProgreso!=null)pbProgreso.setVisibility(View.GONE);
+			Toast.makeText(getActivity(), "Se encontraron "+cursor.getCount()+" coincidencias", Toast.LENGTH_LONG).show();
 			if(estadoListaResultados!=null){
 				try{lvResultados.onRestoreInstanceState(estadoListaResultados);}catch(Exception e){}
 				estadoListaResultados=null;
 			}
 		}
-		
 	}
 
 	@Override

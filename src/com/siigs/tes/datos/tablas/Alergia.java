@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.google.gson.annotations.SerializedName;
+import com.siigs.tes.R;
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
 
@@ -88,13 +89,13 @@ public class Alergia {
 	 * @return resId de la imagen que representa a {@link tipoAlergia}
 	 */
 	public static int getResourceImagenTipoAlergia(String tipoAlergia){
-		if(tipoAlergia.toLowerCase().equals("antibioticos"))return android.R.drawable.btn_star;
-		else if(tipoAlergia.toLowerCase().equals("antihipertensivos"))return android.R.drawable.btn_star;
-		else if(tipoAlergia.toLowerCase().equals("antiinflamatorios"))return android.R.drawable.btn_star;
-		else if(tipoAlergia.toLowerCase().equals("quirurgicos"))return android.R.drawable.btn_star;
-		else if(tipoAlergia.toLowerCase().equals("vitaminas"))return android.R.drawable.btn_star;
-		else if(tipoAlergia.toLowerCase().equals("alimentos"))return android.R.drawable.btn_star;
-		else if(tipoAlergia.toLowerCase().equals("otros medicamentos"))return android.R.drawable.btn_radio;
+		if(tipoAlergia.toLowerCase().equals("antibioticos"))return R.drawable.antibiotico;
+		else if(tipoAlergia.toLowerCase().equals("antihipertensivos"))return R.drawable.antihipertensivos;
+		else if(tipoAlergia.toLowerCase().equals("antiinflamatorios"))return R.drawable.antiinflamatorios;
+		else if(tipoAlergia.toLowerCase().equals("quirurgicos"))return R.drawable.quirurgicos;
+		else if(tipoAlergia.toLowerCase().equals("vitaminas"))return R.drawable.vitaminas;
+		else if(tipoAlergia.toLowerCase().equals("alimentos"))return R.drawable.alimentos;
+		else if(tipoAlergia.toLowerCase().equals("otros medicamentos"))return R.drawable.otrosmedicamentos;
 		else return android.R.drawable.btn_radio;
 	}
 	

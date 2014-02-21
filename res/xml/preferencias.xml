@@ -10,7 +10,11 @@
     <EditTextPreference android:summary="@string/tiempo_espera_reintento_summary" android:key="tiempo_espera_reintento" android:title="@string/tiempo_espera_reintento" android:defaultValue="2000"/>
     <EditTextPreference android:enabled="false" android:key="tipo_censo" android:defaultValue="-1"/>
     <EditTextPreference android:enabled="false" android:key="unidad_medica" android:defaultValue="-1"/>
-    <CheckBoxPreference android:key="es_instalacion_nueva" android:enabled="false" android:defaultValue="true"/><EditTextPreference android:enabled="false" android:key="fecha_ultima_sincronizacion"/>
+    <EditTextPreference android:enabled="false" android:key="filtro_dias_iras" android:defaultValue="10"/>
+    <EditTextPreference android:enabled="false" android:key="filtro_dias_edas" android:defaultValue="10"/>
+    <EditTextPreference android:enabled="false" android:key="filtro_dias_consultas" android:defaultValue="10"/>
+    <CheckBoxPreference android:key="es_instalacion_nueva" android:enabled="false" android:defaultValue="true"/>
+    <EditTextPreference android:enabled="false" android:key="fecha_ultima_sincronizacion"/>
     <CheckBoxPreference android:key="ultima_sincronizacion_exitosa" android:defaultValue="false" android:enabled="false"/>
     <CheckBoxPreference android:key="requiere_actualizar_version_apk" android:defaultValue="false" android:enabled="false"/>
     <EditTextPreference android:key="url_actualizacion_apk" android:defaultValue="http://www.servidor.com"/>

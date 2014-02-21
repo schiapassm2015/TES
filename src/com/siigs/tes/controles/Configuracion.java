@@ -41,7 +41,7 @@ public class Configuracion extends Fragment {
 				R.layout.controles_configuracion, container, false);
 
 		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_ver, R.string.configuracion, 
-				R.layout.ayuda_dialogo_tes_login, getFragmentManager());
+				R.string.ayuda_configuracion, getFragmentManager());
 		
 		final TextView txtUrl = (TextView)rootView.findViewById(R.id.txtUrl);
 		txtUrl.setText(aplicacion.getUrlSincronizacion());

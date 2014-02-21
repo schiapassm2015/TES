@@ -36,7 +36,7 @@ public class PendientesTarjeta {
 	
 	public final static String CREATE_TABLE =
 		"CREATE TABLE IF NOT EXISTS " + NOMBRE_TABLA + " (" +
-		//ID + " INTEGER PRIMARY KEY NOT NULL, " +
+		//ID_PERSONA + " INTEGER PRIMARY KEY NOT NULL, " +
 		ID_PERSONA + " TEXT NOT NULL, "+
 		FECHA + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), " +
 		TABLA + " TEXT NOT NULL, "+

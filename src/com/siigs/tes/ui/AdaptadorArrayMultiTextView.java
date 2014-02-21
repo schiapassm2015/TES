@@ -70,7 +70,7 @@ public class AdaptadorArrayMultiTextView<T> extends ArrayAdapter<T> {
 				e.printStackTrace();
 			}
 			TextView destino = (TextView) salida.findViewById(this.bindIdView[i]);
-			if(miBinder == null || !miBinder.setViewValue(destino, "setText", elemento, bindDeAtributo[i], valor))
+			if(miBinder == null || !miBinder.setViewValue(destino, "setText", elemento, bindDeAtributo[i], valor, position))
 				destino.setText(valor);
 		}
 

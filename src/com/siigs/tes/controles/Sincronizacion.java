@@ -1,17 +1,11 @@
 package com.siigs.tes.controles;
 
-import com.siigs.tes.DialogoAyuda;
 import com.siigs.tes.R;
 import com.siigs.tes.Sesion;
 import com.siigs.tes.TesAplicacion;
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.SincronizacionTask;
 import com.siigs.tes.datos.tablas.ArbolSegmentacion;
-import com.siigs.tes.datos.tablas.ControlAccionNutricional;
-import com.siigs.tes.datos.tablas.ControlConsulta;
-import com.siigs.tes.datos.tablas.ControlNutricional;
-import com.siigs.tes.datos.tablas.ControlEda;
-import com.siigs.tes.datos.tablas.ControlIra;
 import com.siigs.tes.datos.tablas.ControlVacuna;
 import com.siigs.tes.datos.tablas.Persona;
 import com.siigs.tes.ui.WidgetUtil;
@@ -24,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,7 +53,7 @@ public class Sincronizacion extends Fragment {
 				R.layout.controles_sincronizacion, container, false);
 
 		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_ver, R.string.sincronizacion, 
-				R.layout.ayuda_dialogo_tes_login, getFragmentManager());
+				R.string.ayuda_sincronizacion, getFragmentManager());
 		
 		txtVersion = (TextView)rootView.findViewById(R.id.txtVersionDatos);
 		txtUltimaSincronizacion = (TextView)rootView.findViewById(R.id.txtUltimaSincronizacion);
@@ -132,11 +125,6 @@ public class Sincronizacion extends Fragment {
 				fecha));
 
 		int totalControles = 0;
-		if(ControlAccionNutricional.getTotalCreadosDespues(getActivity(), fecha)>0)totalControles++;
-		if(ControlConsulta.getTotalCreadosDespues(getActivity(), fecha)>0)totalControles++;
-		if(ControlEda.getTotalCreadosDespues(getActivity(), fecha)>0)totalControles++;
-		if(ControlIra.getTotalCreadosDespues(getActivity(), fecha)>0)totalControles++;
-		if(ControlNutricional.getTotalCreadosDespues(getActivity(), fecha)>0)totalControles++;
 		if(ControlVacuna.getTotalCreadosDespues(getActivity(), fecha)>0)totalControles++;
 		txtControlesSincronizar.setText(totalControles+"");
 	}

@@ -23,6 +23,7 @@ similar a una tabla -->
 	        android:layout_weight="1"
 	        android:text="Paterno"
 	        android:gravity="center"
+	        android:textStyle="bold"
 	        android:textColor="@color/link_texto"/>
         
 	    <TextView android:id="@+id/txtPaternoTutor"
@@ -49,6 +50,7 @@ similar a una tabla -->
 	        android:layout_weight="1"
 	        android:text="Materno"
 	        android:gravity="center"
+	        android:textStyle="bold"
 	        android:textColor="@color/link_texto"/>
         
 	    <TextView android:id="@+id/txtMaternoTutor"
@@ -75,6 +77,7 @@ similar a una tabla -->
 	        android:layout_weight="1"
 	        android:text="Nombre"
 	        android:gravity="center"
+	        android:textStyle="bold"
 	        android:textColor="@color/link_texto"/>
         
 	    <TextView android:id="@+id/txtNombreTutor"
@@ -101,6 +104,13 @@ similar a una tabla -->
         android:text="saca830223456chs0723"
         android:gravity="center"/>
     
+    <TextView android:id="@+id/txtAGEB"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="ageb"
+        android:gravity="center"/>
+    
     <TextView android:id="@+id/txtFechaNacimiento"
         android:layout_width="70dp"
         android:layout_height="match_parent"
@@ -117,7 +127,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtBCG_U"
         android:tag="vacuna"
-        android:layout_width="30dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -125,7 +135,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtHepatitis_1"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -133,7 +143,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtHepatitis_2"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -141,7 +151,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtHepatitis_3"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -149,7 +159,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtPentavalente_1"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -157,7 +167,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtPentavalente_2"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -165,7 +175,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtPentavalente_3"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -173,7 +183,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtPentavalente_4"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -181,7 +191,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtDPT_R"
         android:tag="vacuna"
-        android:layout_width="30dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -189,7 +199,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtSRP_1"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -197,7 +207,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtSRP_2"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -205,7 +215,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtROTAVIRUS_1"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -213,7 +223,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtROTAVIRUS_2"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -221,7 +231,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtROTAVIRUS_3"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -229,7 +239,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtNEUMOCOCO_1"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -237,7 +247,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtNEUMOCOCO_2"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -245,7 +255,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtNEUMOCOCO_3"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -253,7 +263,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtINFLUENZA_1"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -261,7 +271,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtINFLUENZA_2"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"
@@ -269,7 +279,7 @@ similar a una tabla -->
     
     <TextView android:id="@+id/txtINFLUENZA_R"
         android:tag="vacuna"
-        android:layout_width="18dp"
+        android:layout_width="@dimen/columna_censo"
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="¿"

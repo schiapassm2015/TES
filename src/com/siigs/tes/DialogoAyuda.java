@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class DialogoAyuda extends DialogFragment {
 
@@ -24,18 +25,18 @@ public class DialogoAyuda extends DialogFragment {
 	public static final String TAG=DialogoAyuda.class.toString();
 	//Nombre del argumento/parámetro leído en getArguments()
 	//que indica el layout a visualizar
-	public static final String ARG_LAYOUT="layout";
+	public static final String ARG_TEXT="textId";
 
 	/**
 	 * Crea un nuevo diálogo de ayuda con el fragment manager y layout
 	 * especificados.
 	 * @param fm
-	 * @param layout
+	 * @param textResId
 	 */
-	public static void CrearNuevo(FragmentManager fm, int layout){
+	public static void CrearNuevo(FragmentManager fm, int textResId){
 		DialogoAyuda dialogo=new DialogoAyuda();
 		Bundle args=new Bundle();
-		args.putInt(DialogoAyuda.ARG_LAYOUT, layout);
+		args.putInt(DialogoAyuda.ARG_TEXT, textResId);
 		dialogo.setArguments(args);
 		dialogo.show(fm, DialogoAyuda.TAG);
 	}
@@ -45,7 +46,6 @@ public class DialogoAyuda extends DialogFragment {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 	}
 
@@ -61,8 +61,16 @@ public class DialogoAyuda extends DialogFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		//Visualizamos el layout indicado en los argumentos
-		View view=inflater.inflate(getArguments().getInt(ARG_LAYOUT), 
+		View view=inflater.inflate(R.layout.ayuda_template, 
 				container,false);
+		
+		TextView contenido = (TextView)view.findViewById(R.id.txtContenedorAyuda);
+		contenido.setText(getArguments().getInt(ARG_TEXT));
+		
+		//Antes con método ViewStub...
+		//ViewStub contenido = (ViewStub)view.findViewById(R.id.vsContenedorAyuda);
+		//contenido.setLayoutResource(getArguments().getInt(ARG_TEXT));
+		//contenido.inflate();
 		
 		//Botón cerrar
 		Button btnCerrar=(Button)view.findViewById(R.id.btnCerrar);
@@ -75,6 +83,6 @@ public class DialogoAyuda extends DialogFragment {
 		
 		return view;
 	}
-	
+
 
 }//fin clase

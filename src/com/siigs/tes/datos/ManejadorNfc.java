@@ -8,11 +8,6 @@ import java.util.List;
 import com.google.gson.JsonSyntaxException;
 import com.siigs.tes.Sesion;
 import com.siigs.tes.TesAplicacion;
-import com.siigs.tes.datos.tablas.ControlAccionNutricional;
-import com.siigs.tes.datos.tablas.ControlConsulta;
-import com.siigs.tes.datos.tablas.ControlEda;
-import com.siigs.tes.datos.tablas.ControlIra;
-import com.siigs.tes.datos.tablas.ControlNutricional;
 import com.siigs.tes.datos.tablas.ControlVacuna;
 import com.siigs.tes.datos.tablas.ErrorSis;
 import com.siigs.tes.datos.tablas.PendientesTarjeta;
@@ -124,7 +119,7 @@ public class ManejadorNfc {
 		persona.manzana = existeString(datosPersona[n++]);
 		persona.sector = existeString(datosPersona[n++]);
 		persona.id_asu_localidad_domicilio = Integer.parseInt(datosPersona[n++]);
-		persona.cp_domicilio = Integer.parseInt(datosPersona[n++]);
+		persona.cp_domicilio = existeInt(datosPersona[n++]);
 		persona.telefono_domicilio = existeString(datosPersona[n++]);
 		persona.fecha_registro = datosPersona[n++];
 		persona.id_asu_um_tratante = Integer.parseInt(datosPersona[n++]);
@@ -181,69 +176,22 @@ public class ManejadorNfc {
 			vacuna.id_persona = persona.id;
 			vacuna.id_vacuna = Integer.parseInt(datosVacuna[0]);
 			vacuna.fecha = datosVacuna[1];
+			vacuna.id_asu_um = Integer.parseInt(datosVacuna[2]);
 			vacunas.add(vacuna);
 		}
 		
-		String[] listaIras = piezas[7].equals("")? new String[]{} : separar(piezas[7], SEPARADOR_REGISTRO);
-		List<ControlIra> iras = new ArrayList<ControlIra>();
-		for(String regIra : listaIras){
-			String[] datosIra = separar(regIra, SEPARADOR_CAMPO);
-			ControlIra ira = new ControlIra();
-			ira.id_persona = persona.id;
-			ira.id_ira = Integer.parseInt(datosIra[0]);
-			ira.fecha = datosIra[1];
-			iras.add(ira);
-		}
+		//Reservado para Iras
+
+		//Reservado para Edas
 		
-		String[] listaEdas = piezas[8].equals("")? new String[]{} : separar(piezas[8], SEPARADOR_REGISTRO);
-		List<ControlEda> edas = new ArrayList<ControlEda>();
-		for(String regEda : listaEdas){
-			String[] datosEda = separar(regEda, SEPARADOR_CAMPO);
-			ControlEda eda = new ControlEda();
-			eda.id_persona = persona.id;
-			eda.id_eda = Integer.parseInt(datosEda[0]);
-			eda.fecha = datosEda[1];
-			edas.add(eda);
-		}
-		
-		String[] listaConsultas = piezas[9].equals("")? new String[]{} : separar(piezas[9], SEPARADOR_REGISTRO);
-		List<ControlConsulta> consultas = new ArrayList<ControlConsulta>();
-		for(String regConsulta : listaConsultas){
-			String[] datosConsulta = separar(regConsulta, SEPARADOR_CAMPO);
-			ControlConsulta consulta = new ControlConsulta();
-			consulta.id_persona = persona.id;
-			consulta.id_consulta = Integer.parseInt(datosConsulta[0]);
-			consulta.fecha = datosConsulta[1];
-			consultas.add(consulta);
-		}
-		
-		String[] listaAcciones = piezas[10].equals("")? new String[]{} : separar(piezas[10], SEPARADOR_REGISTRO);
-		List<ControlAccionNutricional> acciones = new ArrayList<ControlAccionNutricional>();
-		for(String regAccion : listaAcciones){
-			String[] datosAccion = separar(regAccion, SEPARADOR_CAMPO);
-			ControlAccionNutricional accion = new ControlAccionNutricional();
-			accion.id_persona = persona.id;
-			accion.id_accion_nutricional = Integer.parseInt(datosAccion[0]);
-			accion.fecha = datosAccion[1];
-			acciones.add(accion);
-		}
-		
-		//Si persona no tiene controles, no existirá última localidad, así que la validamos
-		String[] listaControles = piezas[11].equals("")? new String[]{} : separar(piezas[11], SEPARADOR_REGISTRO);
-		List<ControlNutricional> controles = new ArrayList<ControlNutricional>();
-		for(String regControl : listaControles){
-			String[] datosControl = separar(regControl, SEPARADOR_CAMPO);
-			ControlNutricional control = new ControlNutricional();
-			control.id_persona = persona.id;
-			control.peso = Double.parseDouble(datosControl[0]);
-			control.altura = Integer.parseInt(datosControl[1]);
-			control.talla = Integer.parseInt(datosControl[2]);
-			control.fecha = datosControl[3];
-			controles.add(control);
-		}
+		//Reservado para Consultas
+
+		//Reservado para Acciones Nutricionales
+
+		//Reservado para Controles Nutricionales
 		
 		return new Sesion.DatosPaciente(persona, tutor, registro, alergias, afiliaciones,
-				vacunas, iras, edas, consultas, acciones, controles, true);
+				vacunas, true);
 	}//fin LeerVersion1
 	
 	/**
@@ -278,7 +226,7 @@ public class ManejadorNfc {
 		salida.append(convertirString(datos.persona.manzana) + SEPARADOR_CAMPO);
 		salida.append(convertirString(datos.persona.sector) + SEPARADOR_CAMPO);
 		salida.append(convertirInt(datos.persona.id_asu_localidad_domicilio) + SEPARADOR_CAMPO);
-		salida.append(datos.persona.cp_domicilio + SEPARADOR_CAMPO);
+		salida.append(convertirInt(datos.persona.cp_domicilio) + SEPARADOR_CAMPO);
 		salida.append(convertirString(datos.persona.telefono_domicilio) + SEPARADOR_CAMPO);
 		salida.append(datos.persona.fecha_registro + SEPARADOR_CAMPO);
 		salida.append(datos.persona.id_asu_um_tratante + SEPARADOR_CAMPO);
@@ -319,55 +267,28 @@ public class ManejadorNfc {
 		//Datos vacunas
 		for(int i=0;i<datos.vacunas.size();i++){
 			salida.append(datos.vacunas.get(i).id_vacuna + SEPARADOR_CAMPO);
-			salida.append(datos.vacunas.get(i).fecha);
+			salida.append(datos.vacunas.get(i).fecha + SEPARADOR_CAMPO);
+			salida.append(datos.vacunas.get(i).id_asu_um);
 			if(i!=datos.vacunas.size()-1)salida.append(SEPARADOR_REGISTRO);
 		}
 		salida.append(SEPARADOR_TABLA);
 		
-		//Datos iras
-		for(int i=0;i<datos.iras.size();i++){
-			salida.append(datos.iras.get(i).id_ira + SEPARADOR_CAMPO);
-			salida.append(datos.iras.get(i).fecha);
-			if(i!=datos.iras.size()-1)salida.append(SEPARADOR_REGISTRO);
-		}
+		//Reservado para Datos iras
 		salida.append(SEPARADOR_TABLA);
 		
-		//Datos edas
-		for (int i = 0; i < datos.edas.size(); i++) {
-			salida.append(datos.edas.get(i).id_eda + SEPARADOR_CAMPO);
-			salida.append(datos.edas.get(i).fecha);
-			if (i != datos.edas.size() - 1)
-				salida.append(SEPARADOR_REGISTRO);
-		}
+		//Reservado para Datos edas
 		salida.append(SEPARADOR_TABLA);
 		
-		//Datos consultas
-		for (int i = 0; i < datos.consultas.size(); i++) {
-			salida.append(datos.consultas.get(i).id_consulta + SEPARADOR_CAMPO);
-			salida.append(datos.consultas.get(i).fecha);
-			if (i != datos.consultas.size() - 1)
-				salida.append(SEPARADOR_REGISTRO);
-		}
+		//Reservado para Datos consultas
 		salida.append(SEPARADOR_TABLA);
 		
-		//Datos acciones nutricionales
-		for (int i = 0; i < datos.accionesNutricionales.size(); i++) {
-			salida.append(datos.accionesNutricionales.get(i).id_accion_nutricional + SEPARADOR_CAMPO);
-			salida.append(datos.accionesNutricionales.get(i).fecha);
-			if (i != datos.accionesNutricionales.size() - 1)
-				salida.append(SEPARADOR_REGISTRO);
-		}
+		//Reservado para Datos acciones nutricionales
 		salida.append(SEPARADOR_TABLA);
 		
-		//Datos controles nutricionales
-		for (int i = 0; i < datos.controlesNutricionales.size(); i++) {
-			salida.append(datos.controlesNutricionales.get(i).peso + SEPARADOR_CAMPO);
-			salida.append(datos.controlesNutricionales.get(i).altura + SEPARADOR_CAMPO);
-			salida.append(datos.controlesNutricionales.get(i).talla + SEPARADOR_CAMPO);
-			salida.append(datos.controlesNutricionales.get(i).fecha);
-			if (i != datos.controlesNutricionales.size() - 1)
-				salida.append(SEPARADOR_REGISTRO);
-		}
+		//Reservado para Datos controles nutricionales
+		//salida.append(SEPARADOR_TABLA);
+		
+		//Espacio disponible previa reservación de espacio
 		
 		EscribirTextoPlano(nfcTag, salida.toString());
 	}
@@ -413,26 +334,6 @@ public class ManejadorNfc {
 						ControlVacuna nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, ControlVacuna.class);
 						if(!InsertarEnLista(nuevo, datosPaciente.vacunas))
 							continue;
-					}else if(pendiente.tabla.equals(ControlNutricional.NOMBRE_TABLA)){
-						ControlNutricional nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, ControlNutricional.class);
-						if(!InsertarEnLista(nuevo, datosPaciente.controlesNutricionales))
-							continue;
-					}else if(pendiente.tabla.equals(ControlAccionNutricional.NOMBRE_TABLA)){
-						ControlAccionNutricional nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, ControlAccionNutricional.class);
-						if(!InsertarEnLista(nuevo, datosPaciente.accionesNutricionales))
-							continue;
-					}else if(pendiente.tabla.equals(ControlConsulta.NOMBRE_TABLA)){
-						ControlConsulta nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, ControlConsulta.class);
-						if(!InsertarEnLista(nuevo, datosPaciente.consultas))
-							continue;
-					}else if(pendiente.tabla.equals(ControlIra.NOMBRE_TABLA)){
-						ControlIra nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, ControlIra.class);
-						if(!InsertarEnLista(nuevo, datosPaciente.iras))
-							continue;
-					}else if(pendiente.tabla.equals(ControlEda.NOMBRE_TABLA)){
-						ControlEda nuevo = DatosUtil.ObjetoDesdeJson(pendiente.registro_json, ControlEda.class);
-						if(!InsertarEnLista(nuevo, datosPaciente.edas))
-							continue;
 						
 						//ESTOS ELEMENTOS SE AGREGAN DIRECTO PUES NO HAY ORDEN ESPECÍFICO REQUERIDO
 					}else if(pendiente.tabla.equals(PersonaAlergia.NOMBRE_TABLA)){
@@ -465,7 +366,7 @@ public class ManejadorNfc {
 					
 				}catch(JsonSyntaxException jse){
 					int idUsuario=((TesAplicacion)contexto.getApplicationContext()).getSesion().getUsuario()._id;
-					ErrorSis.AgregarError(contexto, idUsuario, 0, "Json incorrecto en pendiente de persona:"+
+					ErrorSis.AgregarError(contexto, idUsuario, ErrorSis.ERROR_DESCONOCIDO, "Json incorrecto en pendiente de persona:"+
 							pendiente.id_persona+", fecha:"+pendiente.fecha+", tabla:"+pendiente.tabla);
 				}
 				
@@ -497,27 +398,7 @@ public class ManejadorNfc {
 				if(esFechaHoraMenor( ((ControlVacuna) objeto).fecha, 
 						((ControlVacuna)lista.get(indice)).fecha) )
 					break;
-			}else if(objeto instanceof ControlNutricional){
-				if(esFechaHoraMenor( ((ControlNutricional) objeto).fecha, 
-						((ControlNutricional)lista.get(indice)).fecha) )
-					break;
-			}else if(objeto instanceof ControlAccionNutricional){
-				if(esFechaHoraMenor( ((ControlAccionNutricional) objeto).fecha, 
-						((ControlAccionNutricional)lista.get(indice)).fecha) )
-					break;
-			}else if(objeto instanceof ControlConsulta){
-				if(esFechaHoraMenor( ((ControlConsulta) objeto).fecha, 
-						((ControlConsulta)lista.get(indice)).fecha) )
-					break;
-			}else if(objeto instanceof ControlIra){
-				if(esFechaHoraMenor( ((ControlIra) objeto).fecha, 
-						((ControlIra)lista.get(indice)).fecha) )
-					break;
-			}else if(objeto instanceof ControlEda){
-				if(esFechaHoraMenor( ((ControlEda) objeto).fecha, 
-						((ControlEda)lista.get(indice)).fecha) )
-					break;
-			}
+			}//else if(...){}
 		}
 		//Inserta objeto en la posición adecuada según su fecha
 		lista.add(indice, objeto);
@@ -635,79 +516,5 @@ public class ManejadorNfc {
 		return new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, new byte[0], payload);
 	}
 	
-	/**
-	 * VERSIÓN 1 de metadatos ----------------
-	 * VERSIONBD
-persona
-  `id` CHAR(32)*******
-  `curp` VARCHAR(18)
-  `nombre` VARCHAR(35)
-  `apellido_paterno` VARCHAR(20)
-  `apellido_materno` VARCHAR(20)
-  `sexo` CHAR(1)
-  `id_ece_tipo_sanguineo` INT(1)
-  `fecha_nacimiento` DATE
-  `id_localidad_nacimiento` INT(10)
-  `calle_domicilio` VARCHAR(60)
-  `numero_domicilio` VARCHAR(10)
-  `colonia_domicilio` VARCHAR(30)
-  `referencia_domicilio` VARCHAR(60)
-  `id_localidad_domicilio` INT(6)
-  `cp_domicilio` INT(5)
-  `telefono_domicilio` VARCHAR(20)
-  `fecha_registro` DATE 
-  `id_um_tratante` INT(10)
-  `celuar` VARCHAR(20) 
-  `ultima_actualizacion` DATETIME
-  `id_ece_nacionalidad` INT(3)
-  `id_operadora_celular` INT(2)
-  `ultima_actualizacion` INT(2)
 
-tutor
-  `id` CHAR(32) 
-  `curp` VARCHAR(18)
-  `nombre` VARCHAR(35) 
-  `apellido_paterno` VARCHAR(20)
-  `apellido_materno` VARCHAR(20) 
-  `sexo` char(1) 
-  `telefono` VARCHAR(20)
-  `celular` VARCHAR(20) 
-  `id_operadora_celular` INT(2)
-
-registro_civil
-  `id_localidad_registro_civil`
-  `fecha_registro` DATE
-
-persona_x_alergia*** UNA ENTRADA POR CADA ALERGIA
-  `id_alergia` INT(4)
-
-persona_x_afiliacion*** UNA ENTRADA POR CADA AfILIACION
-  `id_afiliacion` INT(2)
-
-control_vacuna*** UNA ENTRADA POR CADA VACUNA
-  `id_ece_vacuna` INT(2) 
-  `fecha` DATE
-
-control_ira*** UNA ENTRADA POR CADA ENFERMEDAD
-  `id_ece_ira` INT(3) 
-  `fecha` DATE 
-
-control_eda*** UNA ENTRADA POR CADA ENFERMEDAD
-  `id_ece_eda` INT(3) 
-  `fecha` DATE  
-
-control_consulta*** UNA ENTRADA POR CADA ENFERMEDAD
-  `id_ece_consulta` INT(3) 
-  `fecha` DATE 
-
-control_accion_nutricional*** UNA ENTRADA POR CADA CONTROL
-  `id_ece_accion_nutricional` INT(2) 
-  `fecha` DATETIME 
-
-control_nutricional*** UNA ENTRADA POR CADA CONTROL
-  `peso` DECIMAL(5,2) 
-  `altura` INT(3)
-  `talla` INT(3) 
-  `fecha` DATETIME
-	 */
 }

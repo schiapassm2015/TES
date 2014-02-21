@@ -39,7 +39,7 @@ public class ArbolSegmentacion {
 		ID_PADRE + " INTEGER NOT NULL, " +
 		ORDEN + " INTEGER DEFAULT NULL, " +
 		VISIBLE + " INTEGER NOT NULL, " +
-		DESCRIPCION + " TEXT NOT NULL "+
+		DESCRIPCION + " TEXT NOT NULL COLLATE NOCASE"+
 		"); ";
 	
 	//POJO

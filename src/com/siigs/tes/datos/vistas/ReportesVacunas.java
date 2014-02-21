@@ -9,7 +9,7 @@ import com.siigs.tes.datos.tablas.ControlVacuna;
 import com.siigs.tes.datos.tablas.Vacuna;
 
 /**
- * Describe la consulta anidada de Vacunas aplicadas en un periodo de tiempo
+ * Describe la consulta anidada de las Vacunas aplicadas en todo el sistema en un periodo de tiempo
  * @author Axel
  *
  */

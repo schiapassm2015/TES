@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Window;
 import android.widget.Toast;
 
 /**
@@ -55,7 +56,7 @@ public class PrincipalActivity extends FragmentActivity implements
 		setContentView(R.layout.activity_principal_onepane);
 
 		this.aplicacion = (TesAplicacion)getApplication();
-		
+
 		if (findViewById(R.id.seccion_detail_container) != null) {
 			// The detail container view will be present only in the
 			// large-screen layouts (res/values-large and
@@ -187,7 +188,7 @@ public class PrincipalActivity extends FragmentActivity implements
 
 	/**
 	 * Callback method from {@link PrincipalFragment.Callbacks} indicating
-	 * that the item with the given ID was selected.
+	 * that the item with the given ID_PERSONA was selected.
 	 */
 	@Override
 	public void onItemSelected(String id) {
@@ -220,7 +221,7 @@ public class PrincipalActivity extends FragmentActivity implements
 
 		} else {
 			// In single-pane mode, simply start the detail activity
-			// for the selected item ID.
+			// for the selected item ID_PERSONA.
 			Intent detailIntent = new Intent(this, ControlActivity.class);
 			detailIntent.putExtra("clase", ContenidoControles.CONTROLES_TODOS_MAP.get(id).clase.getName());
 			startActivity(detailIntent);

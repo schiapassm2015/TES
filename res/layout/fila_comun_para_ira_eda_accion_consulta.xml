@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:minHeight="@dimen/alto_fila_comun_ira_eda_accion"
     android:orientation="horizontal"
+    android:clickable="true"
     android:background="@drawable/selector_fila_tabla" >
     
     <TextView android:id="@+id/txtFecha"
@@ -32,6 +33,13 @@
         android:layout_height="match_parent"
         android:background="@drawable/borde_gris"
         android:text="[detalle]"
+        android:gravity="center" />
+    
+    <TextView android:id="@+id/txtTratamiento"
+        android:layout_width="@dimen/columna_comun_ira_eda_accion_tratamiento"
+        android:layout_height="match_parent"
+        android:background="@drawable/borde_gris"
+        android:text="[tratamiento]"
         android:gravity="center" />
     
 </LinearLayout>

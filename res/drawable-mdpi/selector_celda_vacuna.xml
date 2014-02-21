@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Selector para definir los estados de color/forma/fondo que tiene un item de lista
-Este selector está enfocado en particular para los items de {@link PrincipalFragment}
-a travéz del layout {@link fila_principalfragment} -->
+<!-- Define comportamiento de una celda normal de vacuna -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android" >
     <item 
         android:state_pressed="true"
-        android:drawable="@drawable/gradiente_naranja" />
+        android:drawable="@drawable/gradiente_amarillo_borde" />
     
     <item 
         android:drawable="@drawable/borde_celda_vacuna"/>

@@ -13,19 +13,14 @@ import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.siigs.tes.controles.ContenidoControles;
 import com.siigs.tes.controles.ContenidoControles.ItemControl;
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.ProveedorContenido;
-import com.siigs.tes.datos.tablas.ControlVacuna;
 import com.siigs.tes.datos.tablas.UsuarioInvitado;
 import com.siigs.tes.ui.AdaptadorArrayMultiView;
-import com.siigs.tes.datos.tablas.Grupo;
-import com.siigs.tes.datos.tablas.Permiso;
 import com.siigs.tes.datos.tablas.Persona;
-import com.siigs.tes.datos.tablas.Usuario;
 
 /**
  * A list fragment representing a list of {@link ItemControl}. This fragment also supports
@@ -111,8 +106,6 @@ public class PrincipalFragment extends ListFragment {
 			//Lista vacía
 			LlenarLista(new java.util.ArrayList<ContenidoControles.ItemControl>());
 		}
-		
-		//GenerarDatosFalsos(); //TODO eliminar esto
 	}
 	
 	public static byte[] hexStringToByteArray(String cadena) {
@@ -126,6 +119,7 @@ public class PrincipalFragment extends ListFragment {
 	    }
 	    return data;
 	}
+
 	
 	public static String ByteArrayTohexString(byte[] cadena) {
 		int largo= cadena.length*2;

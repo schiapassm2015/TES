@@ -6,6 +6,7 @@
     android:paddingLeft="@dimen/padding_izquierda_agregar_control"
     android:orientation="vertical" >
 
+    
     <include
         android:id="@+id/barra_titulo_vacuna"
         layout="@layout/barra_titulo" />
@@ -19,13 +20,11 @@
             android:layout_height="wrap_content"
             android:text="Paciente" />
 
-        <EditText
-            android:id="@+id/txtNombre"
+    	<TextView 
+            android:id="@+id/txtDatosBasicos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
-            android:inputType="text"
-            android:singleLine="true" />
+            android:text="[DATOS BÁSICOS]"/>
     </LinearLayout>
 
     <LinearLayout
@@ -51,13 +50,63 @@
         <TextView
             android:layout_width="70dp"
             android:layout_height="wrap_content"
+            android:text="Vía" />
+
+        <TextView
+            android:id="@+id/txtViaVacuna"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="[via vacuna]"/>
+        
+        <TextView
+            android:layout_width="70dp"
+            android:layout_marginLeft="50dp"
+            android:layout_height="wrap_content"
+            android:text="Dósis (ml)" />
+
+        <TextView
+            android:id="@+id/txtDosis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="[dosis]"/>
+        
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="Región" />
+
+        <TextView
+            android:id="@+id/txtRegion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="[región]"/>
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
             android:text="Lote" />
 
         <EditText
             android:id="@+id/txtLote"
+            style="@style/APP_EditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
+            android:maxLength="40"
             android:digits="@string/caracteres_permitidos" />
     </LinearLayout>
 

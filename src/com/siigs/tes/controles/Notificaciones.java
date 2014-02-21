@@ -45,7 +45,7 @@ public class Notificaciones extends Fragment {
 				R.layout.controles_notificaciones, container, false);
 		
 		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_ver, R.string.notificaciones, 
-				R.layout.ayuda_dialogo_tes_login, getFragmentManager());
+				R.string.ayuda_notificaciones, getFragmentManager());
 		
 		List<Notificacion> datos = Notificacion.getNotificacioones(getActivity());
 		AdaptadorArrayMultiTextView<Notificacion> adaptador = new AdaptadorArrayMultiTextView<Notificacion>(
@@ -65,7 +65,7 @@ public class Notificaciones extends Fragment {
 		@Override
 		public boolean setViewValue(View viewDestino,
 				String metodoInvocarDestino, Notificacion origen,
-				String atributoOrigen, Object valor) {
+				String atributoOrigen, Object valor, int posicion) {
 
 			if(viewDestino.getId()==R.id.txtFechas){
 				((TextView)viewDestino).setText("De: "+DatosUtil.fechaHoraCorta(origen.fecha_inicio)

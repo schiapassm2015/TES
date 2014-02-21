@@ -92,54 +92,6 @@ public class ProveedorContenido extends ContentProvider {
 	public static final Uri VACUNA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	        + "/" + VACUNA_PATH);
 	
-	private static final String CONTROL_IRA_PATH = ControlIra.NOMBRE_TABLA;
-	public static final int CONTROL_IRA_TODOS = 800;
-	public static final int CONTROL_IRA_ID = 810;
-	public static final Uri CONTROL_IRA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + CONTROL_IRA_PATH);
-	
-	private static final String IRA_PATH = Ira.NOMBRE_TABLA;
-	public static final int IRA_TODOS = 820;
-	public static final int IRA_ID = 821;
-	public static final Uri IRA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + IRA_PATH);
-	
-	private static final String CONTROL_EDA_PATH = ControlEda.NOMBRE_TABLA;
-	public static final int CONTROL_EDA_TODOS = 900;
-	public static final int CONTROL_EDA_ID = 910;
-	public static final Uri CONTROL_EDA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + CONTROL_EDA_PATH);
-	
-	private static final String EDA_PATH = Eda.NOMBRE_TABLA;
-	public static final int EDA_TODOS = 920;
-	public static final int EDA_ID = 921;
-	public static final Uri EDA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + EDA_PATH);
-	
-	private static final String CONTROL_CONSULTA_PATH = ControlConsulta.NOMBRE_TABLA;
-	public static final int CONTROL_CONSULTA_TODOS = 1000;
-	public static final int CONTROL_CONSULTA_ID = 1010;
-	public static final Uri CONTROL_CONSULTA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + CONTROL_CONSULTA_PATH);
-	
-	private static final String CONSULTA_PATH = Consulta.NOMBRE_TABLA;
-	public static final int CONSULTA_TODOS = 1020;
-	public static final int CONSULTA_ID = 1021;
-	public static final Uri CONSULTA_CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + CONSULTA_PATH);
-	
-	private static final String CONTROL_ACCION_NUTRICIONAL_PATH = ControlAccionNutricional.NOMBRE_TABLA;
-	public static final int CONTROL_ACCION_NUTRICIONAL_TODOS = 1100;
-	public static final int CONTROL_ACCION_NUTRICIONAL_ID = 1110;
-	public static final Uri CONTROL_ACCION_NUTRICIONAL_CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + CONTROL_ACCION_NUTRICIONAL_PATH);
-	
-	private static final String ACCION_NUTRICIONAL_PATH = AccionNutricional.NOMBRE_TABLA;
-	public static final int ACCION_NUTRICIONAL_TODOS = 1120;
-	public static final int ACCION_NUTRICIONAL_ID = 1121;
-	public static final Uri ACCION_NUTRICIONAL_CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + ACCION_NUTRICIONAL_PATH);
-	
 	private static final String NACIONALIDAD_PATH = Nacionalidad.NOMBRE_TABLA;
 	public static final int NACIONALIDAD_TODOS = 10;
 	public static final int NACIONALIDAD_ID = 11;
@@ -181,12 +133,6 @@ public class ProveedorContenido extends ContentProvider {
 	public static final int AFILIACION_ID = 66;
 	public static final Uri AFILIACION_CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	        + "/" + AFILIACION_PATH);
-	
-	private static final String CONTROL_NUTRICIONAL_PATH = ControlNutricional.NOMBRE_TABLA;
-	public static final int CONTROL_NUTRICIONAL_TODOS = 70;
-	public static final int CONTROL_NUTRICIONAL_ID = 71;
-	public static final Uri CONTROL_NUTRICIONAL_CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + CONTROL_NUTRICIONAL_PATH);
 	
 	private static final String PERSONA_ALERGIA_PATH = PersonaAlergia.NOMBRE_TABLA;
 	public static final int PERSONA_ALERGIA_TODOS = 80;
@@ -260,7 +206,7 @@ public class ProveedorContenido extends ContentProvider {
 	public static final Uri CENSO_CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	        + "/" + CENSO_PATH);
 	
-	private static final String VISTA_ESQUEMA_INCOMPLETO_PATH = "vista_esquema_incompleto";
+	private static final String VISTA_ESQUEMA_INCOMPLETO_PATH = EsquemasIncompletos.NOMBRE_VISTA;
 	public static final int VISTA_ESQUEMA_INCOMPLETO_TODOS = 1810;
 	public static final Uri VISTA_ESQUEMA_INCOMPLETO_CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	        + "/" + VISTA_ESQUEMA_INCOMPLETO_PATH);
@@ -270,12 +216,6 @@ public class ProveedorContenido extends ContentProvider {
 	public static final Uri REPORTE_VACUNAS_CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	        + "/" + REPORTE_VACUNAS_PATH);
 	
-	/*
-	public static final String CONTENT_ITEM_TYPE = 
-			ContentResolver.CURSOR_ITEM_BASE_TYPE + "/persona";
-	public static final String CONTENT_TYPE = 
-			ContentResolver.CURSOR_DIR_BASE_TYPE + "/personas";
-	*/
 	
 	//UriMatcher
 	private static final UriMatcher sURIMatcher = new UriMatcher(
@@ -307,26 +247,6 @@ public class ProveedorContenido extends ContentProvider {
 	    sURIMatcher.addURI(AUTHORITY, VACUNA_PATH, VACUNA_TODOS);
 	    sURIMatcher.addURI(AUTHORITY, VACUNA_PATH + "/#", VACUNA_ID);
 	    
-	    sURIMatcher.addURI(AUTHORITY, CONTROL_IRA_PATH, CONTROL_IRA_TODOS);
-	    sURIMatcher.addURI(AUTHORITY, CONTROL_IRA_PATH + "/#", CONTROL_IRA_ID);
-	    sURIMatcher.addURI(AUTHORITY, IRA_PATH, IRA_TODOS);
-	    sURIMatcher.addURI(AUTHORITY, IRA_PATH + "/#", IRA_ID);
-	    
-	    sURIMatcher.addURI(AUTHORITY, CONTROL_EDA_PATH, CONTROL_EDA_TODOS);
-	    sURIMatcher.addURI(AUTHORITY, CONTROL_EDA_PATH + "/#", CONTROL_EDA_ID);
-	    sURIMatcher.addURI(AUTHORITY, EDA_PATH, EDA_TODOS);
-	    sURIMatcher.addURI(AUTHORITY, EDA_PATH + "/#", EDA_ID);
-	    
-	    sURIMatcher.addURI(AUTHORITY, CONTROL_CONSULTA_PATH, CONTROL_CONSULTA_TODOS);
-	    sURIMatcher.addURI(AUTHORITY, CONTROL_CONSULTA_PATH + "/#", CONTROL_CONSULTA_ID);
-	    sURIMatcher.addURI(AUTHORITY, CONSULTA_PATH, CONSULTA_TODOS);
-	    sURIMatcher.addURI(AUTHORITY, CONSULTA_PATH + "/#", CONSULTA_ID);
-	    
-	    sURIMatcher.addURI(AUTHORITY, CONTROL_ACCION_NUTRICIONAL_PATH, CONTROL_ACCION_NUTRICIONAL_TODOS);
-	    sURIMatcher.addURI(AUTHORITY, CONTROL_ACCION_NUTRICIONAL_PATH + "/#", CONTROL_ACCION_NUTRICIONAL_ID);
-	    sURIMatcher.addURI(AUTHORITY, ACCION_NUTRICIONAL_PATH, ACCION_NUTRICIONAL_TODOS);
-	    sURIMatcher.addURI(AUTHORITY, ACCION_NUTRICIONAL_PATH + "/#", ACCION_NUTRICIONAL_ID);
-	    
 	    sURIMatcher.addURI(AUTHORITY, NACIONALIDAD_PATH, NACIONALIDAD_TODOS);
 	    sURIMatcher.addURI(AUTHORITY, NACIONALIDAD_PATH + "/#", NACIONALIDAD_ID);
 	    
@@ -346,9 +266,6 @@ public class ProveedorContenido extends ContentProvider {
 	    sURIMatcher.addURI(AUTHORITY, PERSONA_AFILIACION_PATH + "/#", PERSONA_AFILIACION_ID);
 	    sURIMatcher.addURI(AUTHORITY, AFILIACION_PATH, AFILIACION_TODOS);
 	    sURIMatcher.addURI(AUTHORITY, AFILIACION_PATH + "/#", AFILIACION_ID);
-	    
-	    sURIMatcher.addURI(AUTHORITY, CONTROL_NUTRICIONAL_PATH, CONTROL_NUTRICIONAL_TODOS);
-	    sURIMatcher.addURI(AUTHORITY, CONTROL_NUTRICIONAL_PATH + "/#", CONTROL_NUTRICIONAL_ID);
 	    
 	    sURIMatcher.addURI(AUTHORITY, PERSONA_ALERGIA_PATH, PERSONA_ALERGIA_TODOS);
 	    sURIMatcher.addURI(AUTHORITY, PERSONA_ALERGIA_PATH + "/#", PERSONA_ALERGIA_ID);
@@ -487,84 +404,7 @@ public class ProveedorContenido extends ContentProvider {
 			break;
 		case ProveedorContenido.VACUNA_TODOS:
 			builder.setTables(Vacuna.NOMBRE_TABLA);// No existe filtro
-			break;
-			
-		//IRAS	
-		case ProveedorContenido.CONTROL_IRA_ID:
-			builder.setTables(ControlIra.NOMBRE_TABLA);
-			builder.appendWhere(ControlIra._ID + "=?");
-			parametros=new String[]{uri.getLastPathSegment()};
-			break;
-		case ProveedorContenido.CONTROL_IRA_TODOS:
-			builder.setTables(ControlIra.NOMBRE_TABLA);// No existe filtro
-			break;
-			
-		case ProveedorContenido.IRA_ID:
-			builder.setTables(Ira.NOMBRE_TABLA);
-			builder.appendWhere(Ira.ID + "=?");
-			parametros=new String[]{uri.getLastPathSegment()};
-			break;
-		case ProveedorContenido.IRA_TODOS:
-			builder.setTables(Ira.NOMBRE_TABLA);// No existe filtro
-			break;
-			
-		//EDAS
-		case ProveedorContenido.CONTROL_EDA_ID:
-			builder.setTables(ControlEda.NOMBRE_TABLA);
-			builder.appendWhere(ControlEda._ID + "=?");
-			parametros=new String[]{uri.getLastPathSegment()};
-			break;
-		case ProveedorContenido.CONTROL_EDA_TODOS:
-			builder.setTables(ControlEda.NOMBRE_TABLA);// No existe filtro
-			break;
-			
-		case ProveedorContenido.EDA_ID:
-			builder.setTables(Eda.NOMBRE_TABLA);
-			builder.appendWhere(Eda.ID + "=?");
-			parametros=new String[]{uri.getLastPathSegment()};
-			break;
-		case ProveedorContenido.EDA_TODOS:
-			builder.setTables(Eda.NOMBRE_TABLA);// No existe filtro
-			break;
-			
-		//CONSULTAS
-		case ProveedorContenido.CONTROL_CONSULTA_ID:
-			builder.setTables(ControlConsulta.NOMBRE_TABLA);
-			builder.appendWhere(ControlConsulta._ID + "=?");
-			parametros=new String[]{uri.getLastPathSegment()};
-			break;
-		case ProveedorContenido.CONTROL_CONSULTA_TODOS:
-			builder.setTables(ControlConsulta.NOMBRE_TABLA);// No existe filtro
-			break;
-			
-		case ProveedorContenido.CONSULTA_ID:
-			builder.setTables(Consulta.NOMBRE_TABLA);
-			builder.appendWhere(Consulta.ID + "=?");
-			parametros=new String[]{uri.getLastPathSegment()};
-			break;
-		case ProveedorContenido.CONSULTA_TODOS:
-			builder.setTables(Consulta.NOMBRE_TABLA);// No existe filtro
-			break;
-			
-		//ACCIONES NUTRICIONALES
-		case ProveedorContenido.CONTROL_ACCION_NUTRICIONAL_ID:
-			builder.setTables(ControlAccionNutricional.NOMBRE_TABLA);
-			builder.appendWhere(ControlAccionNutricional._ID + "=?");
-			parametros=new String[]{uri.getLastPathSegment()};
-			break;			
-		case ProveedorContenido.CONTROL_ACCION_NUTRICIONAL_TODOS:
-			builder.setTables(ControlAccionNutricional.NOMBRE_TABLA);// No existe filtro
-			break;
-
-		case ProveedorContenido.ACCION_NUTRICIONAL_ID:
-			builder.setTables(AccionNutricional.NOMBRE_TABLA);
-			builder.appendWhere(AccionNutricional.ID + "=?");
-			parametros=new String[]{uri.getLastPathSegment()};
-			break;
-		case ProveedorContenido.ACCION_NUTRICIONAL_TODOS:
-			builder.setTables(AccionNutricional.NOMBRE_TABLA);// No existe filtro
-			break;
-		
+			break;		
 			
 		case ProveedorContenido.NACIONALIDAD_ID:
 			builder.setTables(Nacionalidad.NOMBRE_TABLA);
@@ -630,15 +470,6 @@ public class ProveedorContenido extends ContentProvider {
 			builder.setTables(Afiliacion.NOMBRE_TABLA);// No existe filtro
 			break;
 			
-		case ProveedorContenido.CONTROL_NUTRICIONAL_ID:
-			builder.setTables(ControlNutricional.NOMBRE_TABLA);
-			builder.appendWhere(ControlNutricional._ID + "=?");
-			parametros=new String[]{uri.getLastPathSegment()};
-			break;			
-		case ProveedorContenido.CONTROL_NUTRICIONAL_TODOS:
-			builder.setTables(ControlNutricional.NOMBRE_TABLA);// No existe filtro
-			break;
-			
 		//ALERGIAS	
 		case ProveedorContenido.PERSONA_ALERGIA_ID:
 			builder.setTables(PersonaAlergia.NOMBRE_TABLA);
@@ -677,11 +508,6 @@ public class ProveedorContenido extends ContentProvider {
 			builder.setTables(Tutor.NOMBRE_TABLA);// No existe filtro
 			break;
 			
-		/*case ProveedorContenido.PENDIENTES_TARJETA_ID: //LA TABLA NO IDENTIFICA REGISTROS POR UN SOLO ID
-			builder.setTables(PendientesTarjeta.NOMBRE_TABLA);
-			builder.appendWhere(PendientesTarjeta.ID + "=?");
-			parametros=new String[]{uri.getLastPathSegment()};
-			break;*/			
 		case ProveedorContenido.PENDIENTES_TARJETA_TODOS:
 			builder.setTables(PendientesTarjeta.NOMBRE_TABLA);// No existe filtro
 			break;
@@ -731,22 +557,20 @@ public class ProveedorContenido extends ContentProvider {
 			builder.setTables(ViaVacuna.NOMBRE_TABLA);// No existe filtro
 			break;
 			
-		case ProveedorContenido.ESQUEMA_INCOMPLETO_ID:
-			builder.setTables(EsquemaIncompleto.NOMBRE_TABLA);
-			//builder.appendWhere(EsquemaIncompleto.ID + "=?");
-			//parametros=new String[]{uri.getLastPathSegment()};
-			break;			
 		case ProveedorContenido.ESQUEMA_INCOMPLETO_TODOS:
 			builder.setTables(EsquemaIncompleto.NOMBRE_TABLA);// No existe filtro
 			break;
+		
+			//VISTAS
+			
 		case ProveedorContenido.CENSO_TODOS:
 			projection = Censo.COLUMNAS;
 			builder.setTables(Censo.TABLAS);
 			break;
 		case ProveedorContenido.VISTA_ESQUEMA_INCOMPLETO_TODOS:
-			projection = EsquemasIncompletos.COLUMNAS;
-			builder.setTables(EsquemasIncompletos.TABLAS);
-			selection = EsquemasIncompletos.WHERE + " AND " + selection;
+			//projection = EsquemasIncompletos.COLUMNAS;
+			builder.setTables(EsquemasIncompletos.NOMBRE_VISTA);
+			//selection = EsquemasIncompletos.WHERE + (selection==null? "": " AND "+selection);
 			break;
 		case ProveedorContenido.REPORTE_VACUNAS_TODOS:
 			projection = ReportesVacunas.COLUMNAS;
@@ -760,10 +584,6 @@ public class ProveedorContenido extends ContentProvider {
 		//Continúa consulta con o sin parámetros según uri
 		Cursor cur= builder.query(this.basedatos.getReadableDatabase(), 
 				projection, selection, parametros, groupBy, null, sortOrder);
-		//The setNotificationUri() method simply places a watch on the caller’s 
-		//content resolver such that if the data changes and the caller has 
-		//a registered change watcher, they’ll be notified. 
-		//Here we just use the same URI.
 		cur.setNotificationUri(this.getContext().getContentResolver(), uri);
 		return cur;
 	}
@@ -785,10 +605,6 @@ public class ProveedorContenido extends ContentProvider {
 		case ProveedorContenido.PERSONA_TODOS:
 			tabla=Persona.NOMBRE_TABLA;
 			break;
-		//case ProveedorContenido.PERSONA_ID:
-		//	tabla=Persona.NOMBRE_TABLA;
-		//	where = Persona.ID + "=" + id;
-		//	break;
 		case ProveedorContenido.USUARIO_TODOS:
 			tabla=Usuario.NOMBRE_TABLA;
 			break;
@@ -812,18 +628,6 @@ public class ProveedorContenido extends ContentProvider {
 			break;
 		case ProveedorContenido.VACUNA_TODOS:
 			tabla=Vacuna.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.ACCION_NUTRICIONAL_TODOS:
-			tabla=AccionNutricional.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.IRA_TODOS:
-			tabla=Ira.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.EDA_TODOS:
-			tabla=Eda.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONSULTA_TODOS:
-			tabla=Consulta.NOMBRE_TABLA;
 			break;
 		case ProveedorContenido.ALERGIA_TODOS:
 			tabla=Alergia.NOMBRE_TABLA;
@@ -864,21 +668,6 @@ public class ProveedorContenido extends ContentProvider {
 		case ProveedorContenido.CONTROL_VACUNA_TODOS:
 			tabla=ControlVacuna.NOMBRE_TABLA;
 			break;
-		case ProveedorContenido.CONTROL_IRA_TODOS:
-			tabla=ControlIra.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_EDA_TODOS:
-			tabla=ControlEda.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_ACCION_NUTRICIONAL_TODOS:
-			tabla=ControlAccionNutricional.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_NUTRICIONAL_TODOS:
-			tabla=ControlNutricional.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_CONSULTA_TODOS:
-			tabla=ControlConsulta.NOMBRE_TABLA;
-			break;
 		case ProveedorContenido.REGLA_VACUNA_TODOS:
 			tabla=ReglaVacuna.NOMBRE_TABLA;
 			break;
@@ -888,7 +677,7 @@ public class ProveedorContenido extends ContentProvider {
 		case ProveedorContenido.ESQUEMA_INCOMPLETO_TODOS:
 			tabla=EsquemaIncompleto.NOMBRE_TABLA;
 			break;
-			
+		
 		default:
 			throw new IllegalArgumentException("Uri desconocido "+uri);
 		}//fin casos
@@ -911,7 +700,6 @@ public class ProveedorContenido extends ContentProvider {
 
 	@Override
 	public String getType(Uri uri) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -951,18 +739,6 @@ public class ProveedorContenido extends ContentProvider {
 		case ProveedorContenido.VACUNA_TODOS:
 			tabla=Vacuna.NOMBRE_TABLA;
 			break;
-		case ProveedorContenido.ACCION_NUTRICIONAL_TODOS:
-			tabla=AccionNutricional.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.IRA_TODOS:
-			tabla=Ira.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.EDA_TODOS:
-			tabla=Eda.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONSULTA_TODOS:
-			tabla=Consulta.NOMBRE_TABLA;
-			break;
 		case ProveedorContenido.ALERGIA_TODOS:
 			tabla=Alergia.NOMBRE_TABLA;
 			break;
@@ -1001,21 +777,6 @@ public class ProveedorContenido extends ContentProvider {
 			break;
 		case ProveedorContenido.CONTROL_VACUNA_TODOS:
 			tabla=ControlVacuna.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_IRA_TODOS:
-			tabla=ControlIra.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_EDA_TODOS:
-			tabla=ControlEda.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_ACCION_NUTRICIONAL_TODOS:
-			tabla=ControlAccionNutricional.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_NUTRICIONAL_TODOS:
-			tabla=ControlNutricional.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_CONSULTA_TODOS:
-			tabla=ControlConsulta.NOMBRE_TABLA;
 			break;
 		case ProveedorContenido.REGLA_VACUNA_TODOS:
 			tabla=ReglaVacuna.NOMBRE_TABLA;
@@ -1056,12 +817,7 @@ public class ProveedorContenido extends ContentProvider {
 	
 	@Override
 	/**
-	 * Genera acciones UPDATE en base de datos según el tipo de uri. Una tabla puede tener
-	 * uri _TODOS o _ID. En tipo _ID genera updates basados en la columna ID de la tabla.
-	 * El tipo _TODOS permite agregar criterios libres de actualización que deberán
-	 * cumplir con los criterios mandado en parámetro {selection}
-	 * 
-	 * Notas: http://www.vogella.com/articles/AndroidSQLite/article.html
+	 * Genera acciones UPDATE en base de datos según el tipo de uri. 
 	 */
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 		int tipoUri= sURIMatcher.match(uri);
@@ -1107,18 +863,6 @@ public class ProveedorContenido extends ContentProvider {
 		case ProveedorContenido.VACUNA_TODOS:
 			tabla=Vacuna.NOMBRE_TABLA;
 			break;
-		case ProveedorContenido.ACCION_NUTRICIONAL_TODOS:
-			tabla=AccionNutricional.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.IRA_TODOS:
-			tabla=Ira.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.EDA_TODOS:
-			tabla=Eda.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONSULTA_TODOS:
-			tabla=Consulta.NOMBRE_TABLA;
-			break;
 		case ProveedorContenido.ALERGIA_TODOS:
 			tabla=Alergia.NOMBRE_TABLA;
 			break;
@@ -1157,21 +901,6 @@ public class ProveedorContenido extends ContentProvider {
 			break;
 		case ProveedorContenido.CONTROL_VACUNA_TODOS:
 			tabla=ControlVacuna.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_IRA_TODOS:
-			tabla=ControlIra.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_EDA_TODOS:
-			tabla=ControlEda.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_ACCION_NUTRICIONAL_TODOS:
-			tabla=ControlAccionNutricional.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_NUTRICIONAL_TODOS:
-			tabla=ControlNutricional.NOMBRE_TABLA;
-			break;
-		case ProveedorContenido.CONTROL_CONSULTA_TODOS:
-			tabla=ControlConsulta.NOMBRE_TABLA;
 			break;
 		case ProveedorContenido.REGLA_VACUNA_TODOS:
 			tabla=ReglaVacuna.NOMBRE_TABLA;

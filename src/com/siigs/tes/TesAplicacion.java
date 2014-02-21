@@ -42,6 +42,9 @@ public class TesAplicacion extends Application {
 	private final static String TIEMPO_ESPERA_REINTENTO = "tiempo_espera_reintento";
 	private final static String TIPO_CENSO = "tipo_censo";
 	private final static String UNIDAD_MEDICA = "unidad_medica";
+	private final static String FILTRO_DIAS_ANTIGUEDAD_IRAS = "filtro_dias_antiguedad_iras";
+	private final static String FILTRO_DIAS_ANTIGUEDAD_EDAS = "filtro_dias_antiguedad_edas";
+	private final static String FILTRO_DIAS_ANTIGUEDAD_CONSULTAS = "filtro_dias_antiguedad_consultas";
 	private final static String ES_INSTALACION_NUEVA = "es_instalacion_nueva";
 	private final static String FECHA_ULTIMA_SINCRONIZACION = "fecha_ultima_sincronizacion";
 	private final static String REQUIERE_ACTUALIZAR_VERSION_APK = "requiere_actualizar_version_apk";
@@ -88,7 +91,7 @@ public class TesAplicacion extends Application {
 	 * @return
 	 */
 	public String getUrlSincronizacion(){
-		return preferencias.getString(URL_SINCRONIZACION, "http://www.sm2015.com.mx/tes/servicios/prueba");
+		return preferencias.getString(URL_SINCRONIZACION, "http://www.sm2015.com.mx/tes/servicios/synchronization");
 	}
 	public void setUrlSincronizacion(String url){
 		SharedPreferences.Editor editor = preferencias.edit();
@@ -135,6 +138,36 @@ public class TesAplicacion extends Application {
 		editor.putInt(UNIDAD_MEDICA, um);
 		editor.apply();
 		Log.d(TAG, "Cambiada unidad médica a:"+um);
+	}
+	
+	public int getFiltroDiasAntiguedadIras(){
+		return preferencias.getInt(FILTRO_DIAS_ANTIGUEDAD_IRAS, 10);
+	}
+	public void setFiltroDiasAntiguedadIras(int dias){
+		SharedPreferences.Editor editor = preferencias.edit();
+		editor.putInt(FILTRO_DIAS_ANTIGUEDAD_IRAS, dias);
+		editor.apply();
+		Log.d(TAG, "Cambiado filtro días de iras a:"+dias);
+	}
+	
+	public int getFiltroDiasAntiguedadEdas(){
+		return preferencias.getInt(FILTRO_DIAS_ANTIGUEDAD_EDAS, 10);
+	}
+	public void setFiltroDiasAntiguedadEdas(int dias){
+		SharedPreferences.Editor editor = preferencias.edit();
+		editor.putInt(FILTRO_DIAS_ANTIGUEDAD_EDAS, dias);
+		editor.apply();
+		Log.d(TAG, "Cambiado filtro días de edas a:"+dias);
+	}
+	
+	public int getFiltroDiasAntiguedadConsultas(){
+		return preferencias.getInt(FILTRO_DIAS_ANTIGUEDAD_CONSULTAS, 10);
+	}
+	public void setFiltroDiasAntiguedadConsultas(int dias){
+		SharedPreferences.Editor editor = preferencias.edit();
+		editor.putInt(FILTRO_DIAS_ANTIGUEDAD_CONSULTAS, dias);
+		editor.apply();
+		Log.d(TAG, "Cambiado filtro días de consultas a:"+dias);
 	}
 	
 	public boolean getEsInstalacionNueva(){
@@ -302,7 +335,7 @@ public class TesAplicacion extends Application {
 		String mensaje= "El dispositivo se está sincronizando en "+getUrlSincronizacion()
 				+"\nPor favor espere.";
 		if(getEsInstalacionNueva())
-			mensaje="("+getUrlSincronizacion()+")"+"\nEsta acción puede tardar 30 minutos. Por favor espere.";
+			mensaje="("+getUrlSincronizacion()+")"+"\nEsta acción puede tardar varios minutos. Por favor espere.";
 		boolean indeterminado=true, cancelable=false;
 		this.pdProgreso = ProgressDialog.show(llamador, "Sincronizando", 
 				mensaje, indeterminado, cancelable);

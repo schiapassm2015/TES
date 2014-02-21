@@ -21,10 +21,12 @@ public interface ObjectViewBinder<T> {
 	 * @param origen El objeto en la colección de datos del adaptador de donde se extrae {@link valor}
 	 * @param atributoOrigen Atributo de {@link origen} que se extrae cuyo valor es el denominado por {@link valor}
 	 * @param valor Valor del atributo {@link atributoOrigen} contenido en {@link origen} usado para ser asignado a {@link viewDestino}
+	 * @param posicion La posición/fila en la lista/tabla que se visualiza este elemento. 
 	 * @return El implementador debe regresar <b>true</b> para avisar al adaptador que NO debe
 	 * asignar él mismo {@link valor} a {@link viewDestino} pues el implementador lo ha hecho por su cuenta.
 	 * Debe regresar <b>false</b> en caso contrario para que el adaptador continúe con la asignación.
 	 */
-	public boolean setViewValue(View viewDestino, String metodoInvocarDestino, T origen, String atributoOrigen, Object valor );
+	public boolean setViewValue(View viewDestino, String metodoInvocarDestino, 
+			T origen, String atributoOrigen, Object valor, int posicion);
 
 }

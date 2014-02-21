@@ -43,7 +43,7 @@ public class AntiguoDomicilio {
 		NUMERO_DOMICILIO + " TEXT DEFAULT NULL, " +
 		COLONIA_DOMICILIO + " TEXT DEFAULT NULL, "+
 		REFERENCIA_DOMICILIO + " TEXT DEFAULT NULL, " +
-		CP_DOMICILIO + " INTEGER NOT NULL, "+
+		CP_DOMICILIO + " INTEGER, "+
 		"UNIQUE (" + ID_PERSONA + "," + FECHA_CAMBIO + ")" +
 		"); ";
 	
@@ -55,7 +55,7 @@ public class AntiguoDomicilio {
 	public String numero_domicilio;
 	public String colonia_domicilio;
 	public String referencia_domicilio;
-	public int cp_domicilio;
+	public Integer cp_domicilio;
 	
 	public static Uri AgregarAntiguoDomicilio(Context context, AntiguoDomicilio dom) throws Exception {
 		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(dom);

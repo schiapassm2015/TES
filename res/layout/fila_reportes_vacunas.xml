@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:clickable="true"
     android:background="@drawable/selector_fila_tabla" >
     
     <TextView android:id="@+id/txtVacuna"

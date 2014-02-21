@@ -70,7 +70,7 @@ public class AdaptadorArrayMultiView<T> extends ArrayAdapter<T> {
 			
 			View destino = salida.findViewById(regla.idViewDestino);
 			try {
-				if(miBinder == null || !miBinder.setViewValue(destino, regla.metodoInvocarEnIdView, elemento, regla.atributoPorCopiar, valor))
+				if(miBinder == null || !miBinder.setViewValue(destino, regla.metodoInvocarEnIdView, elemento, regla.atributoPorCopiar, valor, position))
 					destino.getClass().getMethod(regla.metodoInvocarEnIdView, regla.tipoDatoMetodoInvocarEnIdView).invoke(destino, valor);
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();

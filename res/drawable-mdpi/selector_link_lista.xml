@@ -8,13 +8,15 @@ en una fila de un ListView -->
     
     <item 
         android:state_pressed="true"
-        android:drawable="@drawable/gradiente_amarillo" />
-
+        android:state_enabled="true"
+        android:drawable="@color/link_texto_fondo" />
+<!-- 
     <item 
         android:state_activated="true"
         android:drawable="@drawable/gradiente_azul_medio" />
-    
-    <item 
+     -->
+    <item
+        android:state_enabled="true" 
         android:drawable="@drawable/borde_gris"/>
     
 </selector>

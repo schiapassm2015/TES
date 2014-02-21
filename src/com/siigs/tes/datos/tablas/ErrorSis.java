@@ -15,6 +15,8 @@ public class ErrorSis {
 
 	public final static String NOMBRE_TABLA = "sis_error"; //nombre en BD
 	
+	public final static int ERROR_DESCONOCIDO = 1000;
+	
 	//Columnas en la nube
 	public final static String ID_USUARIO = "id_usuario";
 	public final static String ID_CONTROLADOR_ACCION = "id_controlador_accion";
@@ -34,7 +36,7 @@ public class ErrorSis {
 		ID_USUARIO + " INTEGER NOT NULL, " +
 		ID_CONTROLADOR_ACCION + " INTEGER NOT NULL, "+
 		FECHA_HORA + " INTEGER NOT NULL DEFAULT(strftime('%s','now')), "+
-		DESCRIPCION + " TEXT NOT NULL "+
+		DESCRIPCION + " TEXT NOT NULL COLLATE NOCASE"+
 		"); ";
 	
 	//POJO

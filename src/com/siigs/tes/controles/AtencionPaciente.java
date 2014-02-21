@@ -11,6 +11,7 @@ import com.siigs.tes.Sesion;
 import com.siigs.tes.TesAplicacion;
 import com.siigs.tes.datos.DatosUtil;
 import com.siigs.tes.datos.tablas.Alergia;
+import com.siigs.tes.datos.tablas.AntiguaUM;
 import com.siigs.tes.datos.tablas.AntiguoDomicilio;
 import com.siigs.tes.datos.tablas.ArbolSegmentacion;
 import com.siigs.tes.datos.tablas.Bitacora;
@@ -104,7 +105,8 @@ public class AtencionPaciente extends Fragment {
 		final Persona p = sesion.getDatosPacienteActual().persona;
 		
 		//LECTURA DE DATOS PARA SECCIÓN VER
-		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_ver, R.string.datos_paciente);
+		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_ver, R.string.datos_paciente,
+				R.string.ayuda_ver_datos_paciente, getFragmentManager() );
 
 		((TextView)rootView.findViewById(R.id.txtNombre)).setText(p.getNombreCompleto());
 		((TextView)rootView.findViewById(R.id.txtCurp)).setText(p.curp ==null ? "" : p.curp);
@@ -116,7 +118,7 @@ public class AtencionPaciente extends Fragment {
 				p.calle_domicilio 
 						+ (p.numero_domicilio ==null ? "" : " #" + p.numero_domicilio) 
 						+ (p.colonia_domicilio == null ? "" : ", " + p.colonia_domicilio));
-		((TextView)rootView.findViewById(R.id.txtCP)).setText(p.cp_domicilio+"");
+		((TextView)rootView.findViewById(R.id.txtCP)).setText(p.cp_domicilio ==null ? "" : p.cp_domicilio+"");
 		((TextView)rootView.findViewById(R.id.txtReferencia)).setText(p.referencia_domicilio==null?"":p.referencia_domicilio);
 		((TextView)rootView.findViewById(R.id.txtAGEB)).setText(p.ageb==null?"":p.ageb);
 		((TextView)rootView.findViewById(R.id.txtSector)).setText(p.sector==null?"":p.sector);
@@ -150,7 +152,8 @@ public class AtencionPaciente extends Fragment {
 		
 		
 		//LECTURA DE DATOS PARA SECCIÓN DOMICILIO
-		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_domicilio, R.string.actualizar_domicilio);
+		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_domicilio, R.string.actualizar_domicilio,
+				R.string.ayuda_actualizar_domicilio, getFragmentManager());
 
 		final TextView txtCalle = (TextView)rootView.findViewById(R.id.txtCalle);
 		txtCalle.setText(p.calle_domicilio);
@@ -167,7 +170,7 @@ public class AtencionPaciente extends Fragment {
 		final TextView txtReferencia = (TextView)rootView.findViewById(R.id.txtReferenciaEditar);
 		txtReferencia.setText(p.referencia_domicilio==null?"":p.referencia_domicilio);
 		final TextView txtCP = (TextView)rootView.findViewById(R.id.txtCPeditar);
-		txtCP.setText(p.cp_domicilio+"");
+		txtCP.setText(p.cp_domicilio == null ? "" : p.cp_domicilio+"");
 		
 		//Autocomplete de localidad
 		idLocalidadSeleccionada = p.id_asu_localidad_domicilio;
@@ -193,9 +196,8 @@ public class AtencionPaciente extends Fragment {
 			@Override
 			public void onClick(View view) {
 				//Validamos los datos
-				if(txtCalle.getText().toString().length()==0 || txtColonia.getText().toString().length()==0
-						|| txtNumero.getText().toString().length()==0 || txtCP.getText().toString().length()==0){
-					Toast.makeText(getActivity(), getString(R.string.aviso_llenar_campos), Toast.LENGTH_LONG).show();
+				if(txtCalle.getText().toString().length()==0){
+					Toast.makeText(getActivity(), getString(R.string.aviso_llenar_calle), Toast.LENGTH_LONG).show();
 					return;
 				}
 				
@@ -221,7 +223,8 @@ public class AtencionPaciente extends Fragment {
 						p.ageb = txtAGEB.getText().toString();
 						p.sector = txtSector.getText().toString();
 						p.manzana = txtManzana.getText().toString();
-						try{p.cp_domicilio = Integer.parseInt(txtCP.getText().toString());}catch(Exception e){}
+						if(!txtCP.getText().toString().equals(""))
+							try{p.cp_domicilio = Integer.parseInt(txtCP.getText().toString());}catch(Exception e){}
 						
 						//En bd
 						try {
@@ -250,12 +253,18 @@ public class AtencionPaciente extends Fragment {
 		
 		
 		// LECTURA DE DATOS PARA SECCIÓN UNIDAD MÉDICA
-		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_um, R.string.actualizar_um);
+		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_um, R.string.actualizar_um,
+				R.string.ayuda_actualizar_um, getFragmentManager());
 
 		Button btnActualizarUM = (Button) rootView.findViewById(R.id.btnActualizarUM);
 		btnActualizarUM.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
+				if(p.id_asu_um_tratante == aplicacion.getUnidadMedica()){
+					Toast.makeText(getActivity(), "Este paciente ya está asignado a esta unidad médica", Toast.LENGTH_LONG).show();
+					return;
+				}
+				
 				//Confirmación
 				AlertDialog dialogo=new AlertDialog.Builder(getActivity()).create();
 				dialogo.setMessage("¿En verdad desea asignar paciente a esta unidad médica?");
@@ -265,13 +274,19 @@ public class AtencionPaciente extends Fragment {
 				dialogo.setButton(AlertDialog.BUTTON_POSITIVE, getString(android.R.string.ok), new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						// Antigua Unidad Médica
+						AntiguaUM antiguaUM = new AntiguaUM();
+						antiguaUM.id_persona = p.id;
+						antiguaUM.fecha_cambio = DatosUtil.getAhora();
+						antiguaUM.id_asu_um_tratante = p.id_asu_um_tratante;
 						// Guardamos cambios en memoria
-						p.ultima_actualizacion = DatosUtil.getAhora();
-						p.id_asu_um_tratante = aplicacion.getUnidadMedica();						
+						p.ultima_actualizacion = antiguaUM.fecha_cambio;
+						p.id_asu_um_tratante = aplicacion.getUnidadMedica();
 						// En bd
 						int ICA = ContenidoControles.ICA_PACIENTE_ASIGNAR_UM;
 						try {
 							Persona.AgregarEditar(getActivity(), p);
+							AntiguaUM.AgregarAntiguaUM(getActivity(), antiguaUM);
 							Bitacora.AgregarRegistro(getActivity(), sesion.getUsuario()._id, 
 									ICA, "paciente:"+p.id);
 						} catch (Exception e) {
@@ -296,7 +311,7 @@ public class AtencionPaciente extends Fragment {
 		
 		//LECTURA DE DATOS PARA SECCIÓN AGREGAR ALERGIAS
 		WidgetUtil.setBarraTitulo(rootView, R.id.barra_titulo_alergias, 
-				R.string.agregar_alergia, R.layout.ayuda_dialogo_tes_login, getFragmentManager());
+				R.string.agregar_alergia, R.string.ayuda_agregar_alergia, getFragmentManager());
 		TextView ayudaAlergia = (TextView) rootView.findViewById(
 				R.id.barra_titulo_alergias).findViewById(R.id.txtTituloBarra);
 		ayudaAlergia.setText(R.string.agregar_alergia);
@@ -427,7 +442,7 @@ public class AtencionPaciente extends Fragment {
 			try{
 				SimpleCursorAdapter adaptador = (SimpleCursorAdapter) acLocalidad.getAdapter();
 				if(adaptador.getCursor()!=null){
-					Log.d(TAG,"cerrando cursor");
+					Log.d(TAG,"cerrando cursor localidad");
 					adaptador.getCursor().close();
 				}
 			}catch(Exception e){}

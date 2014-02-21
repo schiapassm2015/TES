@@ -136,7 +136,7 @@ public class Login extends DialogFragment {
 					}else{
 						Toast.makeText(getActivity(), "Clave no reconocida", Toast.LENGTH_SHORT).show();
 					}
-					Log.d(TAG, "comparando clave usuario "+ usuarioElegido.clave + " con "+ clave+" iguales?"+(usuarioElegido.clave.equals(clave)));
+					//Log.d(TAG, "comparando clave usuario "+ usuarioElegido.clave + " con "+ clave+" iguales?"+(usuarioElegido.clave.equals(clave)));
 				}else{
 					//Avisamos que fue invitado
 					if(invitadoElegido == null){
@@ -180,7 +180,7 @@ public class Login extends DialogFragment {
 		btnAyuda.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				DialogoAyuda.CrearNuevo(getFragmentManager(), R.layout.ayuda_dialogo_tes_login);
+				DialogoAyuda.CrearNuevo(getFragmentManager(), R.string.ayuda_login);
 			}
 		});
 		
@@ -268,7 +268,7 @@ public class Login extends DialogFragment {
 		
 		//Confirmación de sincronización
 		String mensaje ="Esta instalación nueva necesita sincronizarse antes de continuar. " +
-				"Este proceso puede tardar 30 minutos. Verifique su conexión a Internet y que tenga batería suficiente." +
+				"Este proceso puede tardar varios minutos. Verifique su conexión a Internet y que tenga batería suficiente." +
 				"\n\nPuede cambiar la URL de sincronización si lo desea.";
 		
 		final EditText txtUrl = new EditText(getActivity());

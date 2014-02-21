@@ -21,7 +21,7 @@ import com.siigs.tes.controles.ContenidoControles;
  */
 public class ControlFragment extends Fragment {
 	/**
-	 * The fragment argument representing the item ID that this fragment
+	 * The fragment argument representing the item ID_PERSONA that this fragment
 	 * represents.
 	 */
 	public static final String ARG_ITEM_ID = "item_id";

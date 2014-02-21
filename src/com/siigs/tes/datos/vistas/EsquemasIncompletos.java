@@ -22,19 +22,32 @@ public class EsquemasIncompletos {
 	public static final String MASCULINO = "M";
 	public static final String FEMENINO = "F";
 	
-	public static CursorLoader getEsquemasIncompletos(Context context, String nombre, Integer anoNacimiento, String sexo){
+	/**
+	 * Hace una búsqueda de esquemas incompletos con los valores del filtro especificado.
+	 * @param context
+	 * @param nombre Filtro para búsqueda por nombre
+	 * @param anoNacimiento Filtro para búsqueda por año de nacimiento
+	 * @param sexo Filtro para búsqueda por sexo
+	 * @param ageb Filtro para búsqueda por ageb
+	 * @return
+	 */
+	public static CursorLoader getEsquemasIncompletos(Context context, String nombre, Integer anoNacimiento, String sexo, String ageb){
 		String selection = "1=1";
 		if(nombre != null)
-			selection += " AND (p."+Persona.NOMBRE + " LIKE '%"+nombre+"%' OR p."+Persona.APELLIDO_PATERNO
-			+" LIKE '%"+nombre+"%' OR p."+Persona.APELLIDO_MATERNO+" LIKE '%"+nombre+"%' "
-			+ "OR p."+Persona.NOMBRE+" || ' ' || p."+Persona.APELLIDO_PATERNO+" || ' ' || p."+Persona.APELLIDO_MATERNO+" LIKE '%"+nombre+"%')";
+			selection += " AND ("+NOMBRE_PACIENTE + " LIKE '%"+nombre+"%' OR "+APPAT_PACIENTE
+			+" LIKE '%"+nombre+"%' OR "+APMAT_PACIENTE+" LIKE '%"+nombre+"%' "
+			+ "OR "+NOMBRE_PACIENTE+" || ' ' || "+APPAT_PACIENTE+" || ' ' || "+APMAT_PACIENTE+" LIKE '%"+nombre+"%')";
 		if(anoNacimiento != null)
-			selection += " AND '" + anoNacimiento + "'=" + "strftime('%Y', p."+Persona.FECHA_NACIMIENTO+")";
+			selection += " AND '" + anoNacimiento + "'=" + "strftime('%Y', "+FECHA_NACIMIENTO+")";
 		if(sexo != null)
-			selection += " AND " + "p."+Persona.SEXO + "='"+sexo+"'";
+			selection += " AND " + SEXO + "='"+sexo+"'";
+		if(ageb != null)
+			selection += " AND " + AGEB + "='"+ageb+"'";
+		
 		return new CursorLoader(context, ProveedorContenido.VISTA_ESQUEMA_INCOMPLETO_CONTENT_URI, null, selection, null, null);
 	}
 	
+	//Subconsulta para cada columna de vacuna
 	private final static String SUBCONSULTA = "(select "+EsquemaIncompleto.PRIORIDAD+" from "+EsquemaIncompleto.NOMBRE_TABLA+" where "+EsquemaIncompleto.ID_PERSONA+"=p."+Persona.ID+" and "+EsquemaIncompleto.ID_VACUNA+"=";
 	
 	//COLUMNAS PARA CURSOR Y PARA QUERY DE CONTENT PROVIDER
@@ -43,7 +56,7 @@ public class EsquemasIncompletos {
 	//Por ese motivo, se deben usar variables por un lado para el content provider (que si ocupa estílo "tabla.columna")
 	//y por el otro lado con alias para el consumo de datos en la forma cursor.getColumnIndex(NOMBRE_PACIENTE)
 	public final static String _ID_PACIENTE = Persona._ID;
-	private final static String COL__ID_PACIENTE = "p." + Persona._ID;
+	private final static String COL__ID_PACIENTE = "p." + Persona._ID + " " + _ID_PACIENTE;
 	
 	public final static String NOMBRE_PACIENTE = "nombre_paciente";
 	private final static String COL_NOMBRE_PACIENTE = "p." + Persona.NOMBRE + " " + NOMBRE_PACIENTE;
@@ -75,6 +88,9 @@ public class EsquemasIncompletos {
 	public final static String REFERENCIA_DOMICILIO = Persona.REFERENCIA_DOMICILIO;
 	private final static String COL_REFERENCIA_DOMICILIO = "p." + Persona.REFERENCIA_DOMICILIO + " " + REFERENCIA_DOMICILIO;
 
+	public final static String AGEB = Persona.AGEB;
+	private final static String COL_AGEB = "p." + Persona.AGEB + " " + AGEB;
+	
 	public final static String CURP = Persona.CURP;
 	private final static String COL_CURP = "p." + Persona.CURP+ " " + CURP;
 	
@@ -146,20 +162,25 @@ public class EsquemasIncompletos {
 	//public final static String DPT_1 = "cv9." + ControlVacuna.ID_VACUNA;
 	//public final static String DPT_2 = "cv10." + ControlVacuna.ID_VACUNA;
 
-	//Columnas para la consulta del ContentProvider
-	public final static String[] COLUMNAS = new String[]{COL__ID_PACIENTE, COL_NOMBRE_PACIENTE, COL_APPAT_PACIENTE, 
-		COL_APMAT_PACIENTE, COL_NOMBRE_TUTOR, COL_APPAT_TUTOR, COL_APMAT_TUTOR, COL_CALLE_DOMICILIO, 
-		COL_NUMERO_DOMICILIO, COL_COLONIA_DOMICILIO, COL_REFERENCIA_DOMICILIO, COL_CURP, COL_FECHA_NACIMIENTO, 
-		COL_SEXO, COL_BCG, COL_HEPATITIS_1, COL_HEPATITIS_2, COL_HEPATITIS_3, COL_PENTAVALENTE_1, 
-		COL_PENTAVALENTE_2, COL_PENTAVALENTE_3,	COL_PENTAVALENTE_4, COL_DPT_R, COL_SRP_1, COL_SRP_2, 
-		COL_ROTAVIRUS_1, COL_ROTAVIRUS_2, COL_ROTAVIRUS_3, COL_NEUMOCOCO_1, COL_NEUMOCOCO_2, COL_NEUMOCOCO_3, 
-		COL_INFLUENZA_1, COL_INFLUENZA_2, COL_INFLUENZA_R};
 	
 	//FROM (TABLAS A USAR CON JOINS)
-	public final static String TABLAS = Tutor.NOMBRE_TABLA + " t " + 
-	" JOIN " + PersonaTutor.NOMBRE_TABLA + " pt ON t."+Tutor.ID + "= pt."+PersonaTutor.ID_TUTOR +
-	" JOIN " + Persona.NOMBRE_TABLA + " p ON pt."+PersonaTutor.ID_PERSONA + "= p."+Persona.ID;
+	private final static String TABLAS = Tutor.NOMBRE_TABLA + " t " + 
+		" JOIN " + PersonaTutor.NOMBRE_TABLA + " pt ON t."+Tutor.ID + "= pt."+PersonaTutor.ID_TUTOR +
+		" JOIN " + Persona.NOMBRE_TABLA + " p ON pt."+PersonaTutor.ID_PERSONA + "= p."+Persona.ID;
+			
+	public final static String NOMBRE_VISTA = "vista_esquemas_incompletos";
 	
-	public final static String WHERE = "p."+Persona.ID
-			+" in (select "+EsquemaIncompleto.ID_PERSONA+" from "+EsquemaIncompleto.NOMBRE_TABLA+")";
+	public final static String CREAR_VISTA = "CREATE VIEW " + NOMBRE_VISTA + " AS SELECT " +
+			COL__ID_PACIENTE + ", " + COL_NOMBRE_PACIENTE + ", " + COL_APPAT_PACIENTE + ", " + COL_APMAT_PACIENTE + ", " +
+			COL_NOMBRE_TUTOR + ", " + COL_APPAT_TUTOR + ", " + COL_APMAT_TUTOR + ", " + COL_CALLE_DOMICILIO + ", " +
+			COL_NUMERO_DOMICILIO + ", " + COL_COLONIA_DOMICILIO + ", " + COL_REFERENCIA_DOMICILIO + ", " +
+			COL_AGEB + ", " + COL_CURP + ", " + COL_FECHA_NACIMIENTO + ", " + COL_SEXO + ", " + COL_BCG + ", " + 
+			COL_HEPATITIS_1 + ", " + COL_HEPATITIS_2 + ", " + COL_HEPATITIS_3 + ", " + COL_PENTAVALENTE_1 + ", " +
+			COL_PENTAVALENTE_2 + ", " + COL_PENTAVALENTE_3 + ", " + COL_PENTAVALENTE_4 + ", " +
+			COL_DPT_R + ", " + COL_SRP_1 + ", " + COL_SRP_2 + ", " + COL_ROTAVIRUS_1 + ", " + COL_ROTAVIRUS_2 + ", " +
+			COL_ROTAVIRUS_3 + ", " + COL_NEUMOCOCO_1 + ", " + COL_NEUMOCOCO_2 + ", " + COL_NEUMOCOCO_3 + ", " +
+			COL_INFLUENZA_1 + ", " + COL_INFLUENZA_2 + ", " + COL_INFLUENZA_R +
+			" FROM " + TABLAS + 
+			" WHERE exists(select "+EsquemaIncompleto.ID_PERSONA+" FROM "
+				+EsquemaIncompleto.NOMBRE_TABLA+" WHERE "+EsquemaIncompleto.ID_PERSONA+"=p."+Persona.ID+")";
 }

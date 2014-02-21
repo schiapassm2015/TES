@@ -1,5 +1,12 @@
 package com.siigs.tes.datos.tablas;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.net.Uri;
+
+import com.siigs.tes.datos.DatosUtil;
+import com.siigs.tes.datos.ProveedorContenido;
+
 
 /**
  * Esquema de tabla de base de datos
@@ -34,4 +41,9 @@ public class AntiguaUM {
 	public String id_persona;
 	public String fecha_cambio;
 	public int id_asu_um_tratante;
+	
+	public static Uri AgregarAntiguaUM(Context context, AntiguaUM um) throws Exception {
+		ContentValues cv = DatosUtil.ContentValuesDesdeObjeto(um);
+		return context.getContentResolver().insert(ProveedorContenido.ANTIGUA_UM_CONTENT_URI, cv);
+	}
 }
